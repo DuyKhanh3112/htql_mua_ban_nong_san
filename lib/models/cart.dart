@@ -36,4 +36,13 @@ class Cart {
       'quantity': quantity,
     };
   }
+
+  Map<String, dynamic> toVal() {
+    return {
+      // 'id': id,
+      'seller_id': seller_id,
+      'product_id': product_id,
+      'quantity': quantity,
+    };
+  }
 }

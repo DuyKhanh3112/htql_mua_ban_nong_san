@@ -7,9 +7,19 @@ class LoadingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-        child: SpinKitThreeBounce(
-      color: Color.fromARGB(255, 216, 120, 64),
-      size: 50.0,
+        child: Stack(
+      alignment: Alignment.center,
+      children: [
+        Image(
+          image: NetworkImage(
+              'https://res.cloudinary.com/dg3p7nxyp/image/upload/v1723004576/app/logo_circle.png'),
+          height: 100,
+        ),
+        SpinKitDualRing(
+          color: Colors.green,
+          size: 130,
+        ),
+      ],
     ));
   }
 }

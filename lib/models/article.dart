@@ -51,4 +51,16 @@ class Article {
       'content': content
     };
   }
+
+  Map<String, dynamic> toVal() {
+    return {
+      // 'id': id,
+      'admin_id': admin_id,
+      'seller_id': seller_id,
+      'status_id': status_id,
+      'create_at': create_at,
+      'title': title,
+      'content': content
+    };
+  }
 }

@@ -26,4 +26,11 @@ class OrderStatus {
       'name': name,
     };
   }
+
+  Map<String, dynamic> toVal() {
+    return {
+      // 'id': id,
+      'name': name,
+    };
+  }
 }

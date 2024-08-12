@@ -41,4 +41,14 @@ class Review {
       'create_at': create_at,
     };
   }
+
+  Map<String, dynamic> toVal() {
+    return {
+      // 'id': id,
+      'order_detail_id': order_detail_id,
+      'comment': comment,
+      'ratting': ratting,
+      'create_at': create_at,
+    };
+  }
 }

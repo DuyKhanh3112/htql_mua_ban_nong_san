@@ -22,6 +22,13 @@ class Province {
 
   Map<String, dynamic> toJson() {
     return {
+      // 'id': id,
+      'name': name,
+    };
+  }
+
+  Map<String, dynamic> toVal() {
+    return {
       'id': id,
       'name': name,
     };

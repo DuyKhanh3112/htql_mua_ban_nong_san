@@ -1,0 +1,49 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:htql_mua_ban_nong_san/models/seller.dart';
+
+class SellerController extends GetxController {
+  static SellerController get to => Get.find<SellerController>();
+
+  CollectionReference SellerCollection =
+      FirebaseFirestore.instance.collection('Seller');
+
+  RxBool isLoading = false.obs;
+
+  Future<void> createSeller(Seller seller) async {
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    String newSellerID = SellerCollection.doc().id;
+    DocumentReference refSeller = SellerCollection.doc(newSellerID);
+    batch.set(refSeller, seller.toVal());
+
+    await batch.commit();
+  }
+
+  Future<bool> checkExistUsername(String username) async {
+    final snapshot =
+        await SellerCollection.where('username', isEqualTo: username).get();
+    if (snapshot.docs.isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> checkExistEmail(String email) async {
+    final snapshot =
+        await SellerCollection.where('email', isEqualTo: email).get();
+    if (snapshot.docs.isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> checkExistPhone(String phone) async {
+    final snapshot =
+        await SellerCollection.where('phone', isEqualTo: phone).get();
+    if (snapshot.docs.isEmpty) {
+      return false;
+    }
+    return true;
+  }
+}

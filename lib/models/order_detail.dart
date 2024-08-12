@@ -41,4 +41,14 @@ class OrderDetail {
       'sell_price': sell_price,
     };
   }
+
+  Map<String, dynamic> toVal() {
+    return {
+      // 'id': id,
+      'order_id': order_id,
+      'product_id': product_id,
+      'quantity': quantity,
+      'sell_price': sell_price,
+    };
+  }
 }
