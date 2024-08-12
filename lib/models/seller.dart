@@ -1,14 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Seller {
   String id;
   String? avatar;
   String? cover;
-  String? email;
+  String email;
   String name;
   String phone;
   String username;
   String password;
-  String status_id;
-  DateTime create_at;
+  String status;
+  Timestamp create_at;
   String address_detail;
   String province_id;
   double? ratting;
@@ -17,12 +19,12 @@ class Seller {
   Seller({
     required this.id,
     required this.username,
-    this.email,
+    required this.email,
     required this.phone,
     required this.password,
     required this.name,
     required this.create_at,
-    required this.status_id,
+    required this.status,
     this.avatar,
     this.cover,
     required this.address_detail,
@@ -41,10 +43,10 @@ class Seller {
       name: '',
       avatar: '',
       cover: '',
-      create_at: DateTime.now(),
-      status_id: '',
+      create_at: Timestamp.now(),
+      status: '',
       address_detail: '',
-      province_id: '',
+      province_id: 'draft',
       ratting: 0,
       tax_code: '',
     );
@@ -55,14 +57,14 @@ class Seller {
       id: json['id'],
       username: json['username'],
       email: json['email'],
-      phone: json['mail'],
+      phone: json['phone'],
       password: json['password'],
       name: json['name'],
       avatar: json['avatar'] ?? '',
       cover: json['cover'] ?? '',
       create_at: json['create_at'],
-      status_id: json['status_id'],
-      address_detail: json['addredd_id'],
+      status: json['status'],
+      address_detail: json['address_detail'],
       province_id: json['province_id'],
       ratting: json['ratting'],
       tax_code: json['tax_code'] ?? '',
@@ -80,7 +82,26 @@ class Seller {
       'avatar': avatar,
       'cover': cover,
       'create_at': create_at,
-      'status_id': status_id,
+      'status': status,
+      'address_detail': address_detail,
+      'province_id': province_id,
+      'ratting': ratting,
+      'tax_code': tax_code,
+    };
+  }
+
+  Map<String, dynamic> toVal() {
+    return {
+      // 'id': id,
+      'username': username,
+      'email': email,
+      'phone': phone,
+      'password': password,
+      'name': name,
+      'avatar': avatar,
+      'cover': cover,
+      'create_at': create_at,
+      'status': status,
       'address_detail': address_detail,
       'province_id': province_id,
       'ratting': ratting,

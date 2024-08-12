@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Buyer {
   String id;
   String? avatar;
@@ -7,8 +9,8 @@ class Buyer {
   String phone;
   String username;
   String password;
-  String status_id;
-  DateTime create_at;
+  String status;
+  Timestamp create_at;
 
   Buyer(
       {required this.id,
@@ -18,7 +20,7 @@ class Buyer {
       required this.password,
       required this.name,
       required this.create_at,
-      required this.status_id,
+      required this.status,
       this.avatar,
       this.cover});
 
@@ -32,8 +34,8 @@ class Buyer {
         name: '',
         avatar: '',
         cover: '',
-        create_at: DateTime.now(),
-        status_id: '');
+        create_at: Timestamp.now(),
+        status: '');
   }
 
   static Buyer fromJson(Map<String, dynamic> json) {
@@ -45,7 +47,7 @@ class Buyer {
       password: json['password'],
       name: json['name'],
       create_at: json['create_at'],
-      status_id: json['status_id'],
+      status: json['status'],
       avatar: json['avatar'] ?? '',
       cover: json['cover'] ?? '',
     );
@@ -62,7 +64,22 @@ class Buyer {
       'avatar': avatar,
       'cover': cover,
       'create_at': create_at,
-      'status_id': status_id
+      'status': status
+    };
+  }
+
+  Map<String, dynamic> toVal() {
+    return {
+      // 'id': id,
+      'username': username,
+      'email': email,
+      'phone': phone,
+      'password': password,
+      'name': name,
+      'avatar': avatar,
+      'cover': cover,
+      'create_at': create_at,
+      'status': status
     };
   }
 }

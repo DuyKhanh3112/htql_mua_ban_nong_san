@@ -42,4 +42,13 @@ class Address {
       'phone': phone
     };
   }
+
+  Map<String, dynamic> toVal() {
+    return {
+      'buyer_id': buyer_id,
+      'province_id': province_id,
+      'address_detail': address_detail,
+      'phone': phone
+    };
+  }
 }

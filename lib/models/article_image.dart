@@ -31,4 +31,12 @@ class ArticleImage {
       'image': image,
     };
   }
+
+  Map<String, dynamic> toVal() {
+    return {
+      // 'id': id,
+      'article_id': article_id,
+      'image': image,
+    };
+  }
 }

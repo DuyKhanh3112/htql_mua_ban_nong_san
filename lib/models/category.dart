@@ -31,4 +31,12 @@ class Category {
       'image': image,
     };
   }
+
+  Map<String, dynamic> toVal() {
+    return {
+      // 'id': id,
+      'name': name,
+      'image': image,
+    };
+  }
 }

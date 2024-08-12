@@ -7,9 +7,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:htql_mua_ban_nong_san/register_page.dart';
 import 'package:htql_mua_ban_nong_san/utils/initial_binding.dart';
 import 'package:htql_mua_ban_nong_san/views/home_page.dart';
-import 'package:htql_mua_ban_nong_san/views/login_page.dart';
+import 'package:htql_mua_ban_nong_san/login_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/home_admin_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,11 +48,13 @@ class MyApp extends StatelessWidget {
       builder: EasyLoading.init(),
       debugShowCheckedModeBanner: false,
       enableLog: false,
-      initialRoute: "/",
+      initialRoute: "/login",
       initialBinding: InitialBindings(),
       getPages: [
         GetPage(name: "/", page: () => const HomePage()),
         GetPage(name: "/login", page: () => const LoginPage()),
+        GetPage(name: "/register", page: () => const RegisterPage()),
+        GetPage(name: "/admin", page: () => const HomeAdminPage()),
       ],
     );
   }

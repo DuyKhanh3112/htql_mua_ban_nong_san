@@ -50,4 +50,16 @@ class Order {
       'received_date': received_date,
     };
   }
+
+  Map<String, dynamic> toVal() {
+    return {
+      // 'id': id,
+      'buyer_id': buyer_id,
+      'seller_id': seller_id,
+      'order_status_id': order_status_id,
+      'order_amount': order_amount,
+      'order_date': order_date,
+      'received_date': received_date,
+    };
+  }
 }

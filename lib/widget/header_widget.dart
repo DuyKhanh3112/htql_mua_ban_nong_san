@@ -14,7 +14,7 @@ class HeaderWidget extends StatelessWidget {
     MainController mainController = Get.find<MainController>();
     return Container(
       padding: const EdgeInsets.all(15),
-      height: 100,
+      height: 75,
       decoration: const BoxDecoration(
         color: Colors.green,
         borderRadius: BorderRadius.only(
@@ -61,7 +61,8 @@ class HeaderWidget extends StatelessWidget {
                 width: 10,
               ),
               Image.network(
-                  'https://cdn-icons-png.flaticon.com/512/8345/8345328.png'),
+                  'https://cdn-icons-png.flaticon.com/512/8345/8345328.png',
+                  height: 50),
             ],
           ),
         ],

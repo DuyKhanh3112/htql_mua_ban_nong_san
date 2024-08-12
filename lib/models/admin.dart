@@ -56,4 +56,17 @@ class Admin {
       'cover': cover,
     };
   }
+
+  Map<String, dynamic> toVal() {
+    return {
+      // 'id': id,
+      'username': username,
+      'email': email,
+      'phone': phone,
+      'password': password,
+      'name': name,
+      'avatar': avatar,
+      'cover': cover,
+    };
+  }
 }

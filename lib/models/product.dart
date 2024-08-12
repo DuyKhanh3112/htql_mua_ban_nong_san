@@ -72,4 +72,20 @@ class Product {
       'unit': unit,
     };
   }
+
+  Map<String, dynamic> toVal() {
+    return {
+      // 'id': id,
+      'name': name,
+      'category_id': category_id,
+      'seller_id': seller_id,
+      'price': price,
+      'description': description,
+      'province_id': province_id,
+      'quantity': quantity,
+      'status_id': status_id,
+      'expripy_date': expripy_date,
+      'unit': unit,
+    };
+  }
 }
