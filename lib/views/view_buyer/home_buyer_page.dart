@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
-import 'package:htql_mua_ban_nong_san/widget/header_widget.dart';
 
 class HomeUserPage extends StatelessWidget {
   const HomeUserPage({super.key});
@@ -22,6 +21,7 @@ class HomeUserPage extends StatelessWidget {
                     // const HeaderWidget(),
                     Container(
                       padding: const EdgeInsets.all(15),
+
                       // height: 100,
                       decoration: const BoxDecoration(
                         color: Colors.green,
@@ -38,55 +38,66 @@ class HomeUserPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Column(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // Icon(Icons.search),
-                              SizedBox(
-                                width: Get.width / 2,
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Tìm kiếm ...',
-                                    hintStyle: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontStyle: FontStyle.italic,
+                          // Icon(Icons.search),
+                          SizedBox(
+                            width: Get.width / 2,
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                hintText: 'Tìm kiếm ...',
+                                hintStyle: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                                border: const OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(30),
                                     ),
-                                    border: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(30),
-                                        ),
-                                        borderSide: BorderSide(
-                                            color: Colors.white,
-                                            style: BorderStyle.solid)),
-                                    contentPadding: const EdgeInsets.only(
-                                      left: 10,
-                                      top: 0,
-                                      bottom: 0,
-                                      right: 10,
-                                    ),
-                                    suffixIcon: IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.search,
+                                    borderSide: BorderSide(
                                         color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                  style: const TextStyle(
+                                        style: BorderStyle.solid)),
+                                contentPadding: const EdgeInsets.only(
+                                  left: 10,
+                                  top: 0,
+                                  bottom: 0,
+                                  right: 10,
+                                ),
+                                suffixIcon: IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.search,
                                     color: Colors.white,
-                                    fontSize: 14,
                                   ),
                                 ),
                               ),
-                              const Icon(
-                                Icons.shopping_cart,
-                                // size: 35,
+                              style: const TextStyle(
                                 color: Colors.white,
+                                fontSize: 14,
                               ),
-                            ],
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Get.toNamed('/cart');
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(right: 5),
+                              child: const Badge(
+                                label: Text(
+                                  '50',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 12),
+                                ),
+                                child: Icon(
+                                  Icons.shopping_cart,
+                                  color: Colors.white,
+                                  size: 35,
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/models/admin.dart';
@@ -24,6 +25,18 @@ class MainController extends GetxController {
   CollectionReference provinceCollection =
       FirebaseFirestore.instance.collection('Province');
 
+  Future<void> createProvince(String name) async {
+    isLoading.value = true;
+    Province province = Province(id: '', name: name);
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    String newProvinceId = provinceCollection.doc().id;
+    DocumentReference refProvince = provinceCollection.doc(newProvinceId);
+    batch.set(refProvince, province.toVal());
+
+    await batch.commit();
+    isLoading.value = false;
+  }
+
   RxBool isLoading = false.obs;
 
   List<Widget> page = [
@@ -45,6 +58,13 @@ class MainController extends GetxController {
   RxInt numPage = 0.obs;
 
   RxList<Province> listProvince = <Province>[].obs;
+
+  Future<bool> checkInternet() async {
+    isLoading.value = true;
+    var connectivityResult = await Connectivity().checkConnectivity();
+    isLoading.value = false;
+    return connectivityResult != ConnectivityResult.none;
+  }
 
   Future<bool> login(String uname, String pword) async {
     isLoading.value = true;
@@ -107,21 +127,23 @@ class MainController extends GetxController {
 
   Future<void> loadAll() async {
     isLoading.value = true;
-    if (listProvince.value.isEmpty) {
-      await loadProvince();
-    }
+    // if (listProvince.value.isEmpty) {
+
+    await loadProvince();
+    // }
     isLoading.value = false;
   }
 
   Future<void> loadProvince() async {
+    listProvince.value = [];
     final snapshot = await provinceCollection.get();
-    if (snapshot.docs.isNotEmpty) {
-      for (var snap in snapshot.docs) {
-        Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
-        data['id'] = snap.id;
-        Province province = Province.fromJson(data);
-        listProvince.value.add(province);
-      }
+    for (var snap in snapshot.docs) {
+      Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
+      // {'key': value}
+      data['id'] = snap.id;
+      Province province = Province.fromJson(data);
+      // ignore: invalid_use_of_protected_member
+      listProvince.value.add(province);
     }
   }
 }

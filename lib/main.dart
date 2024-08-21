@@ -1,21 +1,24 @@
-import 'dart:io';
-
 // import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:htql_mua_ban_nong_san/register_page.dart';
 import 'package:htql_mua_ban_nong_san/utils/initial_binding.dart';
 import 'package:htql_mua_ban_nong_san/views/home_page.dart';
 import 'package:htql_mua_ban_nong_san/login_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/category/category_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/home_admin_page.dart';
+
+// ignore: depend_on_referenced_packages
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:htql_mua_ban_nong_san/views/view_buyer/cart_page.dart';
+import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp();
+
   await Firebase.initializeApp(
     options: const FirebaseOptions(
       apiKey: 'AIzaSyBf4T6R7lIPtzjFgbORbqW6QYnJIpqMXpo',
@@ -33,8 +36,6 @@ void main() async {
     defaultTransition: Transition.native,
   );
 
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const MyApp());
 }
 
@@ -48,13 +49,27 @@ class MyApp extends StatelessWidget {
       builder: EasyLoading.init(),
       debugShowCheckedModeBanner: false,
       enableLog: false,
-      initialRoute: "/login",
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        SfGlobalLocalizations.delegate
+      ],
+      supportedLocales: const [
+        Locale('vi'),
+        Locale('en'),
+        Locale('fr'),
+      ],
+      locale: const Locale('vi'),
+      initialRoute: "/",
       initialBinding: InitialBindings(),
       getPages: [
         GetPage(name: "/", page: () => const HomePage()),
         GetPage(name: "/login", page: () => const LoginPage()),
         GetPage(name: "/register", page: () => const RegisterPage()),
         GetPage(name: "/admin", page: () => const HomeAdminPage()),
+        GetPage(name: "/cart", page: () => const CartPage()),
+        GetPage(name: "/category", page: () => CategoryHomePgae())
       ],
     );
   }

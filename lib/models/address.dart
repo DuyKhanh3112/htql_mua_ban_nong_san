@@ -4,6 +4,7 @@ class Address {
   String province_id;
   String phone;
   String address_detail;
+  bool is_default;
 
   Address({
     required this.id,
@@ -11,6 +12,7 @@ class Address {
     required this.province_id,
     required this.address_detail,
     required this.phone,
+    required this.is_default,
   });
 
   factory Address.initAddress() {
@@ -20,6 +22,7 @@ class Address {
       province_id: '',
       address_detail: '',
       phone: '',
+      is_default: false,
     );
   }
 
@@ -30,6 +33,7 @@ class Address {
       province_id: json['province_id'],
       address_detail: json['province_id'],
       phone: json['phone'],
+      is_default: json['is_default'],
     );
   }
 
@@ -39,7 +43,8 @@ class Address {
       'buyer_id': buyer_id,
       'province_id': province_id,
       'address_detail': address_detail,
-      'phone': phone
+      'phone': phone,
+      'is_default': is_default,
     };
   }
 
@@ -48,7 +53,8 @@ class Address {
       'buyer_id': buyer_id,
       'province_id': province_id,
       'address_detail': address_detail,
-      'phone': phone
+      'phone': phone,
+      'is_default': is_default,
     };
   }
 }

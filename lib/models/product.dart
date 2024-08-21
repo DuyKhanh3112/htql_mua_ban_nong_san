@@ -8,7 +8,7 @@ class Product {
   String province_id;
   double quantity;
   String seller_id;
-  String status_id;
+  String status;
   String? unit;
 
   Product({
@@ -20,7 +20,7 @@ class Product {
     required this.description,
     required this.province_id,
     required this.quantity,
-    required this.status_id,
+    required this.status,
     this.expripy_date,
     this.unit,
   });
@@ -35,7 +35,7 @@ class Product {
       description: '',
       province_id: '',
       quantity: 0,
-      status_id: '',
+      status: '',
       expripy_date: 0,
       unit: '',
     );
@@ -51,7 +51,7 @@ class Product {
       description: json['description'],
       province_id: json['province_id'],
       quantity: json['quantity'],
-      status_id: json['status_is'],
+      status: json['status_is'],
       expripy_date: json['expripy_date'],
       unit: json['unit'] ?? '',
     );
@@ -67,7 +67,7 @@ class Product {
       'description': description,
       'province_id': province_id,
       'quantity': quantity,
-      'status_id': status_id,
+      'status': status,
       'expripy_date': expripy_date,
       'unit': unit,
     };
@@ -83,7 +83,7 @@ class Product {
       'description': description,
       'province_id': province_id,
       'quantity': quantity,
-      'status_id': status_id,
+      'status': status,
       'expripy_date': expripy_date,
       'unit': unit,
     };

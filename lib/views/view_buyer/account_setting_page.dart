@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
-import 'package:htql_mua_ban_nong_san/widget/header_widget.dart';
 
 class AccountSettingPage extends StatelessWidget {
   const AccountSettingPage({super.key});

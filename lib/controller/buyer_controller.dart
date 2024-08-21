@@ -10,7 +10,7 @@ class BuyerController extends GetxController {
       FirebaseFirestore.instance.collection('Buyer');
 
   RxBool isLoading = false.obs;
-
+  RxList<int> listCart = <int>[].obs;
   Future<void> createBuyer(
     Buyer buyer,
   ) async {

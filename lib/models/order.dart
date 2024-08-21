@@ -1,11 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Order {
   String id;
   String buyer_id;
   String seller_id;
   String order_status_id;
   double order_amount;
-  DateTime order_date;
-  DateTime? received_date;
+  Timestamp order_date;
+  Timestamp? received_date;
 
   Order({
     required this.id,
@@ -23,7 +25,7 @@ class Order {
       buyer_id: '',
       seller_id: '',
       order_status_id: '',
-      order_date: DateTime.now(),
+      order_date: Timestamp.now(),
       order_amount: 0,
     );
   }

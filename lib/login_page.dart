@@ -1,12 +1,9 @@
-import 'dart:io';
-
 // import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
-import 'package:htql_mua_ban_nong_san/register_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -202,13 +199,7 @@ class LoginPage extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    onTap: () async {
-                                      await mainController.loadAll();
-                                      for (var item in mainController
-                                          .listProvince.value) {
-                                        print(item.toJson());
-                                      }
-                                    },
+                                    onTap: () async {},
                                   ),
                                   const SizedBox(
                                     height: 10,
