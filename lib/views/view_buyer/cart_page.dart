@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
-import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
+import 'package:htql_mua_ban_nong_san/models/cart.dart';
+import 'package:htql_mua_ban_nong_san/models/seller.dart';
 import 'package:intl/intl.dart';
 
 class CartPage extends StatelessWidget {
@@ -11,20 +13,18 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(MainController());
-    Get.put(BuyerController());
     BuyerController buyerController = Get.find<BuyerController>();
     MainController mainController = Get.find<MainController>();
+    CartController cartController = Get.find<CartController>();
     RxInt num = 1000000.obs;
-    Rx<TextEditingController> numController = TextEditingController().obs;
 
     // ignore: unused_local_variable
     final currencyFormatter =
-        NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
+        NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
 
     return Obx(
       () {
-        return mainController.isLoading.value || buyerController.isLoading.value
+        return mainController.isLoading.value
             ? const LoadingPage()
             : SafeArea(
                 child: Scaffold(
@@ -46,25 +46,18 @@ class CartPage extends StatelessWidget {
                           children: [
                             Column(
                               children: [
-                                for (var i = 1; i < 10; i++)
-                                  cart_by_seller(i, currencyFormatter, num,
-                                      buyerController)
+                                // for (var i = 1; i < 10; i++)
+                                //   cart_by_seller(i, currencyFormatter, num,
+                                //       buyerController)
+                                for (var item
+                                    in cartController.getCartGroupBySeller())
+                                  cartSeller(item),
                               ],
                             ),
                           ],
                         ),
                       ),
-                      buyerController.listCart.value.isEmpty
-                          ? Container(
-                              height: 10,
-                              width: 1000,
-                              color: Colors.black,
-                            )
-                          : Container(
-                              height: 10,
-                              width: 1000,
-                              color: Colors.amber,
-                            ),
+                      // ignore: invalid_use_of_protected_member
                     ],
                   ),
                 ),
@@ -73,12 +66,7 @@ class CartPage extends StatelessWidget {
     );
   }
 
-  Widget cart_by_seller(
-    int i,
-    NumberFormat currencyFormatter,
-    RxInt num,
-    BuyerController buyerController,
-  ) {
+  Container cartSeller(item) {
     return Container(
       padding: const EdgeInsets.all(10),
       margin: const EdgeInsets.only(top: 5, bottom: 5),
@@ -127,7 +115,7 @@ class CartPage extends StatelessWidget {
                 width: 5,
               ),
               Text(
-                'data$i',
+                (item[0] as Seller).name,
                 style: const TextStyle(
                   color: Colors.green,
                   fontSize: 16,
@@ -138,8 +126,9 @@ class CartPage extends StatelessWidget {
           const Divider(),
           Column(
             children: [
-              for (var a = 0; a < 3; a++)
-                cart_details(currencyFormatter, num, buyerController),
+              for (var cart in item[1]) cartDetail(cart),
+              // for (var a = 0; a < 3; a++)
+              //   cart_details(currencyFormatter, num, buyerController),
             ],
           ),
         ],
@@ -147,29 +136,14 @@ class CartPage extends StatelessWidget {
     );
   }
 
-  Widget cart_details(NumberFormat currencyFormatter, RxInt num,
-      BuyerController buyerController) {
-    Rx<TextEditingController> numController = TextEditingController().obs;
-    RxInt total = 0.obs;
-    numController.value.text = '1';
-    total.value = num.value * int.parse(numController.value.text);
-    RxBool isCheck = false.obs;
+  Container cartDetail(cart) {
     return Container(
       // padding: const EdgeInsets.all(5),
-      padding: EdgeInsets.only(bottom: 5, top: 5),
+      padding: const EdgeInsets.only(bottom: 5, top: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Checkbox(
-              value: isCheck.value,
-              onChanged: (value) {
-                isCheck.value = value!;
-                if (value) {
-                  buyerController.listCart.value.add(total.value);
-                } else {
-                  buyerController.listCart.value.remove(total.value);
-                }
-              }),
+          Checkbox(value: false, onChanged: (value) {}),
           Container(
             width: Get.width * 0.2,
             height: Get.height * 0.15,
@@ -203,9 +177,9 @@ class CartPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'data data data data abag agga gag',
-                  style: TextStyle(
+                Text(
+                  (cart as Cart).product_id,
+                  style: const TextStyle(
                     fontSize: 18,
                     color: Colors.green,
                   ),
@@ -214,7 +188,7 @@ class CartPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      currencyFormatter.format(num.value),
+                      '',
                       style: const TextStyle(
                         fontSize: 15,
                         color: Colors.green,
@@ -228,21 +202,13 @@ class CartPage extends StatelessWidget {
                             size: 16,
                             color: Colors.green,
                           ),
-                          onTap: () {
-                            numController.value.text =
-                                '${int.parse(numController.value.text) - 1}';
-                            total.value =
-                                num.value * int.parse(numController.value.text);
-                          },
+                          onTap: () {},
                         ),
                         Container(
                           alignment: Alignment.center,
                           width: 40,
                           child: TextFormField(
-                            onChanged: (value) {
-                              total.value = num.value * int.parse(value);
-                            },
-                            controller: numController.value,
+                            onChanged: (value) {},
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
                             decoration: const InputDecoration(
@@ -258,12 +224,7 @@ class CartPage extends StatelessWidget {
                             size: 16,
                             color: Colors.green,
                           ),
-                          onTap: () {
-                            numController.value.text =
-                                '${int.parse(numController.value.text) + 1}';
-                            total.value =
-                                num.value * int.parse(numController.value.text);
-                          },
+                          onTap: () {},
                         ),
                       ],
                     ),

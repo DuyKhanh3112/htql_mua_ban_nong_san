@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 
 class BuyerController extends GetxController {

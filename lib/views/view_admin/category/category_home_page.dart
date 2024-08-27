@@ -1,21 +1,20 @@
 import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudinary/cloudinary.dart';
+import 'package:convert_vietnamese/convert_vietnamese.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:htql_mua_ban_nong_san/config.dart';
 import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cloudinary_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/category.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/main_drawer.dart';
 import 'package:image_picker/image_picker.dart';
 
-class CategoryHomePgae extends StatelessWidget {
-  const CategoryHomePgae({super.key});
+class CategoryHomePage extends StatelessWidget {
+  const CategoryHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +22,21 @@ class CategoryHomePgae extends StatelessWidget {
     MainController mainController = Get.find<MainController>();
     Get.put(CategoryController());
     CategoryController categoryController = Get.find<CategoryController>();
+
+    Rx<TextEditingController> searchController = TextEditingController().obs;
+
+    RxList<Category> listCategory = <Category>[].obs;
+
     return Obx(() {
-      return mainController.isLoading.value ||
-              categoryController.isLoading.value
+      if (searchController.value.text.isEmpty) {
+        listCategory.value = categoryController.listCategory;
+      } else {
+        listCategory.value = categoryController.listCategory
+            .where((e) => removeDiacritics(e.name.toLowerCase()).contains(
+                removeDiacritics(searchController.value.text.toLowerCase())))
+            .toList();
+      }
+      return categoryController.isLoading.value
           ? const LoadingPage()
           : SafeArea(
               child: Scaffold(
@@ -41,10 +52,14 @@ class CategoryHomePgae extends StatelessWidget {
                   foregroundColor: Colors.white,
                   actions: [
                     InkWell(
-                      child: const Icon(Icons.refresh),
-                      onTap: () async {
-                        await categoryController.loadCategory();
+                      onTap: () {
+                        widgetCreateCategory(context);
                       },
+                      child: const Icon(
+                        Icons.add_circle_outline,
+                        size: 35,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 ),
@@ -53,32 +68,127 @@ class CategoryHomePgae extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(20),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           InkWell(
-                            onTap: () {
-                              widgetCreateCategory(context);
+                            child: const Icon(Icons.refresh),
+                            onTap: () async {
+                              categoryController.isLoading.value = true;
+                              await categoryController.loadCategory();
+                              categoryController.isLoading.value = false;
                             },
-                            child: const Icon(
-                              Icons.add_circle_outline,
-                              size: 35,
-                              color: Colors.green,
+                          ),
+                          SizedBox(
+                            width: Get.width / 2,
+                            child: Column(
+                              children: [
+                                TextFormField(
+                                  onChanged: (value) {
+                                    if (searchController.value.text == '') {
+                                      listCategory.value =
+                                          categoryController.listCategory;
+                                    } else {
+                                      listCategory.value = categoryController
+                                          .listCategory
+                                          .where((e) => removeDiacritics(
+                                                  e.name.toLowerCase())
+                                              .contains(removeDiacritics(
+                                                  searchController.value.text
+                                                      .toLowerCase())))
+                                          .toList();
+                                    }
+                                  },
+                                  controller: searchController.value,
+                                  decoration: InputDecoration(
+                                    hintText: 'Tìm kiếm ...',
+                                    hintStyle: const TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 14,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                    border: const OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(30),
+                                      ),
+                                      borderSide: BorderSide(
+                                          color: Colors.green,
+                                          style: BorderStyle.solid),
+                                    ),
+                                    contentPadding: const EdgeInsets.only(
+                                      left: 10,
+                                      top: 0,
+                                      bottom: 0,
+                                      right: 10,
+                                    ),
+                                    suffixIcon: IconButton(
+                                      onPressed: () async {
+                                        if (searchController.value.text == '') {
+                                          listCategory.value =
+                                              categoryController.listCategory;
+                                        } else {
+                                          listCategory.value =
+                                              categoryController.listCategory
+                                                  .where((e) => e.name.contains(
+                                                      searchController
+                                                          .value.text))
+                                                  .toList();
+                                        }
+                                      },
+                                      icon: const Icon(
+                                        Icons.search,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                  style: const TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
                             ),
-                          )
+                          ),
+                          // InkWell(
+                          //   onTap: () {
+                          //     widgetCreateCategory(context);
+                          //   },
+                          //   child: const Icon(
+                          //     Icons.add_circle_outline,
+                          //     size: 35,
+                          //     color: Colors.green,
+                          //   ),
+                          // ),
+                          // TextButton.icon(
+                          //   onPressed: () {},
+                          //   icon: const Icon(
+                          //     Icons.add_circle_outline,
+                          //     size: 35,
+                          //     color: Colors.green,
+                          //   ),
+                          //   label: const Text(
+                          //     'Thêm loại sản phẩm',
+                          //     style:
+                          //         TextStyle(color: Colors.green, fontSize: 16,),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
                     Expanded(
                       child: ListView.builder(
                           itemCount:
-                              categoryController.listCategory.value.length,
+                              // ignore: invalid_use_of_protected_member
+                              listCategory.value.length,
                           itemBuilder: (BuildContext context, int index) {
                             Category category =
-                                categoryController.listCategory.value[index];
+                                // ignore: invalid_use_of_protected_member
+                                listCategory.value[index];
                             return categoryDetail(category, context);
                           }),
                     ),
                   ],
                 ),
+                drawer: const DrawerAdmin(),
               ),
             );
     });
@@ -100,10 +210,10 @@ class CategoryHomePgae extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(10),
-      margin: const EdgeInsets.only(
-        left: 10,
-        right: 10,
+      padding: EdgeInsets.all(Get.width * 0.01),
+      margin: EdgeInsets.only(
+        left: Get.width * 0.01,
+        right: Get.width * 0.01,
         top: 5,
         bottom: 5,
       ),
@@ -119,9 +229,13 @@ class CategoryHomePgae extends StatelessWidget {
                 Container(
                   width: Get.width / 4,
                   height: Get.height / 10,
+                  margin: const EdgeInsets.only(right: 10),
                   decoration: BoxDecoration(
                     // color: Colors.amber,
-                    image: DecorationImage(image: NetworkImage(category.image)),
+                    image: DecorationImage(
+                      image: NetworkImage(category.image),
+                      fit: BoxFit.cover,
+                    ),
                     borderRadius: const BorderRadius.all(Radius.circular(20)),
                   ),
                 ),
@@ -144,6 +258,15 @@ class CategoryHomePgae extends StatelessWidget {
             ),
             onTap: () async {
               await AwesomeDialog(
+                      titleTextStyle: const TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22,
+                      ),
+                      descTextStyle: const TextStyle(
+                        color: Colors.green,
+                        fontSize: 16,
+                      ),
                       context: context,
                       dialogType: DialogType.question,
                       animType: AnimType.rightSlide,
@@ -155,7 +278,11 @@ class CategoryHomePgae extends StatelessWidget {
                         Get.put(CategoryController());
                         CategoryController categoryController =
                             Get.find<CategoryController>();
+                        categoryController.isLoading.value = true;
+                        await CloudinaryController()
+                            .deleteImage(category.id, 'category');
                         await categoryController.deleteCategory(category);
+                        categoryController.isLoading.value = false;
                       },
                       btnCancelOnPress: () {})
                   .show();
@@ -177,10 +304,31 @@ class CategoryHomePgae extends StatelessWidget {
     Get.dialog(
       Obx(
         () => AlertDialog(
-          title: const Column(
+          title: Column(
             children: [
-              Text('Cập nhật loại sản phẩm'),
-              Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Cập nhật loại sản phẩm',
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.green,
+                    ),
+                  )
+                ],
+              ),
+              const Divider(),
             ],
           ),
           content: SingleChildScrollView(
@@ -221,7 +369,7 @@ class CategoryHomePgae extends StatelessWidget {
                     children: [
                       InkWell(
                         child: DottedBorder(
-                          color: Colors.black,
+                          color: Colors.green,
                           strokeWidth: 2,
                           dashPattern: const [
                             5,
@@ -231,16 +379,17 @@ class CategoryHomePgae extends StatelessWidget {
                             alignment: Alignment.center,
                             margin: const EdgeInsets.all(5),
                             padding: const EdgeInsets.all(5),
-                            height: Get.width / 4,
-                            width: Get.width / 2,
+                            height: Get.width * 0.3,
+                            width: Get.width * 0.4,
                             decoration: BoxDecoration(
                               image: filePath.value != ''
-                                  ? const DecorationImage(
-                                      image: AssetImage(
-                                          'assets/images/upload_file_icon.png'),
+                                  ? DecorationImage(
+                                      image: FileImage(File(filePath.value)),
+                                      fit: BoxFit.cover,
                                     )
                                   : DecorationImage(
                                       image: NetworkImage(category.image),
+                                      fit: BoxFit.cover,
                                     ),
                             ),
                           ),
@@ -393,10 +542,31 @@ class CategoryHomePgae extends StatelessWidget {
     Get.dialog(
       Obx(
         () => AlertDialog(
-          title: const Column(
+          title: Column(
             children: [
-              Text('Thêm loại sản phẩm'),
-              Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Thêm loại sản phẩm',
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.green,
+                    ),
+                  )
+                ],
+              ),
+              const Divider(),
             ],
           ),
           content: SingleChildScrollView(
@@ -503,7 +673,7 @@ class CategoryHomePgae extends StatelessWidget {
                           }
                         },
                         child: DottedBorder(
-                          color: Colors.black,
+                          color: Colors.green,
                           strokeWidth: 2,
                           dashPattern: const [
                             5,
@@ -520,8 +690,14 @@ class CategoryHomePgae extends StatelessWidget {
                                   ? const DecorationImage(
                                       image: AssetImage(
                                           'assets/images/upload_file_icon.png'),
+                                      // fit: BoxFit.cover,
                                     )
-                                  : null,
+                                  : DecorationImage(
+                                      image: FileImage(
+                                        File(filePath.value),
+                                      ),
+                                      fit: BoxFit.fill,
+                                    ),
                             ),
                           ),
                         ),

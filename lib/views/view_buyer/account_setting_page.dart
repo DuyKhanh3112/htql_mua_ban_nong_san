@@ -43,34 +43,38 @@ class AccountSettingPage extends StatelessWidget {
                               const SizedBox(
                                 width: 10,
                               ),
-                              SizedBox(
-                                // width: Get.width / 3,
-                                child: Text(
-                                  mainController.buyer.value.name,
-                                  softWrap: true,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 3,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
+                              mainController.buyer.value.id == ''
+                                  ? const SizedBox()
+                                  : SizedBox(
+                                      // width: Get.width / 3,
+                                      child: Text(
+                                        mainController.buyer.value.name,
+                                        softWrap: true,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 3,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
                               const SizedBox(
                                 width: 10,
                               ),
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                        mainController.buyer.value.avatar!),
-                                  ),
-                                ),
-                                height: 75,
-                                width: 75,
-                              ),
+                              mainController.buyer.value.id == ''
+                                  ? const SizedBox()
+                                  : Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                          image: NetworkImage(mainController
+                                              .buyer.value.avatar!),
+                                        ),
+                                      ),
+                                      height: 75,
+                                      width: 75,
+                                    ),
                               const SizedBox(
                                 width: 10,
                               ),
@@ -82,75 +86,117 @@ class AccountSettingPage extends StatelessWidget {
                     Expanded(
                       child: Container(
                           margin: const EdgeInsets.all(20),
-                          child: ListView(
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.all(10),
-                                child: ListTile(
-                                  leading: const Icon(
-                                    Icons.account_circle,
-                                    color: Colors.green,
-                                  ),
-                                  title: const Text(
-                                    'Quản lý tài khoản',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.green,
+                          child: mainController.buyer.value.id == ''
+                              ? ListView(
+                                  children: [
+                                    Column(
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            mainController.isLoading.value =
+                                                true;
+                                            // await mainController.logout();
+                                            Get.toNamed('/login');
+                                            mainController.isLoading.value =
+                                                false;
+                                          },
+                                          style: const ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStatePropertyAll(
+                                                    Colors.green),
+                                          ),
+                                          child: const Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'Đăng nhập',
+                                                style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                )
+                              : ListView(
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.all(10),
+                                      child: ListTile(
+                                        leading: const Icon(
+                                          Icons.account_circle,
+                                          color: Colors.green,
+                                        ),
+                                        title: const Text(
+                                          'Quản lý tài khoản',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                        shape: const Border(
+                                          bottom:
+                                              BorderSide(color: Colors.green),
+                                        ),
+                                        onTap: () {},
+                                      ),
                                     ),
-                                  ),
-                                  shape: const Border(
-                                    bottom: BorderSide(color: Colors.green),
-                                  ),
-                                  onTap: () {},
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.all(10),
-                                child: ListTile(
-                                  leading: const Icon(
-                                    Icons.password,
-                                    color: Colors.green,
-                                  ),
-                                  title: const Text(
-                                    'Cập nhật mật khẩu',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.green,
+                                    Container(
+                                      margin: const EdgeInsets.all(10),
+                                      child: ListTile(
+                                        leading: const Icon(
+                                          Icons.password,
+                                          color: Colors.green,
+                                        ),
+                                        title: const Text(
+                                          'Cập nhật mật khẩu',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                        shape: const Border(
+                                          bottom:
+                                              BorderSide(color: Colors.green),
+                                        ),
+                                        onTap: () {},
+                                      ),
                                     ),
-                                  ),
-                                  shape: const Border(
-                                    bottom: BorderSide(color: Colors.green),
-                                  ),
-                                  onTap: () {},
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.all(10),
-                                child: ListTile(
-                                  leading: const Icon(
-                                    Icons.output,
-                                    color: Colors.green,
-                                  ),
-                                  title: const Text(
-                                    'Đăng xuất',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.green,
+                                    Container(
+                                      margin: const EdgeInsets.all(10),
+                                      child: ListTile(
+                                        leading: const Icon(
+                                          Icons.output,
+                                          color: Colors.green,
+                                        ),
+                                        title: const Text(
+                                          'Đăng xuất',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                        shape: const Border(
+                                          bottom:
+                                              BorderSide(color: Colors.green),
+                                        ),
+                                        onTap: () async {
+                                          mainController.isLoading.value = true;
+                                          await mainController.logout();
+                                          Get.toNamed('/login');
+                                          mainController.isLoading.value =
+                                              false;
+                                        },
+                                      ),
                                     ),
-                                  ),
-                                  shape: const Border(
-                                    bottom: BorderSide(color: Colors.green),
-                                  ),
-                                  onTap: () async {
-                                    mainController.isLoading.value = true;
-                                    await mainController.logout();
-                                    Get.toNamed('/login');
-                                    mainController.isLoading.value = false;
-                                  },
-                                ),
-                              ),
-                            ],
-                          )),
+                                  ],
+                                )),
                     ),
                   ],
                 ),

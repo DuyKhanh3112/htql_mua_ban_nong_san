@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:convert_vietnamese/convert_vietnamese.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/models/category.dart';
 
@@ -41,8 +42,11 @@ class CategoryController extends GetxController {
     for (var item in snapshot.docs) {
       Map<String, dynamic> data = item.data() as Map<String, dynamic>;
       data['id'] = item.id;
+      // ignore: invalid_use_of_protected_member
       listCategory.value.add(Category.fromJson(data));
     }
+    listCategory.sort((a, b) => removeDiacritics(a.name.toLowerCase().trim())
+        .compareTo(removeDiacritics(b.name.toLowerCase().trim())));
     isLoading.value = false;
   }
 }

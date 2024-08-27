@@ -7,12 +7,18 @@ import 'package:htql_mua_ban_nong_san/register_page.dart';
 import 'package:htql_mua_ban_nong_san/utils/initial_binding.dart';
 import 'package:htql_mua_ban_nong_san/views/home_page.dart';
 import 'package:htql_mua_ban_nong_san/login_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/admin_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/category/category_home_page.dart';
-import 'package:htql_mua_ban_nong_san/views/view_admin/home_admin_page.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/personal_admin_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/product/product_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/cart_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_buyer/product/product_details_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/home_seller_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_form_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_home_page.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 
 void main() async {
@@ -67,9 +73,17 @@ class MyApp extends StatelessWidget {
         GetPage(name: "/", page: () => const HomePage()),
         GetPage(name: "/login", page: () => const LoginPage()),
         GetPage(name: "/register", page: () => const RegisterPage()),
-        GetPage(name: "/admin", page: () => const HomeAdminPage()),
+        GetPage(name: "/personal_admin", page: () => const PersonalAdminPage()),
         GetPage(name: "/cart", page: () => const CartPage()),
-        GetPage(name: "/category", page: () => CategoryHomePgae())
+        GetPage(name: "/category", page: () => const CategoryHomePage()),
+        GetPage(name: '/product_admin', page: () => const ProductHomePage()),
+        GetPage(name: '/admin', page: () => const AdminHomePage()),
+        GetPage(name: '/seller', page: () => const HomeSellerPage()),
+        GetPage(
+            name: '/product_seller', page: () => const ProductSellerHomePage()),
+        GetPage(
+            name: '/product_form', page: () => const ProductSellerFormPage()),
+        GetPage(name: '/product_detail', page: () => ProductDetailPage()),
       ],
     );
   }

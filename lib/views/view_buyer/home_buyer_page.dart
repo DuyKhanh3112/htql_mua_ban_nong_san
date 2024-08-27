@@ -1,14 +1,24 @@
+import 'package:flexible_grid_view/flexible_grid_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
+import 'package:htql_mua_ban_nong_san/models/product.dart';
+import 'package:htql_mua_ban_nong_san/models/product_image.dart';
+import 'package:htql_mua_ban_nong_san/models/province.dart';
+import 'package:htql_mua_ban_nong_san/models/seller.dart';
+import 'package:intl/intl.dart';
 
 class HomeUserPage extends StatelessWidget {
   const HomeUserPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Get.put(MainController());
+    final currencyFormatter =
+        NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
     MainController mainController = Get.find<MainController>();
 
     return Obx(() {
@@ -18,10 +28,8 @@ class HomeUserPage extends StatelessWidget {
               child: Scaffold(
                 body: Column(
                   children: [
-                    // const HeaderWidget(),
                     Container(
                       padding: const EdgeInsets.all(15),
-
                       // height: 100,
                       decoration: const BoxDecoration(
                         color: Colors.green,
@@ -79,26 +87,38 @@ class HomeUserPage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          InkWell(
-                            onTap: () {
-                              Get.toNamed('/cart');
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(right: 5),
-                              child: const Badge(
-                                label: Text(
-                                  '50',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 12),
+                          Get.find<MainController>().buyer.value.id == ''
+                              ? const SizedBox()
+                              : InkWell(
+                                  onTap: () {
+                                    Get.toNamed('/cart');
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: Get.width * 0.1),
+                                    child: Get.find<CartController>()
+                                            .listCart
+                                            .isEmpty
+                                        ? const Icon(
+                                            Icons.shopping_cart,
+                                            color: Colors.white,
+                                            size: 35,
+                                          )
+                                        : Badge(
+                                            label: Text(
+                                              '${Get.find<CartController>().getQuantityCart()}',
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12),
+                                            ),
+                                            child: const Icon(
+                                              Icons.shopping_cart,
+                                              color: Colors.white,
+                                              size: 35,
+                                            ),
+                                          ),
+                                  ),
                                 ),
-                                child: Icon(
-                                  Icons.shopping_cart,
-                                  color: Colors.white,
-                                  size: 35,
-                                ),
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                     ),
@@ -106,68 +126,16 @@ class HomeUserPage extends StatelessWidget {
                       height: 10,
                     ),
 
+                    // const Divider(),
                     Expanded(
-                      child: Container(
-                        // padding: const EdgeInsets.all(10),
-                        // margin: const EdgeInsets.only(bottom: 10, top: 10),
-                        child: GridView.count(
-                          crossAxisCount: 2,
-                          children: List.generate(100, (index) {
-                            return Container(
-                              // padding: const EdgeInsets.all(5),
-                              margin: const EdgeInsets.all(5),
-                              decoration: const BoxDecoration(),
-                              child: Card(
-                                // margin: const EdgeInsets.all(10),
-                                // color: Colors.red,
-                                child: InkWell(
-                                  child: Column(
-                                    children: [
-                                      Stack(
-                                        children: [
-                                          Image(
-                                            image: const NetworkImage(
-                                                'https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2021/4/6/896286/Qua-Tao-1.jpg'),
-                                            width: Get.width,
-                                          ),
-                                          Container(
-                                            color: Colors.green,
-                                            width: Get.width / 2,
-                                            // height: 20,
-                                            child: const Text(
-                                              'Ten Shop',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 14,
-                                                fontStyle: FontStyle.italic,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const Text(
-                                        'Ten san pham',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.green,
-                                        ),
-                                      ),
-                                      const Text(
-                                        'Gia: 1.000.000 VND',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.green,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                  onTap: () {},
-                                ),
-                              ),
-                            );
-                          }),
-                        ),
+                      child: FlexibleGridView(
+                        axisCount: GridLayoutEnum.twoElementsInRow,
+                        children: Get.find<ProductController>()
+                            .listProduct
+                            .where((p0) => p0.status == 'active')
+                            .map((product) {
+                          return productDetail(product, currencyFormatter);
+                        }).toList(),
                       ),
                     ),
                     const SizedBox(
@@ -178,5 +146,234 @@ class HomeUserPage extends StatelessWidget {
               ),
             );
     });
+  }
+
+  Container productDetail(Product product, NumberFormat currencyFormatter) {
+    Seller seller = Get.find<ProductController>()
+            .listSeller
+            .firstWhereOrNull((element) => element.id == product.seller_id) ??
+        Seller.initSeller();
+    ProductImage? imgUrl = Get.find<ProductController>()
+        .listProductImage
+        .firstWhereOrNull(
+            (p0) => p0.product_id == product.id && p0.is_default == true);
+    Province province = Get.find<ProductController>()
+            .listProvince
+            .firstWhereOrNull((element) => element.id == product.province_id) ??
+        Province.initProvince();
+    return Container(
+      width: Get.width * 0.5,
+      // height: Get.height * 0.5,
+      margin: EdgeInsets.all(Get.width * 0.01),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: const BorderRadius.all(
+          Radius.circular(20),
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.grey,
+            offset: Offset(2.0, 2.0),
+            blurRadius: 10.0,
+            spreadRadius: 2.0,
+          ),
+        ],
+      ),
+      child: InkWell(
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  height: Get.width * 0.5,
+                  // width: Get.width * 0.5,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                    image: imgUrl == null
+                        ? null
+                        : DecorationImage(
+                            image: NetworkImage(imgUrl.image),
+                            fit: BoxFit.fill,
+                          ),
+                  ),
+                ),
+                // Image(
+
+                Container(
+                  alignment: Alignment.center,
+                  width: Get.width / 2,
+                  // height: 20,
+                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
+                  decoration: const BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      )),
+                  child: Text(
+                    seller.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      overflow: TextOverflow.ellipsis,
+                      fontSize: 14,
+                      // fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                product.name,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '${currencyFormatter.format(product.price)}/${product.unit}',
+                style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.green,
+                    overflow: TextOverflow.ellipsis,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+
+            // Container(
+            //   padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: [
+            //       Container(
+            //         alignment: Alignment.centerLeft,
+            //         width: Get.width * 0.2,
+            //         child: Text(
+            //           'Đã bán: ${NumberFormat.decimalPattern().format(product.sale_num)}',
+            //           style: const TextStyle(
+            //             fontSize: 14,
+            //             color: Colors.green,
+            //             // overflow: TextOverflow.ellipsis,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ),
+            //       ),
+            //       Container(
+            //         alignment: Alignment.centerRight,
+            //         width: Get.width * 0.2,
+            //         child: const Text('********'),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.location_on_sharp,
+                    color: Colors.green,
+                    size: 20,
+                  ),
+                  SizedBox(
+                    width: Get.width * 0.3,
+                    child: Text(
+                      province.name,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.green,
+                        overflow: TextOverflow.ellipsis,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
+              alignment: Alignment.centerRight,
+              width: Get.width * 0.5,
+              child: product.ratting == 0
+                  ? const Text(
+                      'Chưa có đánh giá',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.green,
+                        overflow: TextOverflow.ellipsis,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  : Row(
+                      children: [
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          width: Get.width * 0.3,
+                          child: RatingBarIndicator(
+                            rating: product.ratting ?? 0,
+                            itemBuilder: (context, index) => const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                            itemCount: 5,
+                            itemSize: Get.width * 0.05,
+                            direction: Axis.horizontal,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          width: Get.width * 0.1,
+                          child: Text(
+                            '(${NumberFormat.decimalPatternDigits(decimalDigits: 1).format(product.ratting)})',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.green,
+                              overflow: TextOverflow.ellipsis,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
+              alignment: Alignment.centerRight,
+              width: Get.width * 0.5,
+              child: Text(
+                'Đã bán: ${NumberFormat.decimalPattern().format(product.sale_num)}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.green,
+                  overflow: TextOverflow.ellipsis,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+
+            SizedBox(
+              height: Get.height * 0.01,
+            ),
+          ],
+        ),
+        onTap: () {
+          Get.find<ProductController>().product.value = product;
+          Get.toNamed('/product_detail');
+        },
+      ),
+    );
   }
 }

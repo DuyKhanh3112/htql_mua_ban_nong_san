@@ -25,4 +25,8 @@ class CloudinaryController {
     }
     return 'https://res.cloudinary.com/dg3p7nxyp/image/upload/v1723004576/app/logo_circle.png';
   }
+
+  Future<void> deleteImage(String id, String folder) async {
+    await cloudinary.destroy('$folder/$id');
+  }
 }

@@ -3,17 +3,18 @@ import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/admin_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
+import 'package:htql_mua_ban_nong_san/models/admin.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/product/product_home_page.dart';
 
-class MainDrawer extends StatelessWidget {
-  const MainDrawer({
+class DrawerAdmin extends StatelessWidget {
+  const DrawerAdmin({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    Get.put(MainController());
-    Get.put(AdminController());
     AdminController adminController = Get.find<AdminController>();
     MainController mainController = Get.find<MainController>();
     RxBool ischange = false.obs;
@@ -199,6 +200,9 @@ class MainDrawer extends StatelessWidget {
                             'Thông tin cá nhân',
                             style: TextStyle(color: Colors.green, fontSize: 18),
                           ),
+                          onTap: () {
+                            // Get.toNamed('/personal_admin');
+                          },
                         ),
                         const SizedBox(
                           height: 10,
@@ -213,11 +217,39 @@ class MainDrawer extends StatelessWidget {
                             style: TextStyle(color: Colors.green, fontSize: 18),
                           ),
                           onTap: () async {
-                            Get.put(CategoryController());
-                            CategoryController categoryController =
-                                Get.find<CategoryController>();
-                            await categoryController.loadCategory();
-                            Get.toNamed('/category');
+                            Get.back();
+                            // Get.toNamed('/category');
+                            mainController.indexAdmin.value = 2;
+                            await Get.find<CategoryController>().loadCategory();
+
+                            // Get.toNamed('/category');
+                          },
+                        ),
+                        ListTile(
+                          leading: Image.asset(
+                            'assets/images/category_icon.png',
+                            width: 40,
+                          ),
+                          title: const Text(
+                            'Sản phẩm',
+                            style: TextStyle(color: Colors.green, fontSize: 18),
+                          ),
+                          onTap: () async {
+                            Get.back();
+                            // Get.toNamed('/product_admin');
+                            mainController.indexAdmin.value = 3;
+                            await Get.find<ProductController>().loadAllData();
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.logout),
+                          title: const Text(
+                            'Logout',
+                            style: TextStyle(color: Colors.green, fontSize: 18),
+                          ),
+                          onTap: () {
+                            Get.toNamed('/login');
+                            mainController.admin.value = Admin.initAdmin();
                           },
                         ),
                       ],

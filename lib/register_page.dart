@@ -461,8 +461,8 @@ class RegisterPage extends StatelessWidget {
                                                             .toList(),
                                                         value: province.value,
                                                         onChanged: (item) {
-                                                          print(item!.id);
-                                                          province.value = item;
+                                                          province.value =
+                                                              item!;
                                                         },
                                                       ),
                                                     ],
@@ -839,6 +839,15 @@ class RegisterPage extends StatelessWidget {
       buyerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
+        titleTextStyle: const TextStyle(
+          color: Colors.green,
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
+        ),
+        descTextStyle: const TextStyle(
+          color: Colors.green,
+          fontSize: 16,
+        ),
         context: context,
         dialogType: DialogType.error,
         animType: AnimType.rightSlide,
@@ -852,6 +861,15 @@ class RegisterPage extends StatelessWidget {
       buyerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
+        titleTextStyle: const TextStyle(
+          color: Colors.green,
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
+        ),
+        descTextStyle: const TextStyle(
+          color: Colors.green,
+          fontSize: 16,
+        ),
         context: context,
         dialogType: DialogType.error,
         animType: AnimType.rightSlide,
@@ -865,6 +883,15 @@ class RegisterPage extends StatelessWidget {
       buyerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
+        titleTextStyle: const TextStyle(
+          color: Colors.green,
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
+        ),
+        descTextStyle: const TextStyle(
+          color: Colors.green,
+          fontSize: 16,
+        ),
         context: context,
         dialogType: DialogType.error,
         animType: AnimType.rightSlide,

@@ -45,15 +45,32 @@ class LoginPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'ĐĂNG NHẬP',
-                            style: TextStyle(
-                              fontSize: 28,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                          SizedBox(
+                            width: Get.width * 0.1,
+                            child: InkWell(
+                              onTap: () {
+                                Get.toNamed('/');
+                              },
+                              child: const Icon(
+                                Icons.home,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            width: Get.width * 0.8,
+                            child: const Text(
+                              'ĐĂNG NHẬP',
+                              style: TextStyle(
+                                fontSize: 28,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
@@ -62,9 +79,6 @@ class LoginPage extends StatelessWidget {
                     Expanded(
                       child: ListView(
                         children: [
-                          // SizedBox(
-                          //   height: Get.height / 10,
-                          // ),
                           const Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -228,6 +242,15 @@ class LoginPage extends StatelessWidget {
                                                     'inactive') {
                                               // ignore: use_build_context_synchronously
                                               await AwesomeDialog(
+                                                titleTextStyle: const TextStyle(
+                                                  color: Colors.green,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 22,
+                                                ),
+                                                descTextStyle: const TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 16,
+                                                ),
                                                 context: context,
                                                 dialogType: DialogType.warning,
                                                 animType: AnimType.rightSlide,
@@ -241,6 +264,15 @@ class LoginPage extends StatelessWidget {
                                           } else {
                                             // ignore: use_build_context_synchronously
                                             await AwesomeDialog(
+                                              titleTextStyle: const TextStyle(
+                                                color: Colors.green,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 22,
+                                              ),
+                                              descTextStyle: const TextStyle(
+                                                color: Colors.green,
+                                                fontSize: 16,
+                                              ),
                                               context: context,
                                               dialogType: DialogType.error,
                                               animType: AnimType.rightSlide,

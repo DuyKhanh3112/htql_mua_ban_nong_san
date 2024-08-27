@@ -2,12 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/models/admin.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/category/category_home_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/product/product_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/account_setting_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/home_buyer_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/home_seller_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_home_page.dart';
 
 class MainController extends GetxController {
   static MainController get to => Get.find<MainController>();
@@ -46,6 +51,29 @@ class MainController extends GetxController {
     const AccountSettingPage(),
     const AccountSettingPage(),
   ];
+  List<Widget> pageAdmin = [
+    const CategoryHomePage(), // personal information
+    const CategoryHomePage(),
+    const CategoryHomePage(), //Province
+    const ProductHomePage(),
+  ];
+  RxInt indexAdmin = 0.obs;
+  List<String> titleAdmin = [
+    'Thông tin cá nhân',
+    'Loại sản phẩm',
+    'Tỉnh thành phố',
+    'Sản phẩm',
+  ];
+
+  List<Widget> pageSeller = [
+    // const HomeSellerPage(),
+    const ProductSellerHomePage(),
+  ];
+  RxInt indexSeller = 0.obs;
+  List<String> titleSeller = [
+    'Thông tin cá nhân',
+    'Sản phẩm',
+  ];
 
   List<String> titles = [
     'Home',
@@ -63,6 +91,7 @@ class MainController extends GetxController {
     isLoading.value = true;
     var connectivityResult = await Connectivity().checkConnectivity();
     isLoading.value = false;
+    // ignore: unrelated_type_equality_checks
     return connectivityResult != ConnectivityResult.none;
   }
 
@@ -81,6 +110,7 @@ class MainController extends GetxController {
       data['id'] = snapshot.docs[0].id;
 
       buyer.value = Buyer.fromJson(data);
+      await Get.find<CartController>().loadCartByBuyer();
       Get.toNamed('/');
       isLoading.value = false;
       return true;
@@ -98,7 +128,7 @@ class MainController extends GetxController {
       data['id'] = snapshotSeller.docs[0].id;
 
       seller.value = Seller.fromJson(data);
-      Get.toNamed('/');
+      Get.toNamed('/seller');
       isLoading.value = false;
       return true;
     }
