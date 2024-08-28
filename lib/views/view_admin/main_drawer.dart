@@ -6,7 +6,6 @@ import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/admin.dart';
-import 'package:htql_mua_ban_nong_san/views/view_admin/product/product_home_page.dart';
 
 class DrawerAdmin extends StatelessWidget {
   const DrawerAdmin({

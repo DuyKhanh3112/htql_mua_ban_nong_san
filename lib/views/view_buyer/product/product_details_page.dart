@@ -1,10 +1,8 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
@@ -76,24 +74,20 @@ class ProductDetailPage extends StatelessWidget {
                                 items: listImageUrl
                                     .map(
                                       (item) => Container(
-                                        child: Container(
-                                          margin:
-                                              EdgeInsets.all(Get.width * 0.01),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(40)),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                  Radius.circular(40),
-                                                ),
-                                                image: DecorationImage(
-                                                  image:
-                                                      NetworkImage(item.image),
-                                                  fit: BoxFit.fill,
-                                                ),
+                                        margin:
+                                            EdgeInsets.all(Get.width * 0.01),
+                                        child: ClipRRect(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(40)),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                Radius.circular(40),
+                                              ),
+                                              image: DecorationImage(
+                                                image: NetworkImage(item.image),
+                                                fit: BoxFit.fill,
                                               ),
                                             ),
                                           ),
@@ -801,29 +795,29 @@ class ProductDetailPage extends StatelessWidget {
                                                         await Get.find<
                                                                 CartController>()
                                                             .createCart(cart);
-                                                        // ignore: use_build_context_synchronously
-                                                        await AwesomeDialog(
-                                                          titleTextStyle:
-                                                              const TextStyle(
-                                                            color: Colors.green,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 22,
-                                                          ),
-                                                          descTextStyle:
-                                                              const TextStyle(
-                                                            color: Colors.green,
-                                                            fontSize: 16,
-                                                          ),
-                                                          context: context,
-                                                          dialogType: DialogType
-                                                              .success,
-                                                          animType: AnimType
-                                                              .rightSlide,
-                                                          title:
-                                                              'Thêm giỏ hàng thành công',
-                                                          btnOkOnPress: () {},
-                                                        ).show();
+                                                        // // ignore: use_build_context_synchronously
+                                                        // await AwesomeDialog(
+                                                        //   titleTextStyle:
+                                                        //       const TextStyle(
+                                                        //     color: Colors.green,
+                                                        //     fontWeight:
+                                                        //         FontWeight.bold,
+                                                        //     fontSize: 22,
+                                                        //   ),
+                                                        //   descTextStyle:
+                                                        //       const TextStyle(
+                                                        //     color: Colors.green,
+                                                        //     fontSize: 16,
+                                                        //   ),
+                                                        //   context: context,
+                                                        //   dialogType: DialogType
+                                                        //       .success,
+                                                        //   animType: AnimType
+                                                        //       .rightSlide,
+                                                        //   title:
+                                                        //       'Thêm giỏ hàng thành công',
+                                                        //   btnOkOnPress: () {},
+                                                        // ).show();
                                                         Get.back();
                                                       }
                                                     },

@@ -11,7 +11,6 @@ import 'package:htql_mua_ban_nong_san/views/view_admin/category/category_home_pa
 import 'package:htql_mua_ban_nong_san/views/view_admin/product/product_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/account_setting_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/home_buyer_page.dart';
-import 'package:htql_mua_ban_nong_san/views/view_seller/home_seller_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_home_page.dart';
 
 class MainController extends GetxController {
@@ -110,7 +109,7 @@ class MainController extends GetxController {
       data['id'] = snapshot.docs[0].id;
 
       buyer.value = Buyer.fromJson(data);
-      await Get.find<CartController>().loadCartByBuyer();
+      Get.find<CartController>().loadCartByBuyer();
       Get.toNamed('/');
       isLoading.value = false;
       return true;

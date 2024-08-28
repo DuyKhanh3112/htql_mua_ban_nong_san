@@ -120,6 +120,33 @@ class ProductController extends GetxController {
     listProduct.sort((a, b) => b.create_at.compareTo(a.create_at));
   }
 
+  Future<void> loadProductActive() async {
+    listProduct.value = [];
+    listProductImage.value = [];
+    final snapshotProduct =
+        await productCollection.where('status', isEqualTo: 'active').get();
+    for (var item in snapshotProduct.docs) {
+      Map<String, dynamic> data = item.data() as Map<String, dynamic>;
+      data['id'] = item.id;
+      data['sale_num'] =
+          await Get.find<OrderController>().getNumOfSale(data['id']);
+      data['ratting'] =
+          await Get.find<ReviewController>().getRatting(data['id']);
+
+      listProduct.add(Product.fromJson(data));
+
+      final snapshotImg = await productImageCollection
+          .where('product_id', isEqualTo: item.id)
+          .get();
+      for (var img in snapshotImg.docs) {
+        Map<String, dynamic> dataImg = img.data() as Map<String, dynamic>;
+        dataImg['id'] = img.id;
+        listProductImage.add(ProductImage.fromJson(dataImg));
+      }
+    }
+    listProduct.sort((a, b) => b.create_at.compareTo(a.create_at));
+  }
+
   Future<void> loadData() async {
     isLoading.value = true;
 

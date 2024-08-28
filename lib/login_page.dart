@@ -3,6 +3,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 
 class LoginPage extends StatelessWidget {
@@ -51,7 +52,11 @@ class LoginPage extends StatelessWidget {
                           SizedBox(
                             width: Get.width * 0.1,
                             child: InkWell(
-                              onTap: () {
+                              onTap: () async {
+                                mainController.isLoading.value = true;
+                                await Get.find<ProductController>()
+                                    .loadAllProduct();
+                                mainController.isLoading.value = false;
                                 Get.toNamed('/');
                               },
                               child: const Icon(

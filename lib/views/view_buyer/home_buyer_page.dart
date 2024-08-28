@@ -20,6 +20,9 @@ class HomeUserPage extends StatelessWidget {
     final currencyFormatter =
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
     MainController mainController = Get.find<MainController>();
+    RxDouble quantityCart = 0.0.obs;
+    // quantityCart.value = Get.find<CartController>().getQuantityCart();
+    quantityCart.value = 0;
 
     return Obx(() {
       return mainController.isLoading.value
@@ -90,15 +93,23 @@ class HomeUserPage extends StatelessWidget {
                           Get.find<MainController>().buyer.value.id == ''
                               ? const SizedBox()
                               : InkWell(
-                                  onTap: () {
+                                  onTap: () async {
+                                    mainController.isLoading.value = true;
+                                    await Get.find<CartController>()
+                                        .getCartGroupBySeller();
+                                    Get.find<CartController>()
+                                        .listCartChoose
+                                        .value = [];
+                                    mainController.isLoading.value = false;
                                     Get.toNamed('/cart');
                                   },
                                   child: Container(
                                     margin: EdgeInsets.symmetric(
                                         horizontal: Get.width * 0.1),
                                     child: Get.find<CartController>()
-                                            .listCart
-                                            .isEmpty
+                                                .countCart
+                                                .value ==
+                                            0
                                         ? const Icon(
                                             Icons.shopping_cart,
                                             color: Colors.white,
@@ -106,7 +117,7 @@ class HomeUserPage extends StatelessWidget {
                                           )
                                         : Badge(
                                             label: Text(
-                                              '${Get.find<CartController>().getQuantityCart()}',
+                                              '${Get.find<CartController>().countCart.value}',
                                               style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 12),

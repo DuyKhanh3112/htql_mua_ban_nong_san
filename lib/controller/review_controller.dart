@@ -23,7 +23,7 @@ class ReviewController extends GetxController {
       for (var item in snapshootReview.docs) {
         Map<String, dynamic> data = item.data() as Map<String, dynamic>;
         count += 1;
-        ratting += ratting;
+        ratting += data['ratting'];
       }
     }
     if (count != 0) {

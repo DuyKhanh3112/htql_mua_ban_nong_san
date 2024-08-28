@@ -24,7 +24,7 @@ class InitialBindings extends Bindings {
     Get.put(CartController(), permanent: true);
     Get.find<MainController>().isLoading.value = true;
 
-    await Get.find<ProductController>().loadAllProduct();
+    await Get.find<ProductController>().loadProductActive();
     await Get.find<ProductController>().loadCategory();
     await Get.find<ProductController>().loadSeller();
     await Get.find<ProductController>().loadProvince();

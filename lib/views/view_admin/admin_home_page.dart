@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
-import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/main_drawer.dart';
 
 class AdminHomePage extends StatelessWidget {

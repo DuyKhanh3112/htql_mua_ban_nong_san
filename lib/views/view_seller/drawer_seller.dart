@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
-import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
-import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
 
 class DrawerSeller extends StatelessWidget {
@@ -13,9 +11,6 @@ class DrawerSeller extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(MainController());
-    Get.put(SellerController());
-    SellerController sellerController = Get.find<SellerController>();
     MainController mainController = Get.find<MainController>();
     return Obx(() {
       return Container(

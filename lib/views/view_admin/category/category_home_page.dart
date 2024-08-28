@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cloudinary_controller.dart';
-import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/category.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/main_drawer.dart';
@@ -18,9 +17,6 @@ class CategoryHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(MainController());
-    MainController mainController = Get.find<MainController>();
-    Get.put(CategoryController());
     CategoryController categoryController = Get.find<CategoryController>();
 
     Rx<TextEditingController> searchController = TextEditingController().obs;

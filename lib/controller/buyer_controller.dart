@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 
 class BuyerController extends GetxController {
@@ -48,5 +50,14 @@ class BuyerController extends GetxController {
       return false;
     }
     return true;
+  }
+
+  Future<void> logout() async {
+    isLoading.value = true;
+    Get.find<MainController>().buyer.value = Buyer.initBuyer();
+    Get.find<MainController>().numPage.value = 0;
+    await Get.find<CartController>().saveCart();
+    Get.toNamed('/');
+    isLoading.value = false;
   }
 }
