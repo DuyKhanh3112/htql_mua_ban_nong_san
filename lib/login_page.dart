@@ -55,7 +55,7 @@ class LoginPage extends StatelessWidget {
                               onTap: () async {
                                 mainController.isLoading.value = true;
                                 await Get.find<ProductController>()
-                                    .loadAllProduct();
+                                    .loadProductActive();
                                 mainController.isLoading.value = false;
                                 Get.toNamed('/');
                               },

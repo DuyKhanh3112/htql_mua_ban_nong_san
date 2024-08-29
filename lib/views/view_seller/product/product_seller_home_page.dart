@@ -299,47 +299,46 @@ class ProductSellerHomePage extends StatelessWidget {
             ),
           ),
         ),
-        ElevatedButton(
-          onPressed: () async {
-            await AwesomeDialog(
-              titleTextStyle: const TextStyle(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-              ),
-              descTextStyle: const TextStyle(
-                color: Colors.green,
-                fontSize: 16,
-              ),
-              context: context,
-              dialogType: DialogType.question,
-              animType: AnimType.rightSlide,
-              title: 'Bạn có muốn xóa sản phẩm này không?',
-              // desc: 'Bạn có muốn xóa loại sản phẩm này không?',
-              btnOkText: 'Xóa',
-              btnCancelText: 'Không',
-              btnOkOnPress: () async {
-                // product.status = 'hide';
-                await productController.deleteProduct(product);
-              },
-              btnCancelOnPress: () {},
-            ).show();
-          },
-          child: Container(
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(),
-            width: Get.width * 0.15,
-            // height: Get.height * 0.05,
-            child: const Text(
-              'Xóa',
-              style: TextStyle(
-                color: Colors.green,
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
+        // ElevatedButton(
+        //   onPressed: () async {
+        //     await AwesomeDialog(
+        //       titleTextStyle: const TextStyle(
+        //         color: Colors.green,
+        //         fontWeight: FontWeight.bold,
+        //         fontSize: 22,
+        //       ),
+        //       descTextStyle: const TextStyle(
+        //         color: Colors.green,
+        //         fontSize: 16,
+        //       ),
+        //       context: context,
+        //       dialogType: DialogType.question,
+        //       animType: AnimType.rightSlide,
+        //       title: 'Bạn có muốn ẩn sản phẩm này không?',
+        //       // desc: 'Bạn có muốn xóa loại sản phẩm này không?',
+        //       btnOkText: 'Ẩn',
+        //       btnCancelText: 'Không',
+        //       btnOkOnPress: () async {
+        //         product.status = 'hide';
+        //         await productController.updateProduct(product);
+        //       },
+        //       btnCancelOnPress: () {},
+        //     ).show();
+        //   },
+        //   child: Container(
+        //     alignment: Alignment.center,
+        //     decoration: const BoxDecoration(),
+        //     width: Get.width * 0.15,
+        //     child: const Text(
+        //       'Ẩn',
+        //       style: TextStyle(
+        //         color: Colors.green,
+        //         fontSize: 13,
+        //         fontWeight: FontWeight.bold,
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

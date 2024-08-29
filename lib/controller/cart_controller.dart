@@ -57,17 +57,15 @@ class CartController extends GetxController {
 
     Cart? cartData = listCart
         .firstWhereOrNull((element) => element.product_id == cart.product_id);
+
     if (cartData == null) {
       listCart.add(cart);
-      // WriteBatch batch = FirebaseFirestore.instance.batch();
-      // DocumentReference refCart = cartCollection.doc(cartCollection.doc().id);
-      // batch.set(refCart, cart.toVal());
-      // await batch.commit();
     } else {
       cartData.quantity += cart.quantity;
       // await updateCart(cartData);
     }
     // loadCartByBuyer();
+    // await saveCart();
     getCountCart();
     isLoading.value = false;
   }
@@ -89,9 +87,27 @@ class CartController extends GetxController {
 
   Future<void> saveCart() async {
     isLoading.value = true;
-    for (var cart in listCart) {
-      await cartCollection.doc(cart.id).update(cart.toVal());
+    //delete
+    final snapshotCart = await cartCollection
+        .where('buyer_id', isEqualTo: Get.find<MainController>().buyer.value.id)
+        .get();
+    for (var item in snapshotCart.docs) {
+      await deleteCart(item.id);
     }
+
+    for (var cart in listCart) {
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      DocumentReference refCart = cartCollection.doc(cartCollection.doc().id);
+      batch.set(refCart, cart.toVal());
+      await batch.commit();
+    }
+    await loadCartByBuyer();
+    isLoading.value = false;
+  }
+
+  Future<void> deleteCart(String cartID) async {
+    isLoading.value = true;
+    await cartCollection.doc(cartID).delete();
     isLoading.value = false;
   }
 
@@ -113,6 +129,35 @@ class CartController extends GetxController {
 
       if (carts.isNotEmpty) {
         listCartSeller.add([seller, carts]);
+      }
+    }
+    return listCartSeller.toList();
+  }
+
+  dynamic getChooseCartGroupBySeller() {
+    var listCartSeller = [];
+    for (var seller in Get.find<ProductController>().listSeller) {
+      var carts = [];
+      var listProductID = [];
+      double totalSeller = 0.0;
+      for (var pro in Get.find<ProductController>()
+          .listProduct
+          .where((p0) => p0.seller_id == seller.id && p0.status == 'active')
+          .toList()) {
+        listProductID.add(pro.id);
+      }
+      for (var c in listCartChoose
+          .where((element) => listProductID.contains(element.product_id))) {
+        Product prod = Get.find<ProductController>()
+                .listProduct
+                .firstWhereOrNull((element) => element.id == c.product_id) ??
+            Product.initProduct();
+        totalSeller += c.quantity * prod.price;
+        carts.add(c);
+      }
+
+      if (carts.isNotEmpty) {
+        listCartSeller.add([seller, carts, totalSeller]);
       }
     }
     return listCartSeller.toList();

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/address_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/models/admin.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
@@ -10,7 +11,9 @@ import 'package:htql_mua_ban_nong_san/models/province.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/category/category_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/product/product_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/account_setting_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_buyer/category/category_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/home_buyer_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_buyer/order/order_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_home_page.dart';
 
 class MainController extends GetxController {
@@ -45,8 +48,8 @@ class MainController extends GetxController {
 
   List<Widget> page = [
     const HomeUserPage(),
-    const AccountSettingPage(),
-    const AccountSettingPage(),
+    const CategoryPage(),
+    const OrderPage(),
     const AccountSettingPage(),
     const AccountSettingPage(),
   ];
@@ -110,6 +113,7 @@ class MainController extends GetxController {
 
       buyer.value = Buyer.fromJson(data);
       Get.find<CartController>().loadCartByBuyer();
+      Get.find<AddressController>().loadAddressBuyer();
       Get.toNamed('/');
       isLoading.value = false;
       return true;

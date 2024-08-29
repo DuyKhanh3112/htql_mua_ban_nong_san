@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:convert_vietnamese/convert_vietnamese.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cloudinary_controller.dart';
@@ -37,6 +38,9 @@ class ProductController extends GetxController {
   Rx<Province> province = Province.initProvince().obs;
   Rx<Product> product = Product.initProduct().obs;
 
+  Rx<TextEditingController> searchProductController =
+      TextEditingController().obs;
+
   RxInt indexProductPage = 0.obs;
 
   RxList<dynamic> listStatus = [
@@ -55,9 +59,9 @@ class ProductController extends GetxController {
     if (pro.quantity != 0 && pro.status == 'inactive') {
       pro.status = 'active';
     }
-    if (pro.status == 'lock') {
-      pro.status = 'draft';
-    }
+    // if (pro.status == 'lock') {
+    //   pro.status = 'draft';
+    // }
 
     await productCollection.doc(pro.id).update(pro.toVal());
     await loadAllProduct();
@@ -95,6 +99,7 @@ class ProductController extends GetxController {
   }
 
   Future<void> loadAllProduct() async {
+    isLoading.value = true;
     listProduct.value = [];
     listProductImage.value = [];
     final snapshotProduct = await productCollection.get();
@@ -118,6 +123,7 @@ class ProductController extends GetxController {
       }
     }
     listProduct.sort((a, b) => b.create_at.compareTo(a.create_at));
+    isLoading.value = false;
   }
 
   Future<void> loadProductActive() async {

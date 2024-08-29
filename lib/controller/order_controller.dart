@@ -5,6 +5,16 @@ import 'package:htql_mua_ban_nong_san/models/order_detail.dart';
 class OrderController extends GetxController {
   static OrderController get to => Get.find<OrderController>();
   RxBool isLoading = false.obs;
+
+  RxList<dynamic> listStatus = [
+    {'value': 'unconfirm', 'label': 'Chờ xác nhận'},
+    {'value': 'delivering', 'label': 'Đang giao'},
+    {'value': 'delivered', 'label': 'Đã giao'},
+    {'value': 'cancelled', 'label': 'Đã hủy'},
+    {'value': 'fail', 'label': 'Không nhận'}
+  ].obs;
+  RxInt orderIndex = 0.obs;
+
   CollectionReference orderCollection =
       FirebaseFirestore.instance.collection('Order');
   CollectionReference orderDetailCollection =

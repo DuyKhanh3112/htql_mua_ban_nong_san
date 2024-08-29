@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
@@ -9,6 +11,12 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(MainController());
     MainController mainController = Get.find<MainController>();
+
+    // if (Get.find<MainController>().seller.value.id != '') {
+    //   Timer.periodic(Duration(seconds: 10), (timer) {
+    //     print('Hàm này sẽ được gọi sau mỗi 10 giây');
+    //   });
+    // }
     return Obx(() {
       return SafeArea(
         child: Scaffold(
@@ -58,7 +66,6 @@ class HomePage extends StatelessWidget {
               ),
             ],
             onTap: (index) {
-              // print(index);
               mainController.numPage.value = index;
             },
             currentIndex: mainController.numPage.value,

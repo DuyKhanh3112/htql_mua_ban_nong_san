@@ -1,8 +1,13 @@
 // import 'package:firebase_core/firebase_core.dart';
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/register_page.dart';
 import 'package:htql_mua_ban_nong_san/utils/initial_binding.dart';
 import 'package:htql_mua_ban_nong_san/views/home_page.dart';
@@ -14,8 +19,13 @@ import 'package:htql_mua_ban_nong_san/views/view_admin/category/category_home_pa
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/personal_admin_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/product/product_home_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_buyer/address/address_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/cart_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_buyer/category/category_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_buyer/checkout_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_buyer/order/order_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/product/product_details_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_buyer/product/search_product_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/home_seller_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_form_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_home_page.dart';
@@ -43,6 +53,15 @@ void main() async {
   );
 
   runApp(const MyApp());
+
+  // Tự động lưu giỏ hàng 60s 1 lần
+  Timer.periodic(const Duration(seconds: 60), (timer) async {
+    if (Get.find<MainController>().buyer.value.id != '') {
+      log('60s save cart 1 lan');
+      await Get.find<CartController>().saveCart();
+      log('done=======');
+    }
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -75,7 +94,6 @@ class MyApp extends StatelessWidget {
         GetPage(name: "/register", page: () => const RegisterPage()),
         GetPage(name: "/personal_admin", page: () => const PersonalAdminPage()),
         GetPage(name: "/cart", page: () => const CartPage()),
-        GetPage(name: "/category", page: () => const CategoryHomePage()),
         GetPage(name: '/product_admin', page: () => const ProductHomePage()),
         GetPage(name: '/admin', page: () => const AdminHomePage()),
         GetPage(name: '/seller', page: () => const HomeSellerPage()),
@@ -84,6 +102,10 @@ class MyApp extends StatelessWidget {
         GetPage(
             name: '/product_form', page: () => const ProductSellerFormPage()),
         GetPage(name: '/product_detail', page: () => const ProductDetailPage()),
+        GetPage(name: "/address", page: () => const AddressPage()),
+        GetPage(name: '/search_product', page: () => const SearchProductPage()),
+        GetPage(name: '/checkout', page: () => const CheckoutPage()),
+        GetPage(name: '/order', page: () => const OrderPage()),
       ],
     );
   }

@@ -1,3 +1,4 @@
+import 'package:convert_vietnamese/convert_vietnamese.dart';
 import 'package:flexible_grid_view/flexible_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -15,16 +16,23 @@ import 'package:intl/intl.dart';
 class HomeUserPage extends StatelessWidget {
   const HomeUserPage({super.key});
 
+  void loadData(RxList<Product> listProduct) {
+    listProduct.value = Get.find<ProductController>()
+        .listProduct
+        .where((p0) => p0.status == 'active')
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final currencyFormatter =
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
     MainController mainController = Get.find<MainController>();
-    RxDouble quantityCart = 0.0.obs;
-    // quantityCart.value = Get.find<CartController>().getQuantityCart();
-    quantityCart.value = 0;
+
+    RxList<Product> listProduct = <Product>[].obs;
 
     return Obx(() {
+      loadData(listProduct);
       return mainController.isLoading.value
           ? const LoadingPage()
           : SafeArea(
@@ -53,40 +61,55 @@ class HomeUserPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Icon(Icons.search),
-                          SizedBox(
-                            width: Get.width / 2,
+                          Container(
+                            margin: EdgeInsets.only(top: Get.width * 0.01),
+                            padding: EdgeInsets.only(
+                                left: Get.width * 0.02,
+                                right: Get.width * 0.02),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.white,
+                                  style: BorderStyle.solid),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(40),
+                              ),
+                            ),
+                            width: Get.width * 0.5,
                             child: TextFormField(
+                              controller: Get.find<ProductController>()
+                                  .searchProductController
+                                  .value,
+                              onChanged: (value) {
+                                loadData(listProduct);
+                              },
+                              style: const TextStyle(color: Colors.white),
                               decoration: InputDecoration(
+                                suffixIcon: Get.find<ProductController>()
+                                        .searchProductController
+                                        .value
+                                        .text
+                                        .isEmpty
+                                    ? null
+                                    : InkWell(
+                                        child: const Icon(
+                                          Icons.search,
+                                          color: Colors.white,
+                                        ),
+                                        onTap: () {
+                                          // Get.find<ProductController>()
+                                          //     .searchProductController
+                                          //     .value
+                                          //     .clear();
+                                          // loadData(listProduct);
+                                          Get.toNamed('search_product');
+                                        },
+                                      ),
+                                border: InputBorder.none,
                                 hintText: 'Tìm kiếm ...',
                                 hintStyle: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 14,
                                   fontStyle: FontStyle.italic,
                                 ),
-                                border: const OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(30),
-                                    ),
-                                    borderSide: BorderSide(
-                                        color: Colors.white,
-                                        style: BorderStyle.solid)),
-                                contentPadding: const EdgeInsets.only(
-                                  left: 10,
-                                  top: 0,
-                                  bottom: 0,
-                                  right: 10,
-                                ),
-                                suffixIcon: IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    Icons.search,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
                               ),
                             ),
                           ),
@@ -117,7 +140,11 @@ class HomeUserPage extends StatelessWidget {
                                           )
                                         : Badge(
                                             label: Text(
-                                              '${Get.find<CartController>().countCart.value}',
+                                              NumberFormat.decimalPattern()
+                                                  .format(
+                                                      Get.find<CartController>()
+                                                          .countCart
+                                                          .value),
                                               style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 12),
@@ -133,6 +160,7 @@ class HomeUserPage extends StatelessWidget {
                         ],
                       ),
                     ),
+
                     const SizedBox(
                       height: 10,
                     ),
@@ -141,10 +169,7 @@ class HomeUserPage extends StatelessWidget {
                     Expanded(
                       child: FlexibleGridView(
                         axisCount: GridLayoutEnum.twoElementsInRow,
-                        children: Get.find<ProductController>()
-                            .listProduct
-                            .where((p0) => p0.status == 'active')
-                            .map((product) {
+                        children: listProduct.map((product) {
                           return productDetail(product, currencyFormatter);
                         }).toList(),
                       ),

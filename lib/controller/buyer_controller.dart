@@ -54,9 +54,10 @@ class BuyerController extends GetxController {
 
   Future<void> logout() async {
     isLoading.value = true;
+
+    await Get.find<CartController>().saveCart();
     Get.find<MainController>().buyer.value = Buyer.initBuyer();
     Get.find<MainController>().numPage.value = 0;
-    await Get.find<CartController>().saveCart();
     Get.toNamed('/');
     isLoading.value = false;
   }

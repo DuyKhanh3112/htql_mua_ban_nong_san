@@ -29,6 +29,6 @@ class ReviewController extends GetxController {
     if (count != 0) {
       return ratting / count;
     }
-    return 4;
+    return 0;
   }
 }

@@ -17,6 +17,7 @@ import 'package:htql_mua_ban_nong_san/models/product_image.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class ProductSellerFormPage extends StatelessWidget {
   const ProductSellerFormPage({super.key});
@@ -55,10 +56,19 @@ class ProductSellerFormPage extends StatelessWidget {
           Province.initProvince();
       nameController.text = pro.name;
       descriptionController.text = pro.description ?? '';
-      expripyDateController.text =
-          pro.expripy_date != null ? pro.expripy_date.toString() : '';
-      priceController.text = pro.price.toString();
-      quantityController.text = pro.quantity.toString();
+      expripyDateController.text = pro.expripy_date != null
+          ? NumberFormat.decimalPatternDigits(decimalDigits: 0)
+              .format(pro.expripy_date)
+              .toString()
+              .toString()
+          : '';
+      priceController.text = NumberFormat.decimalPatternDigits(decimalDigits: 0)
+          .format(pro.price)
+          .toString();
+      quantityController.text =
+          NumberFormat.decimalPatternDigits(decimalDigits: 0)
+              .format(pro.quantity)
+              .toString();
       unitController.text = pro.unit;
       for (var img in productController.listProductImage
           .where((p0) => p0.product_id == pro.id)) {
@@ -1077,6 +1087,12 @@ class ProductSellerFormPage extends StatelessWidget {
                                     : double.parse(expripyDateController.text);
                                 productController.product.value.description =
                                     descriptionController.text;
+
+                                if (productController.product.value.status ==
+                                    'lock') {
+                                  productController.product.value.status =
+                                      'draft';
+                                }
 
                                 await productController.updateProduct(
                                     productController.product.value);

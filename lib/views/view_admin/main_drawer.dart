@@ -217,11 +217,9 @@ class DrawerAdmin extends StatelessWidget {
                           ),
                           onTap: () async {
                             Get.back();
-                            // Get.toNamed('/category');
+
                             mainController.indexAdmin.value = 2;
                             await Get.find<CategoryController>().loadCategory();
-
-                            // Get.toNamed('/category');
                           },
                         ),
                         ListTile(
@@ -237,7 +235,8 @@ class DrawerAdmin extends StatelessWidget {
                             Get.back();
                             // Get.toNamed('/product_admin');
                             mainController.indexAdmin.value = 3;
-                            await Get.find<ProductController>().loadAllData();
+                            await Get.find<ProductController>()
+                                .loadAllProduct();
                           },
                         ),
                         ListTile(

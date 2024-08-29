@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/address_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/admin_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
@@ -22,8 +23,9 @@ class InitialBindings extends Bindings {
     Get.put(OrderController(), permanent: true);
     Get.put(ReviewController(), permanent: true);
     Get.put(CartController(), permanent: true);
-    Get.find<MainController>().isLoading.value = true;
+    Get.put(AddressController(), permanent: true);
 
+    Get.find<MainController>().isLoading.value = true;
     await Get.find<ProductController>().loadProductActive();
     await Get.find<ProductController>().loadCategory();
     await Get.find<ProductController>().loadSeller();

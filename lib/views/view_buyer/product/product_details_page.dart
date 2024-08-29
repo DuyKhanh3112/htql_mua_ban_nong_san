@@ -31,8 +31,7 @@ class ProductDetailPage extends StatelessWidget {
     final currencyFormatter =
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
     return Obx(() {
-      return mainController.isLoading.value ||
-              Get.find<CartController>().isLoading.value
+      return mainController.isLoading.value
           ? const LoadingPage()
           : SafeArea(
               child: Scaffold(
@@ -40,26 +39,47 @@ class ProductDetailPage extends StatelessWidget {
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.green,
                   actions: [
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: Get.width * 0.1),
-                      child: InkWell(
-                        onTap: () {
-                          Get.toNamed('/cart');
-                        },
-                        child: Badge(
-                          label: Text(
-                            '${Get.find<CartController>().getQuantityCart()}',
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 12),
+                    Get.find<MainController>().buyer.value.id == ''
+                        ? const SizedBox()
+                        : InkWell(
+                            onTap: () async {
+                              mainController.isLoading.value = true;
+                              await Get.find<CartController>()
+                                  .getCartGroupBySeller();
+                              Get.find<CartController>().listCartChoose.value =
+                                  [];
+                              mainController.isLoading.value = false;
+                              Get.toNamed('/cart');
+                            },
+                            child: Container(
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: Get.width * 0.1),
+                              child: Get.find<CartController>()
+                                          .countCart
+                                          .value ==
+                                      0
+                                  ? const Icon(
+                                      Icons.shopping_cart,
+                                      color: Colors.white,
+                                      size: 35,
+                                    )
+                                  : Badge(
+                                      label: Text(
+                                        NumberFormat.decimalPattern().format(
+                                            Get.find<CartController>()
+                                                .countCart
+                                                .value),
+                                        style: const TextStyle(
+                                            color: Colors.white, fontSize: 12),
+                                      ),
+                                      child: const Icon(
+                                        Icons.shopping_cart,
+                                        color: Colors.white,
+                                        size: 35,
+                                      ),
+                                    ),
+                            ),
                           ),
-                          child: const Icon(
-                            Icons.shopping_cart,
-                            color: Colors.white,
-                            size: 35,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
                 body: Column(

@@ -1,6 +1,9 @@
+import 'dart:ffi';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
@@ -21,6 +24,7 @@ class CartPage extends StatelessWidget {
     // ignore: unused_local_variable
     final currencyFormatter =
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
+    // Get.find<CartController>().listCartChoose.value = [];
 
     return Obx(
       () {
@@ -59,7 +63,15 @@ class CartPage extends StatelessWidget {
                               // height: Get.height * 0.2,
                               padding: EdgeInsets.all(Get.width * 0.05),
                               decoration: const BoxDecoration(
-                                color: Colors.amber,
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    offset: Offset(4.0, 4.0),
+                                    blurRadius: 10.0,
+                                    spreadRadius: 2.0,
+                                  ),
+                                ],
                               ),
                               child: Column(
                                 children: [
@@ -83,7 +95,10 @@ class CartPage extends StatelessWidget {
                                         alignment: Alignment.centerRight,
                                         width: Get.width * 0.5,
                                         child: Text(
-                                          "${Get.find<CartController>().totalCart.value}",
+                                          currencyFormatter.format(
+                                              Get.find<CartController>()
+                                                  .totalCart
+                                                  .value),
                                           style: const TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
@@ -97,7 +112,9 @@ class CartPage extends StatelessWidget {
                                     height: Get.height * 0.01,
                                   ),
                                   ElevatedButton(
-                                    onPressed: () async {},
+                                    onPressed: () async {
+                                      Get.toNamed('/checkout');
+                                    },
                                     style: const ButtonStyle(
                                       backgroundColor: MaterialStatePropertyAll(
                                           Colors.green),
@@ -134,80 +151,6 @@ class CartPage extends StatelessWidget {
                 ),
               );
       },
-    );
-  }
-
-  Widget btnCheckout() {
-    return Container(
-      // height: Get.height * 0.2,
-      padding: EdgeInsets.all(Get.width * 0.05),
-      decoration: const BoxDecoration(
-        color: Colors.amber,
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                alignment: Alignment.centerLeft,
-                width: Get.width * 0.4,
-                child: const Text(
-                  'Tổng thanh toán:',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
-                  ),
-                ),
-              ),
-              Container(
-                alignment: Alignment.centerRight,
-                width: Get.width * 0.5,
-                child: Text(
-                  "${Get.find<CartController>().totalCart.value}",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: Get.height * 0.01,
-          ),
-          ElevatedButton(
-            onPressed: () async {},
-            style: const ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.green),
-              shape: MaterialStatePropertyAll(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20),
-                  ),
-                ),
-              ),
-            ),
-            child: Container(
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(),
-              height: Get.width * 0.1,
-              width: Get.width * 0.8,
-              child: const Text(
-                'Đặt hàng',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -348,6 +291,7 @@ class CartPage extends StatelessWidget {
                   Get.find<CartController>().listCartChoose.add(cart);
                 }
                 Get.find<CartController>().getCountCart();
+                // print(Get.find<CartController>().listCartChoose.length);
               },
             ),
             Container(
@@ -369,6 +313,9 @@ class CartPage extends StatelessWidget {
                     offset: const Offset(0, 3), // changes position of shadow
                   ),
                 ],
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(10),
+                ),
                 image: DecorationImage(
                   image: NetworkImage(
                     productImage.image,
@@ -459,15 +406,23 @@ class CartPage extends StatelessWidget {
                             child: TextFormField(
                               onChanged: (value) {
                                 if (value.isNotEmpty) {
-                                  cart.quantity = double.parse(value);
-                                  quantityController.value.text =
-                                      NumberFormat.decimalPatternDigits(
-                                              decimalDigits: 0)
-                                          .format(cart.quantity)
-                                          .toString();
-                                  Get.find<CartController>().isChange.value =
-                                      true;
-                                  Get.find<CartController>().getCountCart();
+                                  if (double.parse(value) > 0) {
+                                    cart.quantity = double.parse(value);
+                                    quantityController.value.text =
+                                        NumberFormat.decimalPatternDigits(
+                                                decimalDigits: 0)
+                                            .format(cart.quantity)
+                                            .toString();
+                                    Get.find<CartController>().isChange.value =
+                                        true;
+                                    Get.find<CartController>().getCountCart();
+                                  } else {
+                                    quantityController.value.text =
+                                        NumberFormat.decimalPatternDigits(
+                                                decimalDigits: 0)
+                                            .format(cart.quantity)
+                                            .toString();
+                                  }
                                 }
                               },
                               validator: (value) {

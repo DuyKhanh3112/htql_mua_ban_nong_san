@@ -128,7 +128,10 @@ class AccountSettingPage extends StatelessWidget {
                               : ListView(
                                   children: [
                                     Container(
-                                      margin: const EdgeInsets.all(10),
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: Get.width * 0.05,
+                                        vertical: Get.width * 0.01,
+                                      ),
                                       child: ListTile(
                                         leading: const Icon(
                                           Icons.account_circle,
@@ -149,7 +152,36 @@ class AccountSettingPage extends StatelessWidget {
                                       ),
                                     ),
                                     Container(
-                                      margin: const EdgeInsets.all(10),
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: Get.width * 0.05,
+                                        vertical: Get.width * 0.01,
+                                      ),
+                                      child: ListTile(
+                                        leading: const Icon(
+                                          Icons.location_on_rounded,
+                                          color: Colors.green,
+                                        ),
+                                        title: const Text(
+                                          'Địa chỉ nhận hàng',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                        shape: const Border(
+                                          bottom:
+                                              BorderSide(color: Colors.green),
+                                        ),
+                                        onTap: () {
+                                          Get.toNamed('/address');
+                                        },
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: Get.width * 0.05,
+                                        vertical: Get.width * 0.01,
+                                      ),
                                       child: ListTile(
                                         leading: const Icon(
                                           Icons.password,
@@ -170,7 +202,10 @@ class AccountSettingPage extends StatelessWidget {
                                       ),
                                     ),
                                     Container(
-                                      margin: const EdgeInsets.all(10),
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: Get.width * 0.05,
+                                        vertical: Get.width * 0.01,
+                                      ),
                                       child: ListTile(
                                         leading: const Icon(
                                           Icons.output,

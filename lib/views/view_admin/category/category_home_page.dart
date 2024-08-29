@@ -206,12 +206,12 @@ class CategoryHomePage extends StatelessWidget {
           ),
         ],
       ),
-      padding: EdgeInsets.all(Get.width * 0.01),
+      // padding: EdgeInsets.all(Get.width * 0.01),
       margin: EdgeInsets.only(
-        left: Get.width * 0.01,
-        right: Get.width * 0.01,
-        top: 5,
-        bottom: 5,
+        left: Get.width * 0.05,
+        right: Get.width * 0.05,
+        top: Get.height * 0.01,
+        bottom: Get.height * 0.01,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -492,13 +492,15 @@ class CategoryHomePage extends StatelessWidget {
                     if (formKey.currentState!.validate()) {
                       CategoryController categoryController =
                           Get.find<CategoryController>();
+                      Get.back();
+                      categoryController.isLoading.value = true;
                       category.name = nameController.value.text;
                       if (filePath.value != '') {
                         category.image = (await CloudinaryController()
                             .uploadImage(
                                 filePath.value, category.id, 'category'))!;
                       }
-                      Get.back();
+
                       await categoryController.updateCategory(category);
                     }
                   },
@@ -733,6 +735,8 @@ class CategoryHomePage extends StatelessWidget {
                     if (formKey.currentState!.validate()) {
                       CategoryController categoryController =
                           Get.find<CategoryController>();
+                      Get.back();
+                      categoryController.isLoading.value = true;
                       Category category = Category(
                           id: '', name: nameController.value.text, image: '');
                       category.image = (await CloudinaryController()
@@ -740,7 +744,7 @@ class CategoryHomePage extends StatelessWidget {
                               filePath.value,
                               categoryController.categoryCollection.id,
                               'category'))!;
-                      Get.back();
+
                       await categoryController.createCategory(category);
                     }
                   },
