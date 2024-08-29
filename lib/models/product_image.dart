@@ -2,13 +2,13 @@ class ProductImage {
   String id;
   String product_id;
   String image;
-  bool isDefault;
+  bool is_default;
 
   ProductImage({
     required this.id,
     required this.product_id,
     required this.image,
-    required this.isDefault,
+    required this.is_default,
   });
 
   factory ProductImage.initProductImage() {
@@ -16,7 +16,7 @@ class ProductImage {
       id: '',
       product_id: '',
       image: '',
-      isDefault: false,
+      is_default: false,
     );
   }
   static ProductImage fromJson(Map<String, dynamic> json) {
@@ -24,7 +24,7 @@ class ProductImage {
       id: json['id'],
       product_id: json['product_id'],
       image: json['image'],
-      isDefault: json['isDefault'],
+      is_default: json['is_default'],
     );
   }
 
@@ -33,7 +33,7 @@ class ProductImage {
       'id': id,
       'product_id': product_id,
       'image': image,
-      'isDefault': isDefault,
+      'is_default': is_default,
     };
   }
 
@@ -42,7 +42,7 @@ class ProductImage {
       // 'id': id,
       'product_id': product_id,
       'image': image,
-      'isDefault': isDefault
+      'is_default': is_default
     };
   }
 }

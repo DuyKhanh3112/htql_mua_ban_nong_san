@@ -7,20 +7,45 @@ import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
+import 'package:htql_mua_ban_nong_san/models/category.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
 import 'package:intl/intl.dart';
 
-class HomeUserPage extends StatelessWidget {
-  const HomeUserPage({super.key});
-
+class SearchProductPage extends StatelessWidget {
+  const SearchProductPage({super.key});
   void loadData(RxList<Product> listProduct) {
-    listProduct.value = Get.find<ProductController>()
-        .listProduct
-        .where((p0) => p0.status == 'active')
-        .toList();
+    List<String> listCategoryID = [];
+    ProductController productController = Get.find<ProductController>();
+    if (productController.searchProductController.value.text.isNotEmpty) {
+      for (var element in productController.listCategory.where((p0) =>
+          productController.searchProductController.value.text.isEmpty ||
+          removeDiacritics(p0.name.toLowerCase()).contains(removeDiacritics(
+              productController.searchProductController.value.text
+                  .toLowerCase())))) {
+        listCategoryID.add(element.id);
+      }
+
+      listProduct.value = Get.find<ProductController>()
+          .listProduct
+          .where((p0) =>
+              p0.status == 'active' &&
+              (removeDiacritics(p0.name.toLowerCase()).contains(
+                      removeDiacritics(productController
+                          .searchProductController.value.text
+                          .toLowerCase())) ||
+                  listCategoryID.contains(p0.category_id)))
+          .toList();
+    } else {
+      listProduct.value = Get.find<ProductController>()
+          .listProduct
+          .where((p0) =>
+              p0.status == 'active' &&
+              p0.category_id == productController.category.value.id)
+          .toList();
+    }
   }
 
   @override
@@ -28,11 +53,10 @@ class HomeUserPage extends StatelessWidget {
     final currencyFormatter =
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
     MainController mainController = Get.find<MainController>();
-
     RxList<Product> listProduct = <Product>[].obs;
+    loadData(listProduct);
 
     return Obx(() {
-      loadData(listProduct);
       return mainController.isLoading.value
           ? const LoadingPage()
           : SafeArea(
@@ -74,36 +98,47 @@ class HomeUserPage extends StatelessWidget {
                                 Radius.circular(40),
                               ),
                             ),
-                            width: Get.width * 0.5,
+                            width: Get.width * 0.6,
                             child: TextFormField(
                               controller: Get.find<ProductController>()
                                   .searchProductController
                                   .value,
                               onChanged: (value) {
-                                loadData(listProduct);
+                                // if (value.isEmpty) {
+                                //   loadData(listProduct);
+                                // }
                               },
                               style: const TextStyle(color: Colors.white),
                               decoration: InputDecoration(
-                                suffixIcon: Get.find<ProductController>()
+                                prefixIcon: InkWell(
+                                  child: const Icon(
+                                    Icons.home,
+                                    color: Colors.white,
+                                  ),
+                                  onTap: () {
+                                    Get.find<ProductController>()
                                         .searchProductController
                                         .value
-                                        .text
-                                        .isEmpty
-                                    ? null
-                                    : InkWell(
-                                        child: const Icon(
-                                          Icons.search,
-                                          color: Colors.white,
-                                        ),
-                                        onTap: () {
-                                          // Get.find<ProductController>()
-                                          //     .searchProductController
-                                          //     .value
-                                          //     .clear();
-                                          // loadData(listProduct);
-                                          Get.toNamed('search_product');
-                                        },
-                                      ),
+                                        .clear();
+                                    Get.find<ProductController>()
+                                        .category
+                                        .value = Category.initCategory();
+                                    Get.toNamed('/');
+                                  },
+                                ),
+                                suffixIcon: InkWell(
+                                  child: const Icon(
+                                    Icons.search,
+                                    color: Colors.white,
+                                  ),
+                                  onTap: () {
+                                    // Get.find<ProductController>()
+                                    //     .searchProductController
+                                    //     .value
+                                    //     .clear();
+                                    loadData(listProduct);
+                                  },
+                                ),
                                 border: InputBorder.none,
                                 hintText: 'Tìm kiếm ...',
                                 hintStyle: const TextStyle(

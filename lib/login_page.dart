@@ -1,12 +1,10 @@
-import 'dart:io';
-
 // import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
-import 'package:htql_mua_ban_nong_san/register_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -48,15 +46,36 @@ class LoginPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'ĐĂNG NHẬP',
-                            style: TextStyle(
-                              fontSize: 28,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                          SizedBox(
+                            width: Get.width * 0.1,
+                            child: InkWell(
+                              onTap: () async {
+                                mainController.isLoading.value = true;
+                                await Get.find<ProductController>()
+                                    .loadProductActive();
+                                mainController.isLoading.value = false;
+                                Get.toNamed('/');
+                              },
+                              child: const Icon(
+                                Icons.home,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            width: Get.width * 0.8,
+                            child: const Text(
+                              'ĐĂNG NHẬP',
+                              style: TextStyle(
+                                fontSize: 28,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
@@ -65,9 +84,6 @@ class LoginPage extends StatelessWidget {
                     Expanded(
                       child: ListView(
                         children: [
-                          // SizedBox(
-                          //   height: Get.height / 10,
-                          // ),
                           const Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -202,13 +218,7 @@ class LoginPage extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    onTap: () async {
-                                      await mainController.loadAll();
-                                      for (var item in mainController
-                                          .listProvince.value) {
-                                        print(item.toJson());
-                                      }
-                                    },
+                                    onTap: () async {},
                                   ),
                                   const SizedBox(
                                     height: 10,
@@ -237,6 +247,15 @@ class LoginPage extends StatelessWidget {
                                                     'inactive') {
                                               // ignore: use_build_context_synchronously
                                               await AwesomeDialog(
+                                                titleTextStyle: const TextStyle(
+                                                  color: Colors.green,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 22,
+                                                ),
+                                                descTextStyle: const TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 16,
+                                                ),
                                                 context: context,
                                                 dialogType: DialogType.warning,
                                                 animType: AnimType.rightSlide,
@@ -250,6 +269,15 @@ class LoginPage extends StatelessWidget {
                                           } else {
                                             // ignore: use_build_context_synchronously
                                             await AwesomeDialog(
+                                              titleTextStyle: const TextStyle(
+                                                color: Colors.green,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 22,
+                                              ),
+                                              descTextStyle: const TextStyle(
+                                                color: Colors.green,
+                                                fontSize: 16,
+                                              ),
                                               context: context,
                                               dialogType: DialogType.error,
                                               animType: AnimType.rightSlide,

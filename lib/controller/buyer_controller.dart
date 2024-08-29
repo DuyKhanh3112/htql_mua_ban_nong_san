@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 
 class BuyerController extends GetxController {
@@ -10,7 +11,7 @@ class BuyerController extends GetxController {
       FirebaseFirestore.instance.collection('Buyer');
 
   RxBool isLoading = false.obs;
-
+  RxList<int> listCart = <int>[].obs;
   Future<void> createBuyer(
     Buyer buyer,
   ) async {
@@ -49,5 +50,15 @@ class BuyerController extends GetxController {
       return false;
     }
     return true;
+  }
+
+  Future<void> logout() async {
+    isLoading.value = true;
+
+    await Get.find<CartController>().saveCart();
+    Get.find<MainController>().buyer.value = Buyer.initBuyer();
+    Get.find<MainController>().numPage.value = 0;
+    Get.toNamed('/');
+    isLoading.value = false;
   }
 }

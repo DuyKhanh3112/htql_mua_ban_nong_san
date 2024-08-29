@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Product {
   String id;
   String category_id;
@@ -8,8 +10,11 @@ class Product {
   String province_id;
   double quantity;
   String seller_id;
-  String status_id;
-  String? unit;
+  String status;
+  String unit;
+  Timestamp create_at;
+  double? sale_num;
+  double? ratting;
 
   Product({
     required this.id,
@@ -17,12 +22,15 @@ class Product {
     required this.category_id,
     required this.seller_id,
     required this.price,
-    required this.description,
+    this.description,
     required this.province_id,
     required this.quantity,
-    required this.status_id,
+    required this.status,
     this.expripy_date,
-    this.unit,
+    required this.unit,
+    required this.create_at,
+    this.sale_num,
+    this.ratting,
   });
 
   factory Product.initProduct() {
@@ -35,9 +43,10 @@ class Product {
       description: '',
       province_id: '',
       quantity: 0,
-      status_id: '',
+      status: '',
       expripy_date: 0,
       unit: '',
+      create_at: Timestamp.now(),
     );
   }
 
@@ -51,9 +60,12 @@ class Product {
       description: json['description'],
       province_id: json['province_id'],
       quantity: json['quantity'],
-      status_id: json['status_is'],
+      status: json['status'],
       expripy_date: json['expripy_date'],
       unit: json['unit'] ?? '',
+      create_at: json['create_at'],
+      sale_num: json['sale_num'],
+      ratting: json['ratting'],
     );
   }
 
@@ -67,9 +79,12 @@ class Product {
       'description': description,
       'province_id': province_id,
       'quantity': quantity,
-      'status_id': status_id,
+      'status': status,
       'expripy_date': expripy_date,
       'unit': unit,
+      'create_at': create_at,
+      'sale_num': sale_num,
+      'ratting': ratting,
     };
   }
 
@@ -83,9 +98,9 @@ class Product {
       'description': description,
       'province_id': province_id,
       'quantity': quantity,
-      'status_id': status_id,
+      'status': status,
       'expripy_date': expripy_date,
-      'unit': unit,
+      'unit': unit, 'create_at': create_at,
     };
   }
 }

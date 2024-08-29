@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Review {
   String id;
   String order_detail_id;
   String comment;
   double ratting;
-  DateTime create_at;
+  Timestamp create_at;
+  Timestamp update_at;
 
   Review({
     required this.id,
@@ -11,6 +14,7 @@ class Review {
     required this.comment,
     required this.ratting,
     required this.create_at,
+    required this.update_at,
   });
 
   factory Review.initReview() {
@@ -19,7 +23,8 @@ class Review {
       order_detail_id: '',
       comment: '',
       ratting: 0,
-      create_at: DateTime.now(),
+      create_at: Timestamp.now(),
+      update_at: Timestamp.now(),
     );
   }
   static Review fromJson(Map<String, dynamic> json) {
@@ -29,6 +34,7 @@ class Review {
       comment: json['comment'],
       ratting: json['ratting'],
       create_at: json['create_at'],
+      update_at: json['update_at'],
     );
   }
 
@@ -39,6 +45,7 @@ class Review {
       'comment': comment,
       'ratting': ratting,
       'create_at': create_at,
+      'update_at': update_at,
     };
   }
 
@@ -49,6 +56,7 @@ class Review {
       'comment': comment,
       'ratting': ratting,
       'create_at': create_at,
+      'update_at': update_at,
     };
   }
 }
