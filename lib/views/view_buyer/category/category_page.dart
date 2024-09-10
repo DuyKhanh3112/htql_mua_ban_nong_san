@@ -183,6 +183,7 @@ class CategoryPage extends StatelessWidget {
                                         topLeft: Radius.circular(20),
                                         topRight: Radius.circular(20),
                                       ),
+                                      // ignore: unnecessary_null_comparison
                                       image: category.image == null
                                           ? null
                                           : DecorationImage(

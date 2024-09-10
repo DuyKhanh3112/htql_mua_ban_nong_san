@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:convert_vietnamese/convert_vietnamese.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';

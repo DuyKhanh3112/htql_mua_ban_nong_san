@@ -4,7 +4,6 @@ import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
-import 'package:htql_mua_ban_nong_san/models/order.dart';
 
 class BuyerController extends GetxController {
   static BuyerController get to => Get.find<BuyerController>();

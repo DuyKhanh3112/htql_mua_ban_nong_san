@@ -8,7 +8,6 @@ import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/address.dart';
-import 'package:htql_mua_ban_nong_san/models/order.dart';
 import 'package:htql_mua_ban_nong_san/models/order_detail.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
