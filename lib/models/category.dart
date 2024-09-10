@@ -2,11 +2,13 @@ class Category {
   String id;
   String name;
   String image;
+  bool hide;
 
   Category({
     required this.id,
     required this.name,
     required this.image,
+    required this.hide,
   });
 
   factory Category.initCategory() {
@@ -14,6 +16,7 @@ class Category {
       id: '',
       name: '',
       image: '',
+      hide: false,
     );
   }
   static Category fromJson(Map<String, dynamic> json) {
@@ -21,6 +24,7 @@ class Category {
       id: json['id'],
       name: json['name'],
       image: json['image'],
+      hide: json['hide'],
     );
   }
 
@@ -29,6 +33,7 @@ class Category {
       'id': id,
       'name': name,
       'image': image,
+      'hide': hide,
     };
   }
 
@@ -37,6 +42,7 @@ class Category {
       // 'id': id,
       'name': name,
       'image': image,
+      'hide': hide,
     };
   }
 }

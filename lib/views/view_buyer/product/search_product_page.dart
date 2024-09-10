@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/category.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
@@ -20,11 +23,14 @@ class SearchProductPage extends StatelessWidget {
     List<String> listCategoryID = [];
     ProductController productController = Get.find<ProductController>();
     if (productController.searchProductController.value.text.isNotEmpty) {
-      for (var element in productController.listCategory.where((p0) =>
-          productController.searchProductController.value.text.isEmpty ||
-          removeDiacritics(p0.name.toLowerCase()).contains(removeDiacritics(
-              productController.searchProductController.value.text
-                  .toLowerCase())))) {
+      for (var element in Get.find<CategoryController>()
+          .listCategory
+          .where((p0) => p0.hide == false)
+          .where((p0) =>
+              productController.searchProductController.value.text.isEmpty ||
+              removeDiacritics(p0.name.toLowerCase()).contains(removeDiacritics(
+                  productController.searchProductController.value.text
+                      .toLowerCase())))) {
         listCategoryID.add(element.id);
       }
 
@@ -112,7 +118,7 @@ class SearchProductPage extends StatelessWidget {
                               decoration: InputDecoration(
                                 prefixIcon: InkWell(
                                   child: const Icon(
-                                    Icons.home,
+                                    Icons.arrow_back,
                                     color: Colors.white,
                                   ),
                                   onTap: () {
@@ -132,10 +138,6 @@ class SearchProductPage extends StatelessWidget {
                                     color: Colors.white,
                                   ),
                                   onTap: () {
-                                    // Get.find<ProductController>()
-                                    //     .searchProductController
-                                    //     .value
-                                    //     .clear();
                                     loadData(listProduct);
                                   },
                                 ),
@@ -220,7 +222,7 @@ class SearchProductPage extends StatelessWidget {
   }
 
   Container productDetail(Product product, NumberFormat currencyFormatter) {
-    Seller seller = Get.find<ProductController>()
+    Seller seller = Get.find<SellerController>()
             .listSeller
             .firstWhereOrNull((element) => element.id == product.seller_id) ??
         Seller.initSeller();
@@ -228,7 +230,7 @@ class SearchProductPage extends StatelessWidget {
         .listProductImage
         .firstWhereOrNull(
             (p0) => p0.product_id == product.id && p0.is_default == true);
-    Province province = Get.find<ProductController>()
+    Province province = Get.find<ProvinceController>()
             .listProvince
             .firstWhereOrNull((element) => element.id == product.province_id) ??
         Province.initProvince();

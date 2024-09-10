@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/category.dart';
@@ -141,12 +142,13 @@ class ProductSellerHomePage extends StatelessWidget {
                   onPressed: () async {
                     productController.product.value = Product.initProduct();
                     productController.category.value = Category.initCategory();
-                    productController.province.value = productController
-                            .listProvince
-                            .firstWhereOrNull((element) =>
-                                element.id ==
-                                mainController.seller.value.province_id) ??
-                        Province.initProvince();
+                    productController.province.value =
+                        Get.find<ProvinceController>()
+                                .listProvince
+                                .firstWhereOrNull((element) =>
+                                    element.id ==
+                                    mainController.seller.value.province_id) ??
+                            Province.initProvince();
                     Get.toNamed('/product_form');
                   },
                   backgroundColor: Colors.green,

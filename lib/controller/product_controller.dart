@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:convert_vietnamese/convert_vietnamese.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
@@ -7,11 +6,11 @@ import 'package:htql_mua_ban_nong_san/controller/cloudinary_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/review_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/models/category.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
-import 'package:htql_mua_ban_nong_san/models/seller.dart';
 
 class ProductController extends GetxController {
   static ProductController get to => Get.find<ProductController>();
@@ -19,20 +18,15 @@ class ProductController extends GetxController {
 
   CollectionReference productCollection =
       FirebaseFirestore.instance.collection('Product');
-  CollectionReference provinceCollection =
-      FirebaseFirestore.instance.collection('Province');
-  CollectionReference categoryCollection =
-      FirebaseFirestore.instance.collection('Category');
+
   CollectionReference productImageCollection =
       FirebaseFirestore.instance.collection('ProductImage');
   CollectionReference sellerCollection =
       FirebaseFirestore.instance.collection('Seller');
 
   RxList<Product> listProduct = <Product>[].obs;
-  RxList<Category> listCategory = <Category>[].obs;
-  RxList<Province> listProvince = <Province>[].obs;
+
   RxList<ProductImage> listProductImage = <ProductImage>[].obs;
-  RxList<Seller> listSeller = <Seller>[].obs;
 
   Rx<Category> category = Category.initCategory().obs;
   Rx<Province> province = Province.initProvince().obs;
@@ -59,12 +53,9 @@ class ProductController extends GetxController {
     if (pro.quantity != 0 && pro.status == 'inactive') {
       pro.status = 'active';
     }
-    // if (pro.status == 'lock') {
-    //   pro.status = 'draft';
-    // }
 
     await productCollection.doc(pro.id).update(pro.toVal());
-    await loadAllProduct();
+    // await loadAllProduct();
     isLoading.value = false;
   }
 
@@ -76,25 +67,38 @@ class ProductController extends GetxController {
   }
 
   Future<void> loadProductBySeller() async {
+    isLoading.value = true;
     listProduct.value = [];
     listProductImage.value = [];
     final snapshotProduct = await productCollection
         .where('seller_id',
             isEqualTo: Get.find<MainController>().seller.value.id)
+        .where('category_id',
+            whereIn: Get.find<CategoryController>()
+                .listCategory
+                .where((p0) => p0.hide == false)
+                .map((element) => element.id)
+                .toList())
         .get();
     for (var item in snapshotProduct.docs) {
       Map<String, dynamic> data = item.data() as Map<String, dynamic>;
+
       data['id'] = item.id;
       listProduct.add(Product.fromJson(data));
 
-      final snapshotImg = await productImageCollection
-          .where('product_id', isEqualTo: item.id)
-          .get();
-      for (var img in snapshotImg.docs) {
-        Map<String, dynamic> dataImg = img.data() as Map<String, dynamic>;
-        dataImg['id'] = img.id;
-        listProductImage.add(ProductImage.fromJson(dataImg));
-      }
+      await loadProductImage(item.id);
+    }
+    isLoading.value = false;
+  }
+
+  Future<void> loadProductImage(String productId) async {
+    final snapshotImg = await productImageCollection
+        .where('product_id', isEqualTo: productId)
+        .get();
+    for (var img in snapshotImg.docs) {
+      Map<String, dynamic> dataImg = img.data() as Map<String, dynamic>;
+      dataImg['id'] = img.id;
+      listProductImage.add(ProductImage.fromJson(dataImg));
     }
   }
 
@@ -102,9 +106,23 @@ class ProductController extends GetxController {
     isLoading.value = true;
     listProduct.value = [];
     listProductImage.value = [];
-    final snapshotProduct = await productCollection.get();
-    for (var item in snapshotProduct.docs) {
+    final snapshotProduct = await productCollection
+        // .where('status', isEqualTo: 'active')
+        .where('category_id',
+            whereIn: Get.find<CategoryController>()
+                .listCategory
+                .where((p0) => p0.hide == false)
+                .map((element) => element.id)
+                .toList())
+        .get();
+    for (var item in snapshotProduct.docs.where((element) =>
+        Get.find<SellerController>()
+            .listSeller
+            .map((element) => element.id)
+            .toList()
+            .contains((element.data() as Map<String, dynamic>)['seller_id']))) {
       Map<String, dynamic> data = item.data() as Map<String, dynamic>;
+
       data['id'] = item.id;
       data['sale_num'] =
           await Get.find<OrderController>().getNumOfSale(data['id']);
@@ -127,12 +145,26 @@ class ProductController extends GetxController {
   }
 
   Future<void> loadProductActive() async {
+    isLoading.value = true;
     listProduct.value = [];
     listProductImage.value = [];
-    final snapshotProduct =
-        await productCollection.where('status', isEqualTo: 'active').get();
-    for (var item in snapshotProduct.docs) {
+    final snapshotProduct = await productCollection
+        .where('status', isEqualTo: 'active')
+        .where('category_id',
+            whereIn: Get.find<CategoryController>()
+                .listCategory
+                .where((p0) => p0.hide == false)
+                .map((element) => element.id)
+                .toList())
+        .get();
+    for (var item in snapshotProduct.docs.where((element) =>
+        Get.find<SellerController>()
+            .listSeller
+            .map((element) => element.id)
+            .toList()
+            .contains((element.data() as Map<String, dynamic>)['seller_id']))) {
       Map<String, dynamic> data = item.data() as Map<String, dynamic>;
+
       data['id'] = item.id;
       data['sale_num'] =
           await Get.find<OrderController>().getNumOfSale(data['id']);
@@ -151,74 +183,7 @@ class ProductController extends GetxController {
       }
     }
     listProduct.sort((a, b) => b.create_at.compareTo(a.create_at));
-  }
-
-  Future<void> loadData() async {
-    isLoading.value = true;
-
-    await loadSeller();
-
-    listCategory.value = [];
-    await Get.find<CategoryController>().loadCategory();
-    listCategory.value = Get.find<CategoryController>().listCategory;
-
-    listProvince.value = [];
-    final snapshotProvince = await provinceCollection.get();
-    for (var item in snapshotProvince.docs) {
-      Map<String, dynamic> data = item.data() as Map<String, dynamic>;
-
-      data['id'] = item.id;
-      listProvince.add(Province.fromJson(data));
-    }
-    listProvince.sort(
-        (a, b) => removeDiacritics(a.name).compareTo(removeDiacritics(b.name)));
-
-    listCategory.sort(
-        (a, b) => removeDiacritics(a.name).compareTo(removeDiacritics(b.name)));
-    await loadProductBySeller();
     isLoading.value = false;
-  }
-
-  Future<void> loadSeller() async {
-    listSeller.value = [];
-    final snapshotSeller = await sellerCollection.get();
-    for (var item in snapshotSeller.docs) {
-      Map<String, dynamic> data = item.data() as Map<String, dynamic>;
-      data['id'] = item.id;
-      listSeller.add(Seller.fromJson(data));
-    }
-  }
-
-  Future<void> loadAllData() async {
-    isLoading.value = true;
-
-    await loadSeller();
-
-    await loadCategory();
-
-    await loadProvince();
-
-    await loadAllProduct();
-    isLoading.value = false;
-  }
-
-  Future<void> loadCategory() async {
-    listCategory.value = [];
-    await Get.find<CategoryController>().loadCategory();
-    listCategory.value = Get.find<CategoryController>().listCategory;
-  }
-
-  Future<void> loadProvince() async {
-    listProvince.value = [];
-    final snapshotProvince = await provinceCollection.get();
-    for (var item in snapshotProvince.docs) {
-      Map<String, dynamic> data = item.data() as Map<String, dynamic>;
-
-      data['id'] = item.id;
-      listProvince.add(Province.fromJson(data));
-    }
-    listProvince.sort((a, b) => removeDiacritics(a.name.toLowerCase())
-        .compareTo(removeDiacritics(b.name.toLowerCase())));
   }
 
   Future<void> createProduct(List<dynamic> listFilePath) async {
@@ -247,5 +212,19 @@ class ProductController extends GetxController {
     await batch.commit();
     await loadProductBySeller();
     isLoading.value = false;
+  }
+
+  Future<void> loadProductByID(String id) async {
+    var snap = await productCollection.doc(id).get();
+    Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
+    data['id'] = snap.id;
+    Product pro = Product.fromJson(data);
+    pro.id = id;
+    pro.sale_num = await Get.find<OrderController>().getNumOfSale(data['id']);
+    pro.ratting = await Get.find<ReviewController>().getRatting(data['id']);
+    listProduct.remove(
+        listProduct.firstWhereOrNull((element) => element.id == id) ??
+            Product.initProduct());
+    listProduct.add(pro);
   }
 }

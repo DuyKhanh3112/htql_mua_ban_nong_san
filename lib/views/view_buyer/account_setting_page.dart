@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 
 class AccountSettingPage extends StatelessWidget {
@@ -127,6 +128,34 @@ class AccountSettingPage extends StatelessWidget {
                                 )
                               : ListView(
                                   children: [
+                                    Container(
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: Get.width * 0.05,
+                                        vertical: Get.width * 0.01,
+                                      ),
+                                      child: ListTile(
+                                        leading: const Icon(
+                                          Icons.inventory_outlined,
+                                          color: Colors.green,
+                                        ),
+                                        title: const Text(
+                                          'Quản lý đơn hàng',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                        shape: const Border(
+                                          bottom:
+                                              BorderSide(color: Colors.green),
+                                        ),
+                                        onTap: () async {
+                                          Get.toNamed('order');
+                                          await Get.find<OrderController>()
+                                              .loadOrderByBuyer();
+                                        },
+                                      ),
+                                    ),
                                     Container(
                                       margin: EdgeInsets.symmetric(
                                         horizontal: Get.width * 0.05,

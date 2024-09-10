@@ -42,9 +42,9 @@ class Seller {
       avatar: '',
       cover: '',
       create_at: Timestamp.now(),
-      status: '',
+      status: 'draft',
       address_detail: '',
-      province_id: 'draft',
+      province_id: '',
       tax_code: '',
     );
   }

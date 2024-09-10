@@ -1,8 +1,15 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
+import 'package:htql_mua_ban_nong_san/models/address.dart';
 import 'package:htql_mua_ban_nong_san/models/cart.dart';
+import 'package:htql_mua_ban_nong_san/models/order.dart';
+import 'package:htql_mua_ban_nong_san/models/order_detail.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 
 class CartController extends GetxController {
@@ -17,6 +24,7 @@ class CartController extends GetxController {
   RxDouble totalCart = 0.0.obs;
   RxBool isChange = false.obs;
   RxList<Cart> listCartChoose = <Cart>[].obs;
+  Rx<Address> address = Address.initAddress().obs;
 
   Future<void> loadCartByBuyer() async {
     // double count = 0;
@@ -86,7 +94,7 @@ class CartController extends GetxController {
   }
 
   Future<void> saveCart() async {
-    isLoading.value = true;
+    // isLoading.value = true;
     //delete
     final snapshotCart = await cartCollection
         .where('buyer_id', isEqualTo: Get.find<MainController>().buyer.value.id)
@@ -102,18 +110,18 @@ class CartController extends GetxController {
       await batch.commit();
     }
     await loadCartByBuyer();
-    isLoading.value = false;
+    // isLoading.value = false;
   }
 
   Future<void> deleteCart(String cartID) async {
-    isLoading.value = true;
+    // isLoading.value = true;
     await cartCollection.doc(cartID).delete();
-    isLoading.value = false;
+    // isLoading.value = false;
   }
 
   dynamic getCartGroupBySeller() {
     var listCartSeller = [];
-    for (var seller in Get.find<ProductController>().listSeller) {
+    for (var seller in Get.find<SellerController>().listSeller) {
       var carts = [];
       var listProductID = [];
       for (var pro in Get.find<ProductController>()
@@ -136,7 +144,7 @@ class CartController extends GetxController {
 
   dynamic getChooseCartGroupBySeller() {
     var listCartSeller = [];
-    for (var seller in Get.find<ProductController>().listSeller) {
+    for (var seller in Get.find<SellerController>().listSeller) {
       var carts = [];
       var listProductID = [];
       double totalSeller = 0.0;
@@ -161,5 +169,53 @@ class CartController extends GetxController {
       }
     }
     return listCartSeller.toList();
+  }
+
+  Future<void> checkout() async {
+    isLoading.value = true;
+    Product pro = Product.initProduct();
+    for (var item in getChooseCartGroupBySeller()) {
+      Orders od = Orders(
+        id: Get.find<OrderController>().orderCollection.doc().id,
+        buyer_id: Get.find<MainController>().buyer.value.id,
+        seller_id: item[0].id,
+        address_id: address.value.id,
+        status: 'unconfirm',
+        order_amount: item[2],
+        order_date: Timestamp.now(),
+        update_at: Timestamp.now(),
+      );
+      await Get.find<OrderController>().createOrder(od);
+      for (var oddItem in item[1]) {
+        pro = Get.find<ProductController>().listProduct.firstWhereOrNull(
+                (element) => element.id == oddItem.product_id) ??
+            Product.initProduct();
+
+        OrderDetail odd = OrderDetail(
+            id: Get.find<OrderController>().orderDetailCollection.doc().id,
+            order_id: od.id,
+            product_id: pro.id,
+            quantity: oddItem.quantity,
+            sell_price: pro.price);
+
+        await Get.find<OrderController>().createOrderDetail(odd);
+        pro.quantity -= oddItem.quantity;
+        pro.sale_num = await Get.find<OrderController>().getNumOfSale(pro.id);
+        Get.find<ProductController>().updateProduct(pro);
+
+        listCart.remove(oddItem);
+      }
+    }
+    await saveCart();
+    await loadCartByBuyer();
+
+    listCartChoose.value = [];
+
+    // (Get.find<ProductController>()
+    //             .listProduct
+    //             .firstWhereOrNull((element) => element.id == pro.id) ??
+    //         Product.initProduct())
+    //     .sale_num = await Get.find<OrderController>().getNumOfSale(pro.id);
+    isLoading.value = false;
   }
 }

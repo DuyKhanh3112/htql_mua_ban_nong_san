@@ -13,7 +13,6 @@ import 'package:htql_mua_ban_nong_san/utils/initial_binding.dart';
 import 'package:htql_mua_ban_nong_san/views/home_page.dart';
 import 'package:htql_mua_ban_nong_san/login_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/admin_home_page.dart';
-import 'package:htql_mua_ban_nong_san/views/view_admin/category/category_home_page.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -21,12 +20,13 @@ import 'package:htql_mua_ban_nong_san/views/view_admin/personal_admin_page.dart'
 import 'package:htql_mua_ban_nong_san/views/view_admin/product/product_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/address/address_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/cart_page.dart';
-import 'package:htql_mua_ban_nong_san/views/view_buyer/category/category_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/checkout_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_buyer/order/order_detail_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/order/order_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/product/product_details_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/product/search_product_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/home_seller_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/order/order_seller_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_form_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_home_page.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
@@ -106,6 +106,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/search_product', page: () => const SearchProductPage()),
         GetPage(name: '/checkout', page: () => const CheckoutPage()),
         GetPage(name: '/order', page: () => const OrderPage()),
+        GetPage(name: '/order_seller', page: () => const OrderSellerHomePage()),
+        GetPage(name: '/order_detail', page: () => const OrderDetailPage()),
       ],
     );
   }

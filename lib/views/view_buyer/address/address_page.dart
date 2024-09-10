@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/address_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
-import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/address.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
@@ -79,7 +79,7 @@ class AddressPage extends StatelessWidget {
   }
 
   Widget addressDetail(Address address, BuildContext context) {
-    Province province = Get.find<ProductController>()
+    Province province = Get.find<ProvinceController>()
             .listProvince
             .firstWhereOrNull((element) => element.id == address.province_id) ??
         Province.initProvince();
@@ -363,11 +363,11 @@ class AddressPage extends StatelessWidget {
                               ),
                               DropdownButtonHideUnderline(
                                 child: DropdownButton2(
-                                  value: Get.find<ProductController>()
+                                  value: Get.find<ProvinceController>()
                                       .listProvince
                                       .firstWhereOrNull((element) =>
                                           element.id == province.value.id),
-                                  items: Get.find<ProductController>()
+                                  items: Get.find<ProvinceController>()
                                       .listProvince
                                       .map(
                                         (province) => DropdownMenuItem(
@@ -599,7 +599,7 @@ class AddressPage extends StatelessWidget {
 
     nameController.text = addressController.address.value.name;
     phoneController.text = addressController.address.value.phone;
-    province.value = Get.find<ProductController>()
+    province.value = Get.find<ProvinceController>()
             .listProvince
             .firstWhereOrNull((element) =>
                 element.id == addressController.address.value.province_id) ??
@@ -749,11 +749,11 @@ class AddressPage extends StatelessWidget {
                               ),
                               DropdownButtonHideUnderline(
                                 child: DropdownButton2(
-                                  value: Get.find<ProductController>()
+                                  value: Get.find<ProvinceController>()
                                       .listProvince
                                       .firstWhereOrNull((element) =>
                                           element.id == province.value.id),
-                                  items: Get.find<ProductController>()
+                                  items: Get.find<ProvinceController>()
                                       .listProvince
                                       .map(
                                         (province) => DropdownMenuItem(
@@ -910,7 +910,7 @@ class AddressPage extends StatelessWidget {
                               address_detail: addressDetailController.text,
                               phone: phoneController.text,
                               is_default:
-                                  addressController.listAddress.isEmpty);
+                                  addressController.address.value.is_default);
 
                           Get.back();
                           await addressController.updateAddress(address);

@@ -235,8 +235,7 @@ class DrawerAdmin extends StatelessWidget {
                             Get.back();
                             // Get.toNamed('/product_admin');
                             mainController.indexAdmin.value = 3;
-                            await Get.find<ProductController>()
-                                .loadAllProduct();
+                            Get.find<ProductController>().loadAllProduct();
                           },
                         ),
                         ListTile(

@@ -1,21 +1,24 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
+import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 import 'package:htql_mua_ban_nong_san/models/order.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/drawer_seller.dart';
 import 'package:intl/intl.dart';
 
-class OrderPage extends StatelessWidget {
-  const OrderPage({super.key});
+class OrderSellerHomePage extends StatelessWidget {
+  const OrderSellerHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    OrderController orderController = Get.find<OrderController>();
     MainController mainController = Get.find<MainController>();
+    OrderController orderController = Get.find<OrderController>();
 
     return Obx(() {
       return mainController.isLoading.value || orderController.isLoading.value
@@ -82,16 +85,17 @@ class OrderPage extends StatelessWidget {
                       )
                   ],
                 ),
+                drawer: const DrawerSeller(),
               ),
             );
     });
   }
 
   Container orderItem(Orders order, BuildContext context) {
-    Seller seller = Get.find<SellerController>()
-            .listSeller
-            .firstWhereOrNull((element) => element.id == order.seller_id) ??
-        Seller.initSeller();
+    Buyer buyer = Get.find<BuyerController>()
+            .listBuyer
+            .firstWhereOrNull((element) => element.id == order.buyer_id) ??
+        Buyer.initBuyer();
     return Container(
       // height: Get.height * 0.2,
       width: Get.width,
@@ -132,11 +136,11 @@ class OrderPage extends StatelessWidget {
                     ),
                   ],
                   shape: BoxShape.circle,
-                  image: seller.avatar == ''
+                  image: buyer.avatar == ''
                       ? null
                       : DecorationImage(
                           image: NetworkImage(
-                            seller.avatar!,
+                            buyer.avatar!,
                           ),
                           fit: BoxFit.fill,
                         ),
@@ -148,11 +152,29 @@ class OrderPage extends StatelessWidget {
               SizedBox(
                 width: Get.width * 0.5,
                 child: Text(
-                  seller.name,
+                  buyer.name,
                   style: const TextStyle(
                     color: Colors.green,
                     fontSize: 16,
                     overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                alignment: Alignment.centerRight,
+                width: Get.width * 0.5,
+                child: const Text(
+                  'Tỉ lệ thành công: ${100}%',
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 12,
+                    overflow: TextOverflow.ellipsis,
+                    fontStyle: FontStyle.italic,
                   ),
                 ),
               ),
@@ -264,7 +286,6 @@ class OrderPage extends StatelessWidget {
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    btnViewDetail(order),
                     Container(
                       alignment: Alignment.center,
                       width: Get.width * 0.3,
@@ -312,14 +333,6 @@ class OrderPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ],
-                )
-              : const SizedBox(),
-          order.status == 'delivering'
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    btnViewDetail(order),
                     Container(
                       alignment: Alignment.center,
                       width: Get.width * 0.3,
@@ -339,12 +352,13 @@ class OrderPage extends StatelessWidget {
                                   dialogType: DialogType.question,
                                   animType: AnimType.rightSlide,
                                   title: 'Xác nhận',
-                                  desc: 'Xác nhận đã nhận đơn hàng này',
+                                  desc: 'Bạn có xác nhận giao đơn này không',
                                   btnOkText: 'Xác nhận',
                                   btnCancelText: 'Không',
                                   btnOkOnPress: () async {
                                     Orders ord = order;
-                                    ord.status = 'delivered';
+                                    ord.status = 'delivering';
+
                                     await Get.find<OrderController>()
                                         .updateOrder(ord);
                                   },
@@ -356,7 +370,7 @@ class OrderPage extends StatelessWidget {
                           decoration: const BoxDecoration(),
                           width: Get.width * 0.2,
                           child: const Text(
-                            'Đã nhận',
+                            'Giao hàng',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.green,
@@ -367,86 +381,15 @@ class OrderPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                    btnViewDetail(order),
                   ],
                 )
               : const SizedBox(),
-          order.status == 'delivered'
+          order.status == 'delivering'
               ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     btnViewDetail(order),
-                    Container(
-                      alignment: Alignment.center,
-                      width: Get.width * 0.3,
-                      child: ElevatedButton(
-                        onPressed: () async {},
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: const BoxDecoration(),
-                          width: Get.width * 0.2,
-                          child: const Text(
-                            'Đánh giá',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.green,
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: Get.width * 0.3,
-                      alignment: Alignment.center,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await Get.find<OrderController>().rebuy(order);
-                          Get.toNamed('/cart');
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: const BoxDecoration(),
-                          width: Get.width * 0.2,
-                          child: const Text(
-                            'Mua lại',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.green,
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                )
-              : const SizedBox(),
-          order.status == 'cancelled'
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    btnViewDetail(order),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await Get.find<OrderController>().rebuy(order);
-                        Get.toNamed('/cart');
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        decoration: const BoxDecoration(),
-                        width: Get.width * 0.2,
-                        child: const Text(
-                          'Mua lại',
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 )
               : const SizedBox(),
@@ -457,18 +400,19 @@ class OrderPage extends StatelessWidget {
 
   Widget btnViewDetail(Orders order) {
     return Container(
-      width: Get.width * 0.3,
       alignment: Alignment.center,
+      width: Get.width * 0.3,
       child: ElevatedButton(
         onPressed: () async {
-          await Get.find<OrderController>().loadOrderDetailByOrder(order);
           Get.find<OrderController>().order.value = order;
-          Get.toNamed('order_detail');
+
+          // await Get.find<OrderController>().loadOrderDetailByOrder(order);
+          // Get.toNamed('order_detail');
         },
         child: Container(
           alignment: Alignment.center,
           decoration: const BoxDecoration(),
-          width: Get.width * 0.2,
+          width: Get.width,
           child: const Text(
             'Chi tiết',
             textAlign: TextAlign.center,

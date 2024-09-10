@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/category.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
@@ -52,7 +54,7 @@ class ProductHomePage extends StatelessWidget {
                       child: InkWell(
                         onTap: () async {
                           // widgetCreateCategory(context);
-                          await productController.loadAllData();
+                          productController.loadAllProduct();
                         },
                         child: const Icon(
                           Icons.refresh,
@@ -86,9 +88,10 @@ class ProductHomePage extends StatelessWidget {
                                   value: Get.find<CategoryController>()
                                       .listCategory
                                       .firstWhereOrNull((element) =>
-                                          element.id == category.value.id),
+                                          element.id == category.value.id &&
+                                          element.hide == false),
                                   // items: Get.find<CategoryController>()
-                                  //     .listCategory
+                                  //     .listCategory.where((p0) => p0.hide==false)
                                   //     .map(
                                   //       (category) => DropdownMenuItem(
                                   //         value: category,
@@ -110,7 +113,9 @@ class ProductHomePage extends StatelessWidget {
                                       ),
                                     ),
                                     for (var category
-                                        in productController.listCategory)
+                                        in Get.find<CategoryController>()
+                                            .listCategory
+                                            .where((p0) => p0.hide == false))
                                       DropdownMenuItem(
                                         value: category,
                                         child: Text(
@@ -194,7 +199,8 @@ class ProductHomePage extends StatelessWidget {
                               ),
                               DropdownButtonHideUnderline(
                                 child: DropdownButton2(
-                                  value: productController.listProvince
+                                  value: Get.find<ProvinceController>()
+                                      .listProvince
                                       .firstWhereOrNull((element) =>
                                           element.id == province.value.id),
                                   // items: productController.listProvince
@@ -219,7 +225,8 @@ class ProductHomePage extends StatelessWidget {
                                       ),
                                     ),
                                     for (var province
-                                        in productController.listProvince)
+                                        in Get.find<ProvinceController>()
+                                            .listProvince)
                                       DropdownMenuItem(
                                         value: province,
                                         child: Text(
@@ -360,14 +367,18 @@ class ProductHomePage extends StatelessWidget {
       ProductController productController, BuildContext context) {
     var imageUrl = productController.listProductImage.firstWhereOrNull(
         (img) => img.product_id == product.id && img.is_default == true);
-    Seller? seller = productController.listSeller
+    Seller? seller = Get.find<SellerController>()
+        .listSeller
         .firstWhereOrNull((p0) => p0.id == product.seller_id);
 
-    Category category = productController.listCategory
-            .firstWhereOrNull((c) => c.id == product.category_id) ??
+    Category category = Get.find<CategoryController>()
+            .listCategory
+            .firstWhereOrNull(
+                (c) => c.id == product.category_id && c.hide == false) ??
         Category.initCategory();
 
-    Province province = productController.listProvince
+    Province province = Get.find<ProvinceController>()
+            .listProvince
             .firstWhereOrNull((p) => p.id == product.province_id) ??
         Province.initProvince();
 
