@@ -1,4 +1,3 @@
-import 'package:convert_vietnamese/convert_vietnamese.dart';
 import 'package:flexible_grid_view/flexible_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -6,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
@@ -80,7 +81,7 @@ class HomeUserPage extends StatelessWidget {
                                   .searchProductController
                                   .value,
                               onChanged: (value) {
-                                loadData(listProduct);
+                                // loadData(listProduct);
                               },
                               style: const TextStyle(color: Colors.white),
                               decoration: InputDecoration(
@@ -184,8 +185,12 @@ class HomeUserPage extends StatelessWidget {
     });
   }
 
-  Container productDetail(Product product, NumberFormat currencyFormatter) {
-    Seller seller = Get.find<ProductController>()
+  Container productDetail(Product pro, NumberFormat currencyFormatter) {
+    Product product = Get.find<ProductController>()
+            .listProduct
+            .firstWhereOrNull((element) => element.id == pro.id) ??
+        Product.initProduct();
+    Seller seller = Get.find<SellerController>()
             .listSeller
             .firstWhereOrNull((element) => element.id == product.seller_id) ??
         Seller.initSeller();
@@ -193,7 +198,7 @@ class HomeUserPage extends StatelessWidget {
         .listProductImage
         .firstWhereOrNull(
             (p0) => p0.product_id == product.id && p0.is_default == true);
-    Province province = Get.find<ProductController>()
+    Province province = Get.find<ProvinceController>()
             .listProvince
             .firstWhereOrNull((element) => element.id == product.province_id) ??
         Province.initProvince();
@@ -286,34 +291,6 @@ class HomeUserPage extends StatelessWidget {
                     fontWeight: FontWeight.bold),
               ),
             ),
-
-            // Container(
-            //   padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     children: [
-            //       Container(
-            //         alignment: Alignment.centerLeft,
-            //         width: Get.width * 0.2,
-            //         child: Text(
-            //           'Đã bán: ${NumberFormat.decimalPattern().format(product.sale_num)}',
-            //           style: const TextStyle(
-            //             fontSize: 14,
-            //             color: Colors.green,
-            //             // overflow: TextOverflow.ellipsis,
-            //             fontWeight: FontWeight.bold,
-            //           ),
-            //         ),
-            //       ),
-            //       Container(
-            //         alignment: Alignment.centerRight,
-            //         width: Get.width * 0.2,
-            //         child: const Text('********'),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-
             Container(
               padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
               child: Row(
@@ -338,7 +315,6 @@ class HomeUserPage extends StatelessWidget {
                 ],
               ),
             ),
-
             Container(
               padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
               alignment: Alignment.centerRight,
@@ -399,7 +375,6 @@ class HomeUserPage extends StatelessWidget {
                 ),
               ),
             ),
-
             SizedBox(
               height: Get.height * 0.01,
             ),

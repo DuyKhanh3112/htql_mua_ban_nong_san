@@ -1,16 +1,14 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:convert_vietnamese/convert_vietnamese.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/address_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
-import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/address.dart';
-import 'package:htql_mua_ban_nong_san/models/category.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
@@ -25,15 +23,15 @@ class CheckoutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     MainController mainController = Get.find<MainController>();
 
-    Rx<Address> address = Address.initAddress().obs;
-    address.value = Get.find<AddressController>()
+    Get.find<CartController>().address.value = Get.find<AddressController>()
             .listAddress
             .firstWhereOrNull((element) => element.is_default) ??
         Address.initAddress();
     final currencyFormatter =
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
     return Obx(() {
-      return mainController.isLoading.value
+      return mainController.isLoading.value ||
+              Get.find<CartController>().isLoading.value
           ? const LoadingPage()
           : SafeArea(
               child: Scaffold(
@@ -73,12 +71,16 @@ class CheckoutPage extends StatelessWidget {
                                         value: Get.find<AddressController>()
                                             .listAddress
                                             .firstWhereOrNull((p0) =>
-                                                p0.id == address.value.id),
+                                                p0.id ==
+                                                Get.find<CartController>()
+                                                    .address
+                                                    .value
+                                                    .id),
                                         items: Get.find<AddressController>()
                                             .listAddress
                                             .map((add) {
                                           Province province = Get.find<
-                                                      ProductController>()
+                                                      ProvinceController>()
                                                   .listProvince
                                                   .firstWhereOrNull((element) =>
                                                       element.id ==
@@ -88,8 +90,8 @@ class CheckoutPage extends StatelessWidget {
                                             value: add,
                                             child: Container(
                                               decoration: const BoxDecoration(),
-                                              padding: EdgeInsets.all(
-                                                Get.width * 0.01,
+                                              padding: const EdgeInsets.all(
+                                                5,
                                               ),
                                               alignment: Alignment.centerLeft,
                                               child: Column(
@@ -100,7 +102,7 @@ class CheckoutPage extends StatelessWidget {
                                                   Container(
                                                     alignment:
                                                         Alignment.centerLeft,
-                                                    height: Get.height * 0.02,
+                                                    height: 20,
                                                     child: Text(
                                                       'Họ tên: ${add.name}',
                                                       style: const TextStyle(
@@ -115,7 +117,7 @@ class CheckoutPage extends StatelessWidget {
                                                   Container(
                                                     alignment:
                                                         Alignment.centerLeft,
-                                                    height: Get.height * 0.02,
+                                                    height: 20,
                                                     child: Text(
                                                       'Số điện thoại: ${add.phone}',
                                                       style: const TextStyle(
@@ -130,7 +132,7 @@ class CheckoutPage extends StatelessWidget {
                                                   Container(
                                                     alignment:
                                                         Alignment.centerLeft,
-                                                    height: Get.height * 0.02,
+                                                    height: 20,
                                                     child: Text(
                                                       'Tỉnh thành: ${province.name}',
                                                       style: const TextStyle(
@@ -145,7 +147,7 @@ class CheckoutPage extends StatelessWidget {
                                                   Container(
                                                     alignment:
                                                         Alignment.topLeft,
-                                                    height: Get.height * 0.04,
+                                                    height: 40,
                                                     child: Text(
                                                       'Địa chỉ: ${add.address_detail}',
                                                       maxLines: 2,
@@ -174,14 +176,18 @@ class CheckoutPage extends StatelessWidget {
                                         isExpanded: true,
                                         onChanged: (value) {
                                           if (value == null) {
-                                            address.value =
-                                                Address.initAddress();
+                                            Get.find<CartController>()
+                                                .address
+                                                .value = Address.initAddress();
                                           } else {
-                                            address.value = value;
+                                            Get.find<CartController>()
+                                                .address
+                                                .value = value;
                                           }
                                         },
-                                        menuItemStyleData: MenuItemStyleData(
-                                          height: Get.height * 0.15,
+                                        menuItemStyleData:
+                                            const MenuItemStyleData(
+                                          height: 130,
                                         ),
                                         dropdownStyleData: DropdownStyleData(
                                           maxHeight: Get.height * 0.5,
@@ -296,7 +302,11 @@ class CheckoutPage extends StatelessWidget {
                               if (Get.find<AddressController>()
                                       .listAddress
                                       .firstWhereOrNull((element) =>
-                                          element.id == address.value.id) ==
+                                          element.id ==
+                                          Get.find<CartController>()
+                                              .address
+                                              .value
+                                              .id) ==
                                   null) {
                                 await AwesomeDialog(
                                   titleTextStyle: const TextStyle(
@@ -318,6 +328,9 @@ class CheckoutPage extends StatelessWidget {
                                 ).show();
                                 return;
                               } else {
+                                await Get.find<CartController>().checkout();
+
+                                // ignore: use_build_context_synchronously
                                 await AwesomeDialog(
                                   titleTextStyle: const TextStyle(
                                     color: Colors.green,
@@ -335,6 +348,7 @@ class CheckoutPage extends StatelessWidget {
                                   // desc: 'Tên đăng nhập đã tồn tại.',
                                   btnOkOnPress: () {},
                                 ).show();
+                                Get.back();
                               }
                             },
                             style: const ButtonStyle(

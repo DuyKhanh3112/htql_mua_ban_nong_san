@@ -25,7 +25,7 @@ class CategoryHomePage extends StatelessWidget {
 
     return Obx(() {
       if (searchController.value.text.isEmpty) {
-        listCategory.value = categoryController.listCategory;
+        listCategory.value = categoryController.listCategory.toList();
       } else {
         listCategory.value = categoryController.listCategory
             .where((e) => removeDiacritics(e.name.toLowerCase()).contains(
@@ -81,11 +81,14 @@ class CategoryHomePage extends StatelessWidget {
                                 TextFormField(
                                   onChanged: (value) {
                                     if (searchController.value.text == '') {
-                                      listCategory.value =
-                                          categoryController.listCategory;
+                                      listCategory.value = categoryController
+                                          .listCategory
+                                          .where((p0) => p0.hide == false)
+                                          .toList();
                                     } else {
                                       listCategory.value = categoryController
                                           .listCategory
+                                          .where((p0) => p0.hide == false)
                                           .where((e) => removeDiacritics(
                                                   e.name.toLowerCase())
                                               .contains(removeDiacritics(
@@ -120,10 +123,15 @@ class CategoryHomePage extends StatelessWidget {
                                       onPressed: () async {
                                         if (searchController.value.text == '') {
                                           listCategory.value =
-                                              categoryController.listCategory;
+                                              categoryController.listCategory
+                                                  .where(
+                                                      (p0) => p0.hide == false)
+                                                  .toList();
                                         } else {
                                           listCategory.value =
                                               categoryController.listCategory
+                                                  .where(
+                                                      (p0) => p0.hide == false)
                                                   .where((e) => e.name.contains(
                                                       searchController
                                                           .value.text))
@@ -236,7 +244,7 @@ class CategoryHomePage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  width: Get.width / 2,
+                  width: Get.width * 0.45,
                   child: Text(
                     category.name,
                     style: const TextStyle(
@@ -247,42 +255,47 @@ class CategoryHomePage extends StatelessWidget {
               ],
             ),
           ),
-          InkWell(
-            child: const Icon(
-              Icons.delete,
-              color: Colors.red,
+          SizedBox(
+            width: Get.width * 0.15,
+            child: InkWell(
+              child: category.hide
+                  ? const SizedBox()
+                  : const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+              onTap: () async {
+                // await AwesomeDialog(
+                //         titleTextStyle: const TextStyle(
+                //           color: Colors.green,
+                //           fontWeight: FontWeight.bold,
+                //           fontSize: 22,
+                //         ),
+                //         descTextStyle: const TextStyle(
+                //           color: Colors.green,
+                //           fontSize: 16,
+                //         ),
+                //         context: context,
+                //         dialogType: DialogType.question,
+                //         animType: AnimType.rightSlide,
+                //         title: 'Bạn có muốn xóa loại sản phẩm này không?',
+                //         // desc: 'Bạn có muốn xóa loại sản phẩm này không?',
+                //         btnOkText: 'Xóa',
+                //         btnCancelText: 'Không',
+                //         btnOkOnPress: () async {
+                //           Get.put(CategoryController());
+                //           CategoryController categoryController =
+                //               Get.find<CategoryController>();
+                //           categoryController.isLoading.value = true;
+                //           await CloudinaryController()
+                //               .deleteImage(category.id, 'category');
+                //           await categoryController.deleteCategory(category);
+                //           categoryController.isLoading.value = false;
+                //         },
+                //         btnCancelOnPress: () {})
+                //     .show();
+              },
             ),
-            onTap: () async {
-              await AwesomeDialog(
-                      titleTextStyle: const TextStyle(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22,
-                      ),
-                      descTextStyle: const TextStyle(
-                        color: Colors.green,
-                        fontSize: 16,
-                      ),
-                      context: context,
-                      dialogType: DialogType.question,
-                      animType: AnimType.rightSlide,
-                      title: 'Bạn có muốn xóa loại sản phẩm này không?',
-                      // desc: 'Bạn có muốn xóa loại sản phẩm này không?',
-                      btnOkText: 'Xóa',
-                      btnCancelText: 'Không',
-                      btnOkOnPress: () async {
-                        Get.put(CategoryController());
-                        CategoryController categoryController =
-                            Get.find<CategoryController>();
-                        categoryController.isLoading.value = true;
-                        await CloudinaryController()
-                            .deleteImage(category.id, 'category');
-                        await categoryController.deleteCategory(category);
-                        categoryController.isLoading.value = false;
-                      },
-                      btnCancelOnPress: () {})
-                  .show();
-            },
           ),
         ],
       ),
@@ -738,7 +751,10 @@ class CategoryHomePage extends StatelessWidget {
                       Get.back();
                       categoryController.isLoading.value = true;
                       Category category = Category(
-                          id: '', name: nameController.value.text, image: '');
+                          id: '',
+                          name: nameController.value.text,
+                          image: '',
+                          hide: false);
                       category.image = (await CloudinaryController()
                           .uploadImage(
                               filePath.value,

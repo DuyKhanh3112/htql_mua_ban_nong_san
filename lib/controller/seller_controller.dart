@@ -8,7 +8,22 @@ class SellerController extends GetxController {
   CollectionReference sellerCollection =
       FirebaseFirestore.instance.collection('Seller');
 
+  RxList<Seller> listSeller = <Seller>[].obs;
+
   RxBool isLoading = false.obs;
+
+  Future<void> loadSeller() async {
+    isLoading.value = true;
+    listSeller.value = [];
+    final snapshotSeller =
+        await sellerCollection.where('status', isEqualTo: 'active').get();
+    for (var item in snapshotSeller.docs) {
+      Map<String, dynamic> data = item.data() as Map<String, dynamic>;
+      data['id'] = item.id;
+      listSeller.add(Seller.fromJson(data));
+    }
+    isLoading.value = false;
+  }
 
   Future<void> createSeller(Seller seller) async {
     WriteBatch batch = FirebaseFirestore.instance.batch();

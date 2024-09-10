@@ -8,8 +8,11 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/category.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
@@ -45,44 +48,17 @@ class ProductSellerFormPage extends StatelessWidget {
 
     final picker = ImagePicker();
 
-    var pro = productController.listProduct
-        .firstWhereOrNull((p0) => p0.id == productController.product.value.id);
-    if (pro != null) {
-      category.value = productController.listCategory
-              .firstWhereOrNull((element) => element.id == pro.category_id) ??
-          Category.initCategory();
-      province.value = productController.listProvince
-              .firstWhereOrNull((element) => element.id == pro.province_id) ??
-          Province.initProvince();
-      nameController.text = pro.name;
-      descriptionController.text = pro.description ?? '';
-      expripyDateController.text = pro.expripy_date != null
-          ? NumberFormat.decimalPatternDigits(decimalDigits: 0)
-              .format(pro.expripy_date)
-              .toString()
-              .toString()
-          : '';
-      priceController.text = NumberFormat.decimalPatternDigits(decimalDigits: 0)
-          .format(pro.price)
-          .toString();
-      quantityController.text =
-          NumberFormat.decimalPatternDigits(decimalDigits: 0)
-              .format(pro.quantity)
-              .toString();
-      unitController.text = pro.unit;
-      for (var img in productController.listProductImage
-          .where((p0) => p0.product_id == pro.id)) {
-        listImageUrl.add(img);
-      }
-    } else {
-      Seller? sell = productController.listSeller.firstWhereOrNull(
-          (p0) => p0.id == Get.find<MainController>().seller.value.id);
-      if (sell != null) {
-        province.value = productController.listProvince.firstWhereOrNull(
-                (element) => element.id == sell.province_id) ??
-            Province.initProvince();
-      }
-    }
+    loadData(
+        productController,
+        category,
+        province,
+        nameController,
+        descriptionController,
+        expripyDateController,
+        priceController,
+        quantityController,
+        unitController,
+        listImageUrl);
 
     return Obx(() {
       return productController.isLoading.value
@@ -175,11 +151,15 @@ class ProductSellerFormPage extends StatelessWidget {
                                     ),
                                     DropdownButtonHideUnderline(
                                       child: DropdownButton2(
-                                        value: productController.listCategory
+                                        value: Get.find<CategoryController>()
+                                            .listCategory
                                             .firstWhereOrNull((element) =>
                                                 element.id ==
-                                                category.value.id),
-                                        items: productController.listCategory
+                                                    category.value.id &&
+                                                element.hide == false),
+                                        items: Get.find<CategoryController>()
+                                            .listCategory
+                                            .where((p0) => p0.hide == false)
                                             .map(
                                               (category) => DropdownMenuItem(
                                                 value: category,
@@ -289,11 +269,13 @@ class ProductSellerFormPage extends StatelessWidget {
                                     ),
                                     DropdownButtonHideUnderline(
                                       child: DropdownButton2(
-                                        value: productController.listProvince
+                                        value: Get.find<ProvinceController>()
+                                            .listProvince
                                             .firstWhereOrNull((element) =>
                                                 element.id ==
                                                 province.value.id),
-                                        items: productController.listProvince
+                                        items: Get.find<ProvinceController>()
+                                            .listProvince
                                             .map(
                                               (province) => DropdownMenuItem(
                                                 value: province,
@@ -968,30 +950,17 @@ class ProductSellerFormPage extends StatelessWidget {
                         onPressed: () async {
                           if (formKey.currentState!.validate()) {
                             Category? categorySubmit =
-                                productController.listCategory.firstWhereOrNull(
-                                    (p0) => p0.id == category.value.id);
-                            Province? provinceSubmit = productController
-                                .listProvince
-                                .firstWhereOrNull((element) =>
-                                    element.id == province.value.id);
-                            if (categorySubmit == null) {
-                              await AwesomeDialog(
-                                titleTextStyle: const TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 22,
-                                ),
-                                descTextStyle: const TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 16,
-                                ),
-                                context: context,
-                                dialogType: DialogType.error,
-                                animType: AnimType.rightSlide,
-                                title: 'Hãy chọn loại sản phẩm',
-                                btnOkOnPress: () {},
-                              ).show();
-                            } else if (provinceSubmit == null) {
+                                Get.find<CategoryController>()
+                                    .listCategory
+                                    .firstWhereOrNull((p0) =>
+                                        p0.id == category.value.id &&
+                                        p0.hide == false);
+                            Province? provinceSubmit =
+                                Get.find<ProvinceController>()
+                                    .listProvince
+                                    .firstWhereOrNull((element) =>
+                                        element.id == province.value.id);
+                            if (provinceSubmit == null) {
                               await AwesomeDialog(
                                 titleTextStyle: const TextStyle(
                                   color: Colors.green,
@@ -1037,7 +1006,7 @@ class ProductSellerFormPage extends StatelessWidget {
                                 productController.product.value = Product(
                                     id: '',
                                     name: nameController.text,
-                                    category_id: categorySubmit.id,
+                                    category_id: categorySubmit!.id,
                                     seller_id: Get.find<MainController>()
                                         .seller
                                         .value
@@ -1071,20 +1040,23 @@ class ProductSellerFormPage extends StatelessWidget {
                                 productController.product.value.name =
                                     nameController.text;
                                 productController.product.value.category_id =
-                                    categorySubmit.id;
+                                    categorySubmit!.id;
                                 productController.product.value.province_id =
                                     provinceSubmit.id;
                                 productController.product.value.price =
-                                    double.parse(priceController.text);
+                                    double.parse(priceController.text
+                                        .replaceAll(',', ''));
                                 productController.product.value.quantity =
-                                    double.parse(quantityController.text);
+                                    double.parse(quantityController.text
+                                        .replaceAll(',', ''));
                                 productController.product.value.unit =
                                     unitController.text;
-                                productController.product.value
-                                    .expripy_date = expripyDateController
-                                        .text.isEmpty
-                                    ? null
-                                    : double.parse(expripyDateController.text);
+                                productController.product.value.expripy_date =
+                                    expripyDateController.text.isEmpty
+                                        ? null
+                                        : double.parse(expripyDateController
+                                            .text
+                                            .replaceAll(',', ''));
                                 productController.product.value.description =
                                     descriptionController.text;
 
@@ -1133,6 +1105,62 @@ class ProductSellerFormPage extends StatelessWidget {
               ),
             );
     });
+  }
+
+  void loadData(
+      ProductController productController,
+      Rx<Category> category,
+      Rx<Province> province,
+      TextEditingController nameController,
+      TextEditingController descriptionController,
+      TextEditingController expripyDateController,
+      TextEditingController priceController,
+      TextEditingController quantityController,
+      TextEditingController unitController,
+      RxList<ProductImage> listImageUrl) {
+    var pro = productController.listProduct
+        .firstWhereOrNull((p0) => p0.id == productController.product.value.id);
+    if (pro != null) {
+      category.value = Get.find<CategoryController>()
+              .listCategory
+              .firstWhereOrNull((element) =>
+                  element.id == pro.category_id && element.hide == false) ??
+          Category.initCategory();
+      province.value = Get.find<ProvinceController>()
+              .listProvince
+              .firstWhereOrNull((element) => element.id == pro.province_id) ??
+          Province.initProvince();
+      nameController.text = pro.name;
+      descriptionController.text = pro.description ?? '';
+      expripyDateController.text = pro.expripy_date != null
+          ? NumberFormat.decimalPatternDigits(decimalDigits: 0)
+              .format(pro.expripy_date)
+              .toString()
+              .toString()
+          : '';
+      priceController.text = NumberFormat.decimalPatternDigits(decimalDigits: 0)
+          .format(pro.price)
+          .toString();
+      quantityController.text =
+          NumberFormat.decimalPatternDigits(decimalDigits: 0)
+              .format(pro.quantity)
+              .toString();
+      unitController.text = pro.unit;
+      for (var img in productController.listProductImage
+          .where((p0) => p0.product_id == pro.id)) {
+        listImageUrl.add(img);
+      }
+    } else {
+      Seller? sell = Get.find<SellerController>().listSeller.firstWhereOrNull(
+          (p0) => p0.id == Get.find<MainController>().seller.value.id);
+      if (sell != null) {
+        province.value = Get.find<ProvinceController>()
+                .listProvince
+                .firstWhereOrNull(
+                    (element) => element.id == sell.province_id) ??
+            Province.initProvince();
+      }
+    }
   }
 
   Future<void> createProduct(ProductController productController,

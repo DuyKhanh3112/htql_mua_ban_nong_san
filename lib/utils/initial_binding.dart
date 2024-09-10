@@ -7,6 +7,7 @@ import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/review_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 // import 'package:htql_mua_ban_nong_san/controller/user_controller.dart';
@@ -14,8 +15,10 @@ import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 class InitialBindings extends Bindings {
   @override
   void dependencies() async {
+    Get.put(ProvinceController(), permanent: true);
     Get.put(MainController(), permanent: true);
     Get.put(BuyerController(), permanent: true);
+
     Get.put(SellerController(), permanent: true);
     Get.put(AdminController(), permanent: true);
     Get.put(CategoryController(), permanent: true);
@@ -25,12 +28,7 @@ class InitialBindings extends Bindings {
     Get.put(CartController(), permanent: true);
     Get.put(AddressController(), permanent: true);
 
-    Get.find<MainController>().isLoading.value = true;
-    await Get.find<ProductController>().loadProductActive();
-    await Get.find<ProductController>().loadCategory();
-    await Get.find<ProductController>().loadSeller();
-    await Get.find<ProductController>().loadProvince();
-    Get.find<MainController>().isLoading.value = false;
+    await Get.find<MainController>().loadAll();
   }
 
   Future<void> buyerController() async {

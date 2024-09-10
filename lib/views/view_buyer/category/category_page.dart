@@ -1,4 +1,5 @@
 import 'package:convert_vietnamese/convert_vietnamese.dart';
+import 'package:flexible_grid_view/flexible_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
@@ -7,7 +8,6 @@ import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/category.dart';
-import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:intl/intl.dart';
 
 class CategoryPage extends StatelessWidget {
@@ -146,126 +146,74 @@ class CategoryPage extends StatelessWidget {
                       height: 10,
                     ),
                     Expanded(
-                      child: ListView(
-                        // children: [
-                        //   for (var category
-                        //       in Get.find<CategoryController>().listCategory)
-                        //     Container(
-                        //       height: Get.height * 0.2,
-                        //       width: Get.width,
-                        //       margin: EdgeInsets.all(Get.width * 0.05),
-                        //       decoration: const BoxDecoration(
-                        //         color: Colors.amber,
-                        //         boxShadow: [
-                        //           BoxShadow(
-                        //             color: Colors.grey,
-                        //             offset: Offset(4.0, 4.0),
-                        //             blurRadius: 10.0,
-                        //             spreadRadius: 2.0,
-                        //           ),
-                        //         ],
-                        //       ),
-                        //     ),
-                        // ],
-                        children: listCategory
-                            .map(
-                              (category) => InkWell(
-                                onTap: () {
-                                  Get.find<ProductController>().category.value =
-                                      category;
-                                  Get.toNamed('search_product');
-                                },
-                                child: Container(
-                                  height: Get.height * 0.15,
-                                  width: Get.width,
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: Get.width * 0.05,
-                                    vertical: Get.width * 0.02,
-                                  ),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(20),
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey,
-                                        offset: Offset(4.0, 4.0),
-                                        blurRadius: 10.0,
-                                        spreadRadius: 2.0,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Get.find<CategoryController>()
-                                                      .listCategory
-                                                      .indexOf(category) %
-                                                  2 ==
-                                              0
-                                          ? const SizedBox()
-                                          : Container(
-                                              width: Get.width * 0.4,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                  Radius.circular(20),
-                                                ),
-                                                image: DecorationImage(
-                                                    image: NetworkImage(
-                                                        category.image),
-                                                    fit: BoxFit.fill),
-                                              ),
-                                            ),
-                                      Container(
-                                        alignment:
-                                            Get.find<CategoryController>()
-                                                            .listCategory
-                                                            .indexOf(category) %
-                                                        2 !=
-                                                    0
-                                                ? Alignment.centerRight
-                                                : Alignment.centerLeft,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: Get.width * 0.02),
-                                        width: Get.width * 0.4,
-                                        decoration: const BoxDecoration(),
-                                        child: Text(
-                                          category.name,
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.green,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      Get.find<CategoryController>()
-                                                      .listCategory
-                                                      .indexOf(category) %
-                                                  2 !=
-                                              0
-                                          ? const SizedBox()
-                                          : Container(
-                                              width: Get.width * 0.4,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                  Radius.circular(20),
-                                                ),
-                                                image: DecorationImage(
-                                                    image: NetworkImage(
-                                                        category.image),
-                                                    fit: BoxFit.fill),
-                                              ),
-                                            ),
-                                    ],
-                                  ),
+                      child: FlexibleGridView(
+                        axisCount: GridLayoutEnum.twoElementsInRow,
+                        children: listCategory.map((category) {
+                          return InkWell(
+                            onTap: () {
+                              Get.find<ProductController>().category.value =
+                                  category;
+                              Get.toNamed('search_product');
+                            },
+                            child: Container(
+                              width: Get.width * 0.5,
+                              // height: 100,
+                              margin: EdgeInsets.all(Get.width * 0.03),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(20),
                                 ),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    offset: Offset(2.0, 2.0),
+                                    blurRadius: 10.0,
+                                    spreadRadius: 2.0,
+                                  ),
+                                ],
                               ),
-                            )
-                            .toList(),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: Get.width * 0.3,
+                                    // width: Get.width * 0.5,
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        topRight: Radius.circular(20),
+                                      ),
+                                      image: category.image == null
+                                          ? null
+                                          : DecorationImage(
+                                              image:
+                                                  NetworkImage(category.image),
+                                              fit: BoxFit.fill,
+                                            ),
+                                    ),
+                                  ),
+                                  // SizedBox(height: Get.height,),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: Get.width * 0.02),
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: Get.width * 0.01),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      category.name,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
                       ),
                     ),
                     // const Divider(),
@@ -282,12 +230,13 @@ class CategoryPage extends StatelessWidget {
   void loadData(RxList<Category> listCategory,
       Rx<TextEditingController> searchController) {
     listCategory.value = [];
-    listCategory.value = Get.find<ProductController>()
+    listCategory.value = Get.find<CategoryController>()
         .listCategory
         .where((p0) =>
-            searchController.value.text.isEmpty ||
-            removeDiacritics(p0.name.toLowerCase())
-                .contains(searchController.value.text))
+            p0.hide == false &&
+            (searchController.value.text.isEmpty ||
+                removeDiacritics(p0.name.toLowerCase())
+                    .contains(searchController.value.text)))
         .toList();
   }
 }

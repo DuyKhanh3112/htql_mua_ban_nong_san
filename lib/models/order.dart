@@ -1,43 +1,51 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Order {
+class Orders {
   String id;
   String buyer_id;
   String seller_id;
-  String order_status_id;
+  String address_id;
+  String status;
   double order_amount;
   Timestamp order_date;
   Timestamp? received_date;
+  Timestamp update_at;
 
-  Order({
+  Orders({
     required this.id,
     required this.buyer_id,
     required this.seller_id,
-    required this.order_status_id,
+    required this.address_id,
+    required this.status,
     required this.order_amount,
     required this.order_date,
+    required this.update_at,
     this.received_date,
   });
 
-  factory Order.initOrder() {
-    return Order(
+  factory Orders.initOrder() {
+    return Orders(
       id: '',
       buyer_id: '',
       seller_id: '',
-      order_status_id: '',
+      address_id: '',
+      status: '',
       order_date: Timestamp.now(),
+      update_at: Timestamp.now(),
       order_amount: 0,
     );
   }
-  static Order fromJson(Map<String, dynamic> json) {
-    return Order(
+  static Orders fromJson(Map<String, dynamic> json) {
+    return Orders(
       id: json['id'],
       buyer_id: json['buyer_id'],
       seller_id: json['seller_id'],
-      order_status_id: json['order_status_id'],
+      address_id: json['address_id'],
+      status: json['status'],
       order_amount: json['order_amount'],
       order_date: json['order_date'],
-      received_date: json['received_date'] ?? false,
+      update_at: json['update_at'],
+      received_date: json['received_date'],
     );
   }
 
@@ -46,9 +54,11 @@ class Order {
       'id': id,
       'buyer_id': buyer_id,
       'seller_id': seller_id,
-      'order_status_id': order_status_id,
+      'address_id': address_id,
+      'status': status,
       'order_amount': order_amount,
       'order_date': order_date,
+      'update_at': update_at,
       'received_date': received_date,
     };
   }
@@ -58,9 +68,11 @@ class Order {
       // 'id': id,
       'buyer_id': buyer_id,
       'seller_id': seller_id,
-      'order_status_id': order_status_id,
+      'address_id': address_id,
+      'status': status,
       'order_amount': order_amount,
       'order_date': order_date,
+      'update_at': update_at,
       'received_date': received_date,
     };
   }

@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/address_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/models/admin.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
@@ -14,6 +18,7 @@ import 'package:htql_mua_ban_nong_san/views/view_buyer/account_setting_page.dart
 import 'package:htql_mua_ban_nong_san/views/view_buyer/category/category_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/home_buyer_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/order/order_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/order/order_seller_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_home_page.dart';
 
 class MainController extends GetxController {
@@ -50,7 +55,7 @@ class MainController extends GetxController {
     const HomeUserPage(),
     const CategoryPage(),
     const OrderPage(),
-    const AccountSettingPage(),
+    // const AccountSettingPage(),
     const AccountSettingPage(),
   ];
   List<Widget> pageAdmin = [
@@ -70,6 +75,7 @@ class MainController extends GetxController {
   List<Widget> pageSeller = [
     // const HomeSellerPage(),
     const ProductSellerHomePage(),
+    const OrderSellerHomePage(),
   ];
   RxInt indexSeller = 0.obs;
   List<String> titleSeller = [
@@ -160,10 +166,10 @@ class MainController extends GetxController {
 
   Future<void> loadAll() async {
     isLoading.value = true;
-    // if (listProvince.value.isEmpty) {
-
-    await loadProvince();
-    // }
+    await Get.find<ProvinceController>().loadProvince();
+    await Get.find<CategoryController>().loadCategory();
+    await Get.find<SellerController>().loadSeller();
+    await Get.find<ProductController>().loadProductActive();
     isLoading.value = false;
   }
 

@@ -57,6 +57,7 @@ class LoginPage extends StatelessWidget {
                                 await Get.find<ProductController>()
                                     .loadProductActive();
                                 mainController.isLoading.value = false;
+                                mainController.numPage.value = 0;
                                 Get.toNamed('/');
                               },
                               child: const Icon(
