@@ -1,9 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:htql_mua_ban_nong_san/controller/address_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';

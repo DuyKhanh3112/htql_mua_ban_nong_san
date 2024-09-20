@@ -13,10 +13,8 @@ import 'package:htql_mua_ban_nong_san/utils/initial_binding.dart';
 import 'package:htql_mua_ban_nong_san/views/home_page.dart';
 import 'package:htql_mua_ban_nong_san/login_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/admin_home_page.dart';
-
 // ignore: depend_on_referenced_packages
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:htql_mua_ban_nong_san/views/view_admin/buyer/buyer_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/personal_admin_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/product/product_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/address/address_page.dart';

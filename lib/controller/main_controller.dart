@@ -3,7 +3,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/address_controller.dart';
-import 'package:htql_mua_ban_nong_san/controller/article_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
@@ -21,7 +20,6 @@ import 'package:htql_mua_ban_nong_san/views/view_buyer/account_setting_page.dart
 import 'package:htql_mua_ban_nong_san/views/view_buyer/article/article_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/category/category_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/home_buyer_page.dart';
-import 'package:htql_mua_ban_nong_san/views/view_buyer/order/order_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/article/article_seller_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/order/order_seller_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_home_page.dart';

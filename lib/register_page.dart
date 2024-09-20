@@ -2,11 +2,8 @@ import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudinary/cloudinary.dart';
-import 'package:convert_vietnamese/convert_vietnamese.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:htql_mua_ban_nong_san/config.dart';
 import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cloudinary_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';

@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'dart:math';
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -69,7 +67,7 @@ class ArticleSellerFormPage extends StatelessWidget {
                       child: Column(
                         children: [
                           Get.find<MainController>().admin.value.id == ''
-                              ? SizedBox()
+                              ? const SizedBox()
                               : Row(
                                   children: [
                                     Container(
@@ -452,7 +450,9 @@ class ArticleSellerFormPage extends StatelessWidget {
                                             .update_at = Timestamp.now();
 
                                         await articleController.updateArticle(
-                                            listFilePath, listImageUrl.value);
+                                            listFilePath,
+                                            // ignore: invalid_use_of_protected_member
+                                            listImageUrl.value);
                                       }
                                       // ignore: use_build_context_synchronously
                                       await AwesomeDialog(

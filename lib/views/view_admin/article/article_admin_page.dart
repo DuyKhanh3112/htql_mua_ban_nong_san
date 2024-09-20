@@ -7,7 +7,6 @@ import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/article.dart';
 import 'package:htql_mua_ban_nong_san/models/article_image.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/drawer_admin.dart';
-import 'package:htql_mua_ban_nong_san/views/view_seller/drawer_seller.dart';
 
 class ArticleAdminPage extends StatelessWidget {
   const ArticleAdminPage({super.key});
@@ -244,7 +243,7 @@ class ArticleAdminPage extends StatelessWidget {
                                                   ),
                                                 ),
                                               )
-                                            : SizedBox(),
+                                            : const SizedBox(),
                                       ],
                                     )
                                   ],

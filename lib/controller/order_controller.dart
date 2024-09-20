@@ -13,7 +13,6 @@ import 'package:htql_mua_ban_nong_san/models/order.dart';
 import 'package:htql_mua_ban_nong_san/models/order_detail.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
-import 'package:htql_mua_ban_nong_san/models/review.dart';
 
 class OrderController extends GetxController {
   static OrderController get to => Get.find<OrderController>();
