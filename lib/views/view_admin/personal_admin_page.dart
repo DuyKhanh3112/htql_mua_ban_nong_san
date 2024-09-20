@@ -4,7 +4,7 @@ import 'package:htql_mua_ban_nong_san/controller/admin_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/admin.dart';
-import 'package:htql_mua_ban_nong_san/views/view_admin/main_drawer.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/drawer_admin.dart';
 
 class PersonalAdminPage extends StatelessWidget {
   const PersonalAdminPage({super.key});

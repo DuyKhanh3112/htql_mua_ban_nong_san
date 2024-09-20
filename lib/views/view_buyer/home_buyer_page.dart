@@ -1,13 +1,17 @@
+import 'package:card_banner/card_banner.dart';
 import 'package:flexible_grid_view/flexible_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
+import 'package:htql_mua_ban_nong_san/models/category.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
@@ -17,23 +21,22 @@ import 'package:intl/intl.dart';
 class HomeUserPage extends StatelessWidget {
   const HomeUserPage({super.key});
 
-  void loadData(RxList<Product> listProduct) {
-    listProduct.value = Get.find<ProductController>()
-        .listProduct
-        .where((p0) => p0.status == 'active')
-        .toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     final currencyFormatter =
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
     MainController mainController = Get.find<MainController>();
 
-    RxList<Product> listProduct = <Product>[].obs;
+    // RxList<Product> listProduct = <Product>[].obs;
+    RxList<Product> topProductBestSeller = <Product>[].obs;
+    RxList<Product> topProductNew = <Product>[].obs;
+    RxList<Product> topProductRatting = <Product>[].obs;
+    RxList<Product> productBought = <Product>[].obs;
 
     return Obx(() {
-      loadData(listProduct);
+      loadData(topProductBestSeller, topProductNew, topProductRatting,
+          mainController, productBought);
+
       return mainController.isLoading.value
           ? const LoadingPage()
           : SafeArea(
@@ -82,6 +85,12 @@ class HomeUserPage extends StatelessWidget {
                                   .value,
                               onChanged: (value) {
                                 // loadData(listProduct);
+                                loadData(
+                                    topProductBestSeller,
+                                    topProductNew,
+                                    topProductRatting,
+                                    mainController,
+                                    productBought);
                               },
                               style: const TextStyle(color: Colors.white),
                               decoration: InputDecoration(
@@ -97,19 +106,18 @@ class HomeUserPage extends StatelessWidget {
                                           color: Colors.white,
                                         ),
                                         onTap: () {
-                                          // Get.find<ProductController>()
-                                          //     .searchProductController
-                                          //     .value
-                                          //     .clear();
-                                          // loadData(listProduct);
+                                          Get.find<ProductController>()
+                                              .category
+                                              .value = Category.initCategory();
                                           Get.toNamed('search_product');
                                         },
                                       ),
                                 border: InputBorder.none,
-                                hintText: 'Tìm kiếm ...',
+                                hintText: 'Tìm kiếm sản phẩm...',
                                 hintStyle: const TextStyle(
                                   color: Colors.white,
                                   fontStyle: FontStyle.italic,
+                                  fontSize: 14,
                                 ),
                               ),
                             ),
@@ -161,18 +169,262 @@ class HomeUserPage extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     const SizedBox(
                       height: 10,
                     ),
-
-                    // const Divider(),
+                    // Expanded(
+                    //   child: FlexibleGridView(
+                    //     axisCount: GridLayoutEnum.twoElementsInRow,
+                    //     children: listProduct.map((product) {
+                    //       return productDetail(product, currencyFormatter);
+                    //     }).toList(),
+                    //   ),
+                    // ),
                     Expanded(
-                      child: FlexibleGridView(
-                        axisCount: GridLayoutEnum.twoElementsInRow,
-                        children: listProduct.map((product) {
-                          return productDetail(product, currencyFormatter);
-                        }).toList(),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: Column(
+                          children: [
+                            // SẢN PHẨM ĐÃ MUA
+                            productBought.isEmpty
+                                ? const SizedBox()
+                                : Container(
+                                    color: Colors.green,
+                                    padding: const EdgeInsets.all(10),
+                                    margin: EdgeInsets.only(
+                                      bottom: Get.width * 0.01,
+                                      top: Get.width * 0.05,
+                                    ),
+                                    alignment: Alignment.centerLeft,
+                                    child: const Text(
+                                      'SẢN PHẨM ĐÃ MUA GẦN ĐÂY',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                            productBought.isEmpty
+                                ? const SizedBox()
+                                : SingleChildScrollView(
+                                    child: Container(
+                                      // height: Get.height * 0.5,
+                                      padding: EdgeInsets.only(
+                                          left: Get.width * 0.01),
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: [
+                                            for (var product in productBought)
+                                              productDetail(
+                                                  product, currencyFormatter),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                            // SẢN PHẨM MỚI
+                            topProductNew.isEmpty
+                                ? const SizedBox()
+                                : Container(
+                                    color: Colors.green,
+                                    width: Get.width,
+                                    // width: double.infinity,
+                                    padding: const EdgeInsets.all(10),
+                                    margin: EdgeInsets.only(
+                                      bottom: Get.width * 0.01,
+                                      top: Get.width * 0.05,
+                                    ),
+                                    alignment: Alignment.centerLeft,
+                                    child: const Text(
+                                      'SẢN PHẨM MỚI',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                            topProductNew.isEmpty
+                                ? const SizedBox()
+                                : SingleChildScrollView(
+                                    child: Container(
+                                      // height: Get.height * 0.5,
+                                      padding: EdgeInsets.only(
+                                          left: Get.width * 0.01),
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: [
+                                            for (var product
+                                                in topProductNew.sublist(
+                                                    0,
+                                                    topProductNew.length > 5
+                                                        ? 5
+                                                        : topProductNew.length))
+                                              productDetail(
+                                                  product, currencyFormatter),
+                                            InkWell(
+                                              child: SizedBox(
+                                                width: Get.width * 0.2,
+                                                child: Icon(
+                                                  Icons.chevron_right_sharp,
+                                                  size: Get.width * 0.15,
+                                                  color: Colors.green,
+                                                ),
+                                              ),
+                                              onTap: () {
+                                                Get.find<ProductController>()
+                                                    .listProduct
+                                                    .sort((a, b) => b.create_at
+                                                        .compareTo(
+                                                            a.create_at));
+                                                Get.toNamed('search_product');
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                            //SẢN PHẨM BÁN CHẠY
+                            topProductBestSeller.isEmpty
+                                ? const SizedBox()
+                                : Container(
+                                    color: Colors.green,
+                                    width: Get.width,
+                                    // width: double.infinity,
+                                    padding: const EdgeInsets.all(10),
+                                    margin: EdgeInsets.only(
+                                      bottom: Get.width * 0.01,
+                                      top: Get.width * 0.05,
+                                    ),
+                                    alignment: Alignment.centerLeft,
+                                    child: const Text(
+                                      'SẢN PHẨM BÁN CHẠY',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                            topProductBestSeller.isEmpty
+                                ? const SizedBox()
+                                : SingleChildScrollView(
+                                    child: Container(
+                                      // height: Get.height * 0.5,
+                                      padding: EdgeInsets.only(
+                                          left: Get.width * 0.01),
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: [
+                                            for (var product
+                                                in topProductBestSeller.sublist(
+                                                    0,
+                                                    topProductBestSeller
+                                                                .length >
+                                                            5
+                                                        ? 5
+                                                        : topProductBestSeller
+                                                            .length))
+                                              productDetail(
+                                                  product, currencyFormatter),
+                                            InkWell(
+                                              child: SizedBox(
+                                                width: Get.width * 0.2,
+                                                child: Icon(
+                                                  Icons.chevron_right_sharp,
+                                                  size: Get.width * 0.15,
+                                                  color: Colors.green,
+                                                ),
+                                              ),
+                                              onTap: () {
+                                                Get.find<ProductController>()
+                                                    .listProduct
+                                                    .sort((a, b) => b.sale_num!
+                                                        .compareTo(
+                                                            a.sale_num!));
+                                                Get.toNamed('search_product');
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                            //SẢN PHẨM ĐƯỢC ĐÁNH GIÁ TỐT
+                            topProductRatting.isEmpty
+                                ? const SizedBox()
+                                : Container(
+                                    color: Colors.green,
+                                    width: Get.width,
+                                    padding: const EdgeInsets.all(10),
+                                    margin: EdgeInsets.only(
+                                      bottom: Get.width * 0.01,
+                                      top: Get.width * 0.05,
+                                    ),
+                                    alignment: Alignment.centerLeft,
+                                    child: const Text(
+                                      'SẢN PHẨM ĐƯỢC ĐÁNH GIÁ TỐT',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                            topProductRatting.isEmpty
+                                ? const SizedBox()
+                                : SingleChildScrollView(
+                                    child: Container(
+                                      // height: Get.height * 0.5,
+                                      padding: EdgeInsets.only(
+                                          left: Get.width * 0.01),
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: [
+                                            for (var product
+                                                in topProductRatting.sublist(
+                                                    0,
+                                                    topProductRatting.length > 5
+                                                        ? 5
+                                                        : topProductRatting
+                                                            .length))
+                                              productDetail(
+                                                  product, currencyFormatter),
+                                            InkWell(
+                                              child: SizedBox(
+                                                width: Get.width * 0.2,
+                                                child: Icon(
+                                                  Icons.chevron_right_sharp,
+                                                  size: Get.width * 0.15,
+                                                  color: Colors.green,
+                                                ),
+                                              ),
+                                              onTap: () {
+                                                Get.find<ProductController>()
+                                                    .listProduct
+                                                    .sort((a, b) => b.ratting!
+                                                        .compareTo(a.ratting!));
+                                                Get.toNamed('search_product');
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(
@@ -185,7 +437,36 @@ class HomeUserPage extends StatelessWidget {
     });
   }
 
-  Container productDetail(Product pro, NumberFormat currencyFormatter) {
+  void loadData(
+      RxList<Product> topProductBestSeller,
+      RxList<Product> topProductNew,
+      RxList<Product> topProductRatting,
+      MainController mainController,
+      RxList<Product> productBought) {
+    topProductBestSeller.value = Get.find<ProductController>()
+        .listProduct
+        .where((p0) => p0.status == 'active')
+        .toList();
+    topProductBestSeller.sort((a, b) => b.sale_num!.compareTo(a.sale_num!));
+
+    topProductNew.value = Get.find<ProductController>()
+        .listProduct
+        .where((p0) => p0.status == 'active')
+        .toList();
+    topProductNew.sort((a, b) => b.create_at.compareTo(a.create_at));
+
+    topProductRatting.value = Get.find<ProductController>()
+        .listProduct
+        .where((p0) => p0.status == 'active')
+        .toList();
+    topProductRatting.sort((a, b) => b.ratting!.compareTo(a.ratting!));
+
+    if (mainController.buyer.value.id != '') {
+      productBought.value = Get.find<BuyerController>().listProductBought;
+    }
+  }
+
+  Widget productDetail(Product pro, NumberFormat currencyFormatter) {
     Product product = Get.find<ProductController>()
             .listProduct
             .firstWhereOrNull((element) => element.id == pro.id) ??
@@ -205,7 +486,10 @@ class HomeUserPage extends StatelessWidget {
     return Container(
       width: Get.width * 0.5,
       // height: Get.height * 0.5,
-      margin: EdgeInsets.all(Get.width * 0.01),
+      margin: EdgeInsets.only(
+        left: Get.width * 0.02,
+        right: Get.width * 0.02,
+      ),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: const BorderRadius.all(
@@ -223,48 +507,33 @@ class HomeUserPage extends StatelessWidget {
       child: InkWell(
         child: Column(
           children: [
-            Stack(
-              children: [
-                Container(
-                  height: Get.width * 0.5,
-                  // width: Get.width * 0.5,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                    image: imgUrl == null
-                        ? null
-                        : DecorationImage(
-                            image: NetworkImage(imgUrl.image),
-                            fit: BoxFit.fill,
-                          ),
+            CardBanner(
+              text: '${seller.name} ',
+              color: Colors.green,
+              textStyle: const TextStyle(
+                fontSize: 14,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              edgeSize: 18,
+              edgeColor: Colors.green.shade800,
+              radius: 15,
+              child: Container(
+                height: Get.width * 0.5,
+                // width: Get.width * 0.5,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
                   ),
+                  image: imgUrl == null
+                      ? null
+                      : DecorationImage(
+                          image: NetworkImage(imgUrl.image),
+                          fit: BoxFit.fill,
+                        ),
                 ),
-                // Image(
-
-                Container(
-                  alignment: Alignment.center,
-                  width: Get.width / 2,
-                  // height: 20,
-                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
-                  decoration: const BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      )),
-                  child: Text(
-                    seller.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      overflow: TextOverflow.ellipsis,
-                      fontSize: 14,
-                      // fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),

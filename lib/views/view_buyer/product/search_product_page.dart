@@ -1,3 +1,4 @@
+import 'package:card_banner/card_banner.dart';
 import 'package:convert_vietnamese/convert_vietnamese.dart';
 import 'package:flexible_grid_view/flexible_grid_view.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,6 @@ import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
-import 'package:htql_mua_ban_nong_san/models/category.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
@@ -44,13 +44,15 @@ class SearchProductPage extends StatelessWidget {
                           .toLowerCase())) ||
                   listCategoryID.contains(p0.category_id)))
           .toList();
-    } else {
+    } else if (productController.category.value.id != '') {
       listProduct.value = Get.find<ProductController>()
           .listProduct
           .where((p0) =>
               p0.status == 'active' &&
               p0.category_id == productController.category.value.id)
           .toList();
+    } else {
+      listProduct.value = productController.listProduct;
     }
   }
 
@@ -60,9 +62,9 @@ class SearchProductPage extends StatelessWidget {
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
     MainController mainController = Get.find<MainController>();
     RxList<Product> listProduct = <Product>[].obs;
-    loadData(listProduct);
 
     return Obx(() {
+      loadData(listProduct);
       return mainController.isLoading.value
           ? const LoadingPage()
           : SafeArea(
@@ -122,14 +124,11 @@ class SearchProductPage extends StatelessWidget {
                                     color: Colors.white,
                                   ),
                                   onTap: () {
+                                    Get.back();
                                     Get.find<ProductController>()
                                         .searchProductController
                                         .value
                                         .clear();
-                                    Get.find<ProductController>()
-                                        .category
-                                        .value = Category.initCategory();
-                                    Get.toNamed('/');
                                   },
                                 ),
                                 suffixIcon: InkWell(
@@ -142,10 +141,11 @@ class SearchProductPage extends StatelessWidget {
                                   },
                                 ),
                                 border: InputBorder.none,
-                                hintText: 'Tìm kiếm ...',
+                                hintText: 'Tìm kiếm sản phẩm...',
                                 hintStyle: const TextStyle(
                                   color: Colors.white,
                                   fontStyle: FontStyle.italic,
+                                  fontSize: 14,
                                 ),
                               ),
                             ),
@@ -221,7 +221,11 @@ class SearchProductPage extends StatelessWidget {
     });
   }
 
-  Container productDetail(Product product, NumberFormat currencyFormatter) {
+  Widget productDetail(Product pro, NumberFormat currencyFormatter) {
+    Product product = Get.find<ProductController>()
+            .listProduct
+            .firstWhereOrNull((element) => element.id == pro.id) ??
+        Product.initProduct();
     Seller seller = Get.find<SellerController>()
             .listSeller
             .firstWhereOrNull((element) => element.id == product.seller_id) ??
@@ -237,7 +241,10 @@ class SearchProductPage extends StatelessWidget {
     return Container(
       width: Get.width * 0.5,
       // height: Get.height * 0.5,
-      margin: EdgeInsets.all(Get.width * 0.01),
+      margin: EdgeInsets.only(
+        left: Get.width * 0.02,
+        right: Get.width * 0.02,
+      ),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: const BorderRadius.all(
@@ -255,48 +262,33 @@ class SearchProductPage extends StatelessWidget {
       child: InkWell(
         child: Column(
           children: [
-            Stack(
-              children: [
-                Container(
-                  height: Get.width * 0.5,
-                  // width: Get.width * 0.5,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                    image: imgUrl == null
-                        ? null
-                        : DecorationImage(
-                            image: NetworkImage(imgUrl.image),
-                            fit: BoxFit.fill,
-                          ),
+            CardBanner(
+              text: '${seller.name} ',
+              color: Colors.green,
+              textStyle: const TextStyle(
+                fontSize: 14,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              edgeSize: 18,
+              edgeColor: Colors.green.shade800,
+              radius: 15,
+              child: Container(
+                height: Get.width * 0.5,
+                // width: Get.width * 0.5,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
                   ),
+                  image: imgUrl == null
+                      ? null
+                      : DecorationImage(
+                          image: NetworkImage(imgUrl.image),
+                          fit: BoxFit.fill,
+                        ),
                 ),
-                // Image(
-
-                Container(
-                  alignment: Alignment.center,
-                  width: Get.width / 2,
-                  // height: 20,
-                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
-                  decoration: const BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      )),
-                  child: Text(
-                    seller.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      overflow: TextOverflow.ellipsis,
-                      fontSize: 14,
-                      // fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
@@ -323,34 +315,6 @@ class SearchProductPage extends StatelessWidget {
                     fontWeight: FontWeight.bold),
               ),
             ),
-
-            // Container(
-            //   padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     children: [
-            //       Container(
-            //         alignment: Alignment.centerLeft,
-            //         width: Get.width * 0.2,
-            //         child: Text(
-            //           'Đã bán: ${NumberFormat.decimalPattern().format(product.sale_num)}',
-            //           style: const TextStyle(
-            //             fontSize: 14,
-            //             color: Colors.green,
-            //             // overflow: TextOverflow.ellipsis,
-            //             fontWeight: FontWeight.bold,
-            //           ),
-            //         ),
-            //       ),
-            //       Container(
-            //         alignment: Alignment.centerRight,
-            //         width: Get.width * 0.2,
-            //         child: const Text('********'),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-
             Container(
               padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
               child: Row(
@@ -375,7 +339,6 @@ class SearchProductPage extends StatelessWidget {
                 ],
               ),
             ),
-
             Container(
               padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
               alignment: Alignment.centerRight,
@@ -436,7 +399,6 @@ class SearchProductPage extends StatelessWidget {
                 ),
               ),
             ),
-
             SizedBox(
               height: Get.height * 0.01,
             ),

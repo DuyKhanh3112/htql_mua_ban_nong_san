@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/article_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
@@ -149,6 +150,23 @@ class DrawerSeller extends StatelessWidget {
                       Get.back();
                       Get.find<MainController>().indexSeller.value = 1;
                       await Get.find<OrderController>().loadOrderBySeller();
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.newspaper_rounded,
+                      color: Colors.green,
+                      size: 40,
+                    ),
+                    title: const Text(
+                      'Bài viết',
+                      style: TextStyle(color: Colors.green, fontSize: 18),
+                    ),
+                    onTap: () async {
+                      Get.back();
+                      Get.find<MainController>().indexSeller.value = 2;
+
+                      await Get.find<ArticleController>().loadArticleBySeller();
                     },
                   ),
                   ListTile(

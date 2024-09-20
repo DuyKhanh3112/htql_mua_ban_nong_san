@@ -10,6 +10,7 @@ import 'package:htql_mua_ban_nong_san/config.dart';
 import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cloudinary_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
@@ -29,11 +30,11 @@ class RegisterPage extends StatelessWidget {
     BuyerController buyerController = Get.find<BuyerController>();
     SellerController sellerController = Get.find<SellerController>();
 
-    final cloudinary = Cloudinary.signedConfig(
-      apiKey: Config.apiKey,
-      apiSecret: Config.apiSecret,
-      cloudName: Config.cloudName,
-    );
+    // final cloudinary = Cloudinary.signedConfig(
+    //   apiKey: Config.apiKey,
+    //   apiSecret: Config.apiSecret,
+    //   cloudName: Config.cloudName,
+    // );
 
     final formKey = GlobalKey<FormState>();
     final List<String> typeUser = ['Người bán', 'Người mua'];
@@ -60,26 +61,11 @@ class RegisterPage extends StatelessWidget {
     RxList<Province> listProvince = <Province>[
       Province(id: '0', name: 'Chọn tỉnh thành'),
     ].obs;
-    // Rx<Province> province = Province.initProvince()
     // ignore: invalid_use_of_protected_member
     Rx<Province> province = listProvince.value[0].obs;
-
+    listProvince.addAll(Get.find<ProvinceController>().listProvince);
     return Obx(
       () {
-        // ignore: invalid_use_of_protected_member
-        mainController.listProvince.value.sort((a, b) =>
-            removeDiacritics(a.name).compareTo(removeDiacritics(b.name)));
-        // ignore: invalid_use_of_protected_member
-        for (var province in mainController.listProvince.value) {
-          // ignore: invalid_use_of_protected_member
-          if (listProvince.value
-              .where((element) => element == province)
-              .isEmpty) {
-            // ignore: invalid_use_of_protected_member
-            listProvince.value.add(province);
-          }
-        }
-
         return buyerController.isLoading.value ||
                 mainController.isLoading.value ||
                 sellerController.isLoading.value
@@ -351,7 +337,7 @@ class RegisterPage extends StatelessWidget {
                                             final RegExp passRegExp = RegExp(
                                                 r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$");
                                             if (!passRegExp.hasMatch(value)) {
-                                              return 'Mật khẩu ít nhất 6 ký tự.\nBao gồm: chữ hoa, chữ thường và số.';
+                                              return 'Mật khẩu ít nhất 6 ký tự.\nBao gồm: chữ hoa, chữ thường, số\n và ký tự đặc biệt.';
                                             }
                                             if (passwordConfController
                                                     .value.text.isNotEmpty &&
@@ -408,7 +394,7 @@ class RegisterPage extends StatelessWidget {
                                             final RegExp passRegExp = RegExp(
                                                 r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$");
                                             if (!passRegExp.hasMatch(value)) {
-                                              return 'Mật khẩu ít nhất 6 ký tự.\nBao gồm: chữ hoa, chữ thường và số.';
+                                              return 'Mật khẩu ít nhất 6 ký tự.\nBao gồm: chữ hoa, chữ thường, số\n và ký tự đặc biệt.';
                                             }
                                             if (passwordConfController
                                                     .value.text.isNotEmpty &&
@@ -709,7 +695,7 @@ class RegisterPage extends StatelessWidget {
                                                           buyer,
                                                           buyerController,
                                                           context,
-                                                          cloudinary,
+                                                          // cloudinary,
                                                           filePath.value)) {
                                                         clearAll(
                                                             usernameController,
@@ -755,7 +741,6 @@ class RegisterPage extends StatelessWidget {
                                                           seller,
                                                           sellerController,
                                                           context,
-                                                          cloudinary,
                                                           filePath.value)) {
                                                         clearAll(
                                                             usernameController,
@@ -834,8 +819,9 @@ class RegisterPage extends StatelessWidget {
   }
 
   Future<bool> createBuyer(Buyer buyer, BuyerController buyerController,
-      BuildContext context, Cloudinary cloudinary, String filePath) async {
-    if (await buyerController.checkExistUsername(buyer.username)) {
+      BuildContext context, String filePath) async {
+    if (await buyerController.checkExistUsername(buyer.username) ||
+        await Get.find<SellerController>().checkExistUsername(buyer.username)) {
       buyerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
@@ -857,7 +843,8 @@ class RegisterPage extends StatelessWidget {
       ).show();
       return false;
     }
-    if (await buyerController.checkExistPhone(buyer.phone)) {
+    if (await buyerController.checkExistPhone(buyer.phone) ||
+        await Get.find<SellerController>().checkExistPhone(buyer.phone)) {
       buyerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
@@ -879,7 +866,8 @@ class RegisterPage extends StatelessWidget {
       ).show();
       return false;
     }
-    if (await buyerController.checkExistEmail(buyer.email)) {
+    if (await buyerController.checkExistEmail(buyer.email) ||
+        await Get.find<SellerController>().checkExistEmail(buyer.email)) {
       buyerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
@@ -920,8 +908,9 @@ class RegisterPage extends StatelessWidget {
   }
 
   Future<bool> createSeller(Seller seller, SellerController sellerController,
-      BuildContext context, Cloudinary cloudinary, String filePath) async {
-    if (await sellerController.checkExistUsername(seller.username)) {
+      BuildContext context, String filePath) async {
+    if (await sellerController.checkExistUsername(seller.username) ||
+        await Get.find<BuyerController>().checkExistUsername(seller.username)) {
       sellerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
@@ -934,7 +923,8 @@ class RegisterPage extends StatelessWidget {
       ).show();
       return false;
     }
-    if (await sellerController.checkExistPhone(seller.phone)) {
+    if (await sellerController.checkExistPhone(seller.phone) ||
+        await Get.find<BuyerController>().checkExistPhone(seller.phone)) {
       sellerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
@@ -947,7 +937,8 @@ class RegisterPage extends StatelessWidget {
       ).show();
       return false;
     }
-    if (await sellerController.checkExistEmail(seller.email)) {
+    if (await sellerController.checkExistEmail(seller.email) ||
+        await Get.find<BuyerController>().checkExistEmail(seller.email)) {
       sellerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(

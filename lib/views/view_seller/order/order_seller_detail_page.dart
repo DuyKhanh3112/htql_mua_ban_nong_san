@@ -12,15 +12,13 @@ import 'package:htql_mua_ban_nong_san/models/order_detail.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
-import 'package:htql_mua_ban_nong_san/views/view_buyer/address/address_page.dart';
 import 'package:intl/intl.dart';
 
-class OrderDetailPage extends StatelessWidget {
-  const OrderDetailPage({super.key});
+class OrderSellerDetailPage extends StatelessWidget {
+  const OrderSellerDetailPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    RxBool onChange = false.obs;
     Rx<Province> province = Province.initProvince().obs;
     province.value = Get.find<ProvinceController>()
             .listProvince
@@ -46,32 +44,6 @@ class OrderDetailPage extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  actions: [
-                    onChange.value
-                        ? InkWell(
-                            onTap: () async {
-                              onChange.value = false;
-                              Get.find<OrderController>()
-                                      .order
-                                      .value
-                                      .address_id =
-                                  Get.find<OrderController>().address.value.id;
-                              Get.find<OrderController>()
-                                  .order
-                                  .value
-                                  .update_at = Timestamp.now();
-                              await Get.find<OrderController>().updateOrder(
-                                  Get.find<OrderController>().order.value);
-                              await Get.find<OrderController>()
-                                  .loadOrderByBuyer();
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(right: Get.width * 0.02),
-                              child: const Icon(Icons.save),
-                            ),
-                          )
-                        : const SizedBox(),
-                  ],
                 ),
                 body: Column(
                   children: [
@@ -82,208 +54,122 @@ class OrderDetailPage extends StatelessWidget {
                             SizedBox(
                               height: Get.height * 0.02,
                             ),
-                            Row(
-                              children: [
-                                Container(
-                                  width: Get.find<OrderController>()
-                                              .order
-                                              .value
-                                              .status ==
-                                          'unconfirm'
-                                      ? Get.width * 0.8
-                                      : Get.width * 0.9,
-                                  margin:
-                                      EdgeInsets.only(left: Get.width * 0.02),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton2(
-                                      value: Get.find<AddressController>()
-                                          .listAddress
-                                          .firstWhereOrNull((p0) =>
-                                              p0.id ==
-                                              Get.find<OrderController>()
-                                                  .address
-                                                  .value
-                                                  .id),
-                                      items: Get.find<AddressController>()
-                                          .listAddress
-                                          .map((Address add) {
-                                        Province province =
-                                            Get.find<ProvinceController>()
-                                                    .listProvince
-                                                    .firstWhereOrNull(
-                                                        (element) =>
-                                                            element.id ==
-                                                            add.province_id) ??
-                                                Province.initProvince();
-                                        return DropdownMenuItem(
-                                          value: add,
-                                          child: Container(
-                                            decoration: const BoxDecoration(),
-                                            padding: const EdgeInsets.all(
-                                              5,
-                                            ),
-                                            alignment: Alignment.centerLeft,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Container(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  height: 20,
-                                                  child: Text(
-                                                    'Họ tên: ${add.name}',
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    strutStyle:
-                                                        StrutStyle.disabled,
-                                                  ),
-                                                ),
-                                                Container(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  height: 20,
-                                                  child: Text(
-                                                    'Số điện thoại: ${add.phone}',
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    strutStyle:
-                                                        StrutStyle.disabled,
-                                                  ),
-                                                ),
-                                                Container(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  height: 20,
-                                                  child: Text(
-                                                    'Tỉnh thành: ${province.name}',
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    strutStyle:
-                                                        StrutStyle.disabled,
-                                                  ),
-                                                ),
-                                                Container(
-                                                  alignment: Alignment.topLeft,
-                                                  // height: 40,
-                                                  child: Text(
-                                                    'Địa chỉ: ${add.address_detail}',
-                                                    maxLines: 3,
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    strutStyle:
-                                                        StrutStyle.disabled,
-                                                  ),
-                                                ),
-                                                const Divider(
-                                                  height: 1,
-                                                  color: Colors.green,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      style: const TextStyle(
-                                        color: Colors.green,
-                                        fontSize: 18,
-                                      ),
-                                      isExpanded: true,
-                                      onChanged: Get.find<OrderController>()
-                                                  .order
-                                                  .value
-                                                  .status !=
-                                              'unconfirm'
-                                          ? null
-                                          : (value) {
-                                              onChange.value = true;
-                                              if (value == null) {
-                                                Get.find<OrderController>()
-                                                        .address
-                                                        .value =
-                                                    Address.initAddress();
-                                              } else {
-                                                Get.find<OrderController>()
-                                                    .address
-                                                    .value = value as Address;
-                                              }
-                                            },
-                                      menuItemStyleData:
-                                          const MenuItemStyleData(
-                                        height: 150,
-                                      ),
-                                      dropdownStyleData: DropdownStyleData(
-                                        maxHeight: Get.height * 0.5,
-                                        width: Get.find<OrderController>()
-                                                    .order
-                                                    .value
-                                                    .status ==
-                                                'unconfirm'
-                                            ? Get.width * 0.8
-                                            : Get.width * 0.9,
-                                      ),
-                                      buttonStyleData: ButtonStyleData(
-                                        // height: 60,
-
-                                        width: Get.find<OrderController>()
-                                                    .order
-                                                    .value
-                                                    .status ==
-                                                'unconfirm'
-                                            ? Get.width * 0.8
-                                            : Get.width * 0.9,
-
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: Colors.green,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                            Container(
+                              width: Get.width * 0.9,
+                              margin: EdgeInsets.only(left: Get.width * 0.02),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton2(
+                                  value:
+                                      Get.find<OrderController>().address.value,
+                                  items: [
+                                    Get.find<OrderController>().address.value
+                                  ].map((Address add) {
+                                    Province province =
+                                        Get.find<ProvinceController>()
+                                                .listProvince
+                                                .firstWhereOrNull((element) =>
+                                                    element.id ==
+                                                    add.province_id) ??
+                                            Province.initProvince();
+                                    return DropdownMenuItem(
+                                      value: add,
+                                      child: Container(
+                                        decoration: const BoxDecoration(),
+                                        padding: const EdgeInsets.all(
+                                          5,
                                         ),
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: Get.width * 0.05),
+                                        alignment: Alignment.centerLeft,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              alignment: Alignment.centerLeft,
+                                              height: 20,
+                                              child: Text(
+                                                'Họ tên: ${add.name}',
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                strutStyle: StrutStyle.disabled,
+                                              ),
+                                            ),
+                                            Container(
+                                              alignment: Alignment.centerLeft,
+                                              height: 20,
+                                              child: Text(
+                                                'Số điện thoại: ${add.phone}',
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                strutStyle: StrutStyle.disabled,
+                                              ),
+                                            ),
+                                            Container(
+                                              alignment: Alignment.centerLeft,
+                                              height: 20,
+                                              child: Text(
+                                                'Tỉnh thành: ${province.name}',
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                strutStyle: StrutStyle.disabled,
+                                              ),
+                                            ),
+                                            Container(
+                                              alignment: Alignment.topLeft,
+                                              // height: 40,
+                                              child: Text(
+                                                'Địa chỉ: ${add.address_detail}',
+                                                maxLines: 3,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                strutStyle: StrutStyle.disabled,
+                                              ),
+                                            ),
+                                            const Divider(
+                                              height: 1,
+                                              color: Colors.green,
+                                            ),
+                                          ],
+                                        ),
                                       ),
+                                    );
+                                  }).toList(),
+                                  style: const TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 18,
+                                  ),
+                                  isExpanded: true,
+                                  onChanged: null,
+                                  menuItemStyleData: const MenuItemStyleData(
+                                    height: 150,
+                                  ),
+                                  dropdownStyleData: DropdownStyleData(
+                                    maxHeight: Get.height * 0.5,
+                                    width: Get.width * 0.9,
+                                  ),
+                                  buttonStyleData: ButtonStyleData(
+                                    // height: 60,
+
+                                    width: Get.width * 0.9,
+
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.green,
+                                      ),
+                                      borderRadius: BorderRadius.circular(20),
                                     ),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: Get.width * 0.05),
                                   ),
                                 ),
-                                Get.find<OrderController>()
-                                            .order
-                                            .value
-                                            .status !=
-                                        'unconfirm'
-                                    ? const SizedBox()
-                                    : Container(
-                                        width: Get.width * 0.18,
-                                        height: Get.height * 0.11,
-                                        decoration: const BoxDecoration(
-                                            // color: Colors.amber,
-                                            ),
-                                        child: InkWell(
-                                          onTap: () {
-                                            const AddressPage()
-                                                .createAddress(context);
-                                          },
-                                          child: Icon(
-                                            Icons.add_circle,
-                                            color: Colors.green,
-                                            size: Get.width * 0.075,
-                                          ),
-                                        ),
-                                      ),
-                              ],
+                              ),
                             ),
                             SizedBox(
                               height: Get.height * 0.02,
@@ -329,13 +215,9 @@ class OrderDetailPage extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            Get.find<OrderController>()
-                                        .order
-                                        .value
-                                        .received_date ==
-                                    null
-                                ? const SizedBox()
-                                : Container(
+                            Get.find<OrderController>().order.value.status ==
+                                    'delivering'
+                                ? Container(
                                     margin: EdgeInsets.symmetric(
                                       horizontal: Get.width * 0.05,
                                       vertical: Get.width * 0.01,
@@ -348,7 +230,7 @@ class OrderDetailPage extends StatelessWidget {
                                           alignment: Alignment.centerLeft,
                                           width: Get.width * 0.4,
                                           child: const Text(
-                                            'Ngày đặt:',
+                                            'Ngày giao:',
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -365,7 +247,7 @@ class OrderDetailPage extends StatelessWidget {
                                                     Get.find<OrderController>()
                                                         .order
                                                         .value
-                                                        .order_date
+                                                        .update_at
                                                         .toDate()),
                                             style: const TextStyle(
                                               fontSize: 16,
@@ -376,7 +258,61 @@ class OrderDetailPage extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                  ),
+                                  )
+                                : const SizedBox(),
+                            Get.find<OrderController>().order.value.status ==
+                                        'delivered' &&
+                                    Get.find<OrderController>()
+                                            .order
+                                            .value
+                                            .received_date !=
+                                        null
+                                ? Container(
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.05,
+                                      vertical: Get.width * 0.01,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          alignment: Alignment.centerLeft,
+                                          width: Get.width * 0.4,
+                                          child: const Text(
+                                            'Ngày nhận:',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          alignment: Alignment.centerRight,
+                                          width: Get.width * 0.5,
+                                          child: Text(
+                                            DateFormat('HH:mm dd-MM-yyyy')
+                                                .format(
+                                                    Get.find<OrderController>()
+                                                        .order
+                                                        .value
+                                                        .received_date!
+                                                        .toDate()),
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox(),
+                            for (var odd
+                                in Get.find<OrderController>().listOrderDetail)
+                              orderDetailItem(odd),
                             Container(
                               margin: EdgeInsets.symmetric(
                                 horizontal: Get.width * 0.05,
@@ -418,9 +354,6 @@ class OrderDetailPage extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            for (var odd
-                                in Get.find<OrderController>().listOrderDetail)
-                              orderDetailItem(odd),
                             SizedBox(
                               height: Get.height * 0.01,
                             ),
@@ -606,13 +539,36 @@ class OrderDetailPage extends StatelessWidget {
         children: [
           // btnViewDetail(order),
           Container(
-            width: Get.width * 0.45,
             alignment: Alignment.center,
+            width: Get.width * 0.45,
             child: ElevatedButton(
               onPressed: () async {
-                await Get.find<OrderController>()
-                    .rebuy(Get.find<OrderController>().order.value);
-                Get.toNamed('/cart');
+                // await AwesomeDialog(
+                //         titleTextStyle: const TextStyle(
+                //           color: Colors.green,
+                //           fontWeight: FontWeight.bold,
+                //           fontSize: 22,
+                //         ),
+                //         descTextStyle: const TextStyle(
+                //           color: Colors.green,
+                //           fontSize: 16,
+                //         ),
+                //         context: context,
+                //         dialogType: DialogType.question,
+                //         animType: AnimType.rightSlide,
+                //         title: 'Xác nhận',
+                //         desc:
+                //             'Bạn có muốn hủy đơn hàng này không',
+                //         btnOkText: 'Xác nhận',
+                //         btnCancelText: 'Không',
+                //         btnOkOnPress: () async {
+                //           // Orders ord = order;
+                //           // ord.status = 'cancelled';
+                //           // await Get.find<OrderController>()
+                //           //     .cancelOrder(ord);
+                //         },
+                //         btnCancelOnPress: () {})
+                //     .show();
               },
               child: Container(
                 alignment: Alignment.center,
@@ -634,7 +590,34 @@ class OrderDetailPage extends StatelessWidget {
             alignment: Alignment.center,
             width: Get.width * 0.45,
             child: ElevatedButton(
-              onPressed: () async {},
+              onPressed: () async {
+                // await AwesomeDialog(
+                //         titleTextStyle: const TextStyle(
+                //           color: Colors.green,
+                //           fontWeight: FontWeight.bold,
+                //           fontSize: 22,
+                //         ),
+                //         descTextStyle: const TextStyle(
+                //           color: Colors.green,
+                //           fontSize: 16,
+                //         ),
+                //         context: context,
+                //         dialogType: DialogType.question,
+                //         animType: AnimType.rightSlide,
+                //         title: 'Xác nhận',
+                //         desc:
+                //             'Bạn có muốn hủy đơn hàng này không',
+                //         btnOkText: 'Xác nhận',
+                //         btnCancelText: 'Không',
+                //         btnOkOnPress: () async {
+                //           // Orders ord = order;
+                //           // ord.status = 'cancelled';
+                //           // await Get.find<OrderController>()
+                //           //     .cancelOrder(ord);
+                //         },
+                //         btnCancelOnPress: () {})
+                //     .show();
+              },
               child: Container(
                 alignment: Alignment.center,
                 decoration: const BoxDecoration(),

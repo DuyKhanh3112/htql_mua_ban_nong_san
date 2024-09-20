@@ -87,10 +87,11 @@ class CategoryPage extends StatelessWidget {
                                         },
                                       ),
                                 border: InputBorder.none,
-                                hintText: 'Tìm kiếm ...',
+                                hintText: 'Tìm kiếm loại sản phẩm...',
                                 hintStyle: const TextStyle(
                                   color: Colors.white,
                                   fontStyle: FontStyle.italic,
+                                  fontSize: 14,
                                 ),
                               ),
                             ),
@@ -151,8 +152,13 @@ class CategoryPage extends StatelessWidget {
                         children: listCategory.map((category) {
                           return InkWell(
                             onTap: () {
+                              Get.find<ProductController>()
+                                  .searchProductController
+                                  .value
+                                  .clear();
                               Get.find<ProductController>().category.value =
                                   category;
+
                               Get.toNamed('search_product');
                             },
                             child: Container(

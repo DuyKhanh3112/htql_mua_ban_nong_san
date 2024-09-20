@@ -42,7 +42,6 @@ class CategoryController extends GetxController {
     for (var item in snapshot.docs) {
       Map<String, dynamic> data = item.data() as Map<String, dynamic>;
       data['id'] = item.id;
-      // ignore: invalid_use_of_protected_member
       listCategory.value.add(Category.fromJson(data));
     }
     listCategory.sort((a, b) => removeDiacritics(a.name.toLowerCase().trim())

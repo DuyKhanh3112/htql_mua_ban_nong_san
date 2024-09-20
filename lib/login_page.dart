@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
+import 'package:htql_mua_ban_nong_san/models/buyer.dart';
+import 'package:htql_mua_ban_nong_san/models/seller.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -54,7 +56,7 @@ class LoginPage extends StatelessWidget {
                             child: InkWell(
                               onTap: () async {
                                 mainController.isLoading.value = true;
-                                await Get.find<ProductController>()
+                                Get.find<ProductController>()
                                     .loadProductActive();
                                 mainController.isLoading.value = false;
                                 mainController.numPage.value = 0;
@@ -239,7 +241,7 @@ class LoginPage extends StatelessWidget {
                                                 mainController
                                                         .buyer.value.status !=
                                                     'inactive') {
-                                              // Get.toNamed('/');
+                                              Get.toNamed('/');
                                             } else if (mainController
                                                         .buyer.value.id !=
                                                     '' &&
@@ -266,6 +268,10 @@ class LoginPage extends StatelessWidget {
                                                     'Tài khoản của bạn đã bị khóa.',
                                                 btnOkOnPress: () {},
                                               ).show();
+                                              mainController.buyer.value =
+                                                  Buyer.initBuyer();
+                                              mainController.seller.value =
+                                                  Seller.initSeller();
                                             } else {}
                                           } else {
                                             // ignore: use_build_context_synchronously
@@ -322,7 +328,7 @@ class LoginPage extends StatelessWidget {
                                     width: Get.width,
                                     child: ElevatedButton(
                                       onPressed: () async {
-                                        await mainController.loadAll();
+                                        // await mainController.loadAll();
                                         Get.toNamed('/register');
                                       },
                                       style: const ButtonStyle(

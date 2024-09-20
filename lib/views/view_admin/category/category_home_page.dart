@@ -7,7 +7,7 @@ import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cloudinary_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/category.dart';
-import 'package:htql_mua_ban_nong_san/views/view_admin/main_drawer.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/drawer_admin.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CategoryHomePage extends StatelessWidget {
@@ -255,45 +255,12 @@ class CategoryHomePage extends StatelessWidget {
           ),
           SizedBox(
             width: Get.width * 0.15,
-            child: InkWell(
-              child: category.hide
-                  ? const SizedBox()
-                  : const Icon(
-                      Icons.delete,
-                      color: Colors.red,
-                    ),
-              onTap: () async {
-                // await AwesomeDialog(
-                //         titleTextStyle: const TextStyle(
-                //           color: Colors.green,
-                //           fontWeight: FontWeight.bold,
-                //           fontSize: 22,
-                //         ),
-                //         descTextStyle: const TextStyle(
-                //           color: Colors.green,
-                //           fontSize: 16,
-                //         ),
-                //         context: context,
-                //         dialogType: DialogType.question,
-                //         animType: AnimType.rightSlide,
-                //         title: 'Bạn có muốn xóa loại sản phẩm này không?',
-                //         // desc: 'Bạn có muốn xóa loại sản phẩm này không?',
-                //         btnOkText: 'Xóa',
-                //         btnCancelText: 'Không',
-                //         btnOkOnPress: () async {
-                //           Get.put(CategoryController());
-                //           CategoryController categoryController =
-                //               Get.find<CategoryController>();
-                //           categoryController.isLoading.value = true;
-                //           await CloudinaryController()
-                //               .deleteImage(category.id, 'category');
-                //           await categoryController.deleteCategory(category);
-                //           categoryController.isLoading.value = false;
-                //         },
-                //         btnCancelOnPress: () {})
-                //     .show();
-              },
-            ),
+            child: Switch(
+                value: !category.hide,
+                onChanged: (value) {
+                  category.hide = !value;
+                  Get.find<CategoryController>().updateCategory(category);
+                }),
           ),
         ],
       ),
