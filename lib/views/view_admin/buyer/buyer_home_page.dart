@@ -1,16 +1,9 @@
-import 'dart:io';
-import 'package:convert_vietnamese/convert_vietnamese.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
-import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
-import 'package:htql_mua_ban_nong_san/controller/cloudinary_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
-import 'package:htql_mua_ban_nong_san/models/category.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/drawer_admin.dart';
-import 'package:image_picker/image_picker.dart';
 
 class BuyerHomePage extends StatelessWidget {
   const BuyerHomePage({super.key});
