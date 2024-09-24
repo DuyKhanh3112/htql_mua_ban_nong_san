@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 
 class HeaderWidget extends StatelessWidget {

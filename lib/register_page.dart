@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudinary/cloudinary.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:htql_mua_ban_nong_san/config.dart';
 import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/cloudinary_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
@@ -27,11 +27,11 @@ class RegisterPage extends StatelessWidget {
     BuyerController buyerController = Get.find<BuyerController>();
     SellerController sellerController = Get.find<SellerController>();
 
-    final cloudinary = Cloudinary.signedConfig(
-      apiKey: Config.apiKey,
-      apiSecret: Config.apiSecret,
-      cloudName: Config.cloudName,
-    );
+    // final cloudinary = Cloudinary.signedConfig(
+    //   apiKey: Config.apiKey,
+    //   apiSecret: Config.apiSecret,
+    //   cloudName: Config.cloudName,
+    // );
 
     final formKey = GlobalKey<FormState>();
     final List<String> typeUser = ['Người bán', 'Người mua'];
@@ -58,16 +58,11 @@ class RegisterPage extends StatelessWidget {
     RxList<Province> listProvince = <Province>[
       Province(id: '0', name: 'Chọn tỉnh thành'),
     ].obs;
-    // Rx<Province> province = Province.initProvince()
+    // ignore: invalid_use_of_protected_member
     Rx<Province> province = listProvince.value[0].obs;
-
+    listProvince.addAll(Get.find<ProvinceController>().listProvince);
     return Obx(
       () {
-        if (listProvince.value.length == 1) {
-          listProvince.value.addAll(mainController.listProvince.value);
-          // listProvince.value.add(Province.initProvince());
-        }
-
         return buyerController.isLoading.value ||
                 mainController.isLoading.value ||
                 sellerController.isLoading.value
@@ -231,7 +226,7 @@ class RegisterPage extends StatelessWidget {
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {
-                                              return 'Hãy nhập tên đăng nhập';
+                                              return 'Hãy nhập họ và tên.';
                                             }
                                             return null;
                                           },
@@ -256,7 +251,12 @@ class RegisterPage extends StatelessWidget {
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {
-                                              return 'Hãy nhập tên đăng nhập';
+                                              return 'Hãy nhập số điện thoại.';
+                                            }
+                                            final RegExp phoneRegExp = RegExp(
+                                                r"(84|0[3|5|7|8|9])+([0-9]{8})\b");
+                                            if (!phoneRegExp.hasMatch(value)) {
+                                              return 'Số điện thoại không hợp lệ.';
                                             }
                                             return null;
                                           },
@@ -281,7 +281,12 @@ class RegisterPage extends StatelessWidget {
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {
-                                              return 'Hãy nhập tên đăng nhập';
+                                              return 'Hãy nhập email';
+                                            }
+                                            final RegExp emailRegExp = RegExp(
+                                                r"^[\w-\.]+@([\w-]+\.){1,}[\w-]{1,}$");
+                                            if (!emailRegExp.hasMatch(value)) {
+                                              return 'Email không hợp lệ.';
                                             }
                                             return null;
                                           },
@@ -325,6 +330,11 @@ class RegisterPage extends StatelessWidget {
                                             if (value == null ||
                                                 value.isEmpty) {
                                               return 'Hãy nhập mật khẩu';
+                                            }
+                                            final RegExp passRegExp = RegExp(
+                                                r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$");
+                                            if (!passRegExp.hasMatch(value)) {
+                                              return 'Mật khẩu ít nhất 6 ký tự.\nBao gồm: chữ hoa, chữ thường, số\n và ký tự đặc biệt.';
                                             }
                                             if (passwordConfController
                                                     .value.text.isNotEmpty &&
@@ -378,6 +388,11 @@ class RegisterPage extends StatelessWidget {
                                                 value.isEmpty) {
                                               return 'Hãy xác nhận lại mật khẩu';
                                             }
+                                            final RegExp passRegExp = RegExp(
+                                                r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$");
+                                            if (!passRegExp.hasMatch(value)) {
+                                              return 'Mật khẩu ít nhất 6 ký tự.\nBao gồm: chữ hoa, chữ thường, số\n và ký tự đặc biệt.';
+                                            }
                                             if (passwordConfController
                                                     .value.text.isNotEmpty &&
                                                 value !=
@@ -407,6 +422,7 @@ class RegisterPage extends StatelessWidget {
                                                         menuMaxHeight:
                                                             Get.height / 2,
                                                         items: listProvince
+                                                            // ignore: invalid_use_of_protected_member
                                                             .value
                                                             .map(
                                                               (Province item) =>
@@ -610,11 +626,14 @@ class RegisterPage extends StatelessWidget {
                                                     preferredCameraDevice:
                                                         CameraDevice.front,
                                                   );
-                                                } else {
+                                                } else if (typeSource.value ==
+                                                    'gallery') {
                                                   pickedFile =
                                                       await picker.pickImage(
                                                     source: ImageSource.gallery,
                                                   );
+                                                } else {
+                                                  return;
                                                 }
                                                 if (pickedFile != null) {
                                                   filePath.value = pickedFile
@@ -673,7 +692,7 @@ class RegisterPage extends StatelessWidget {
                                                           buyer,
                                                           buyerController,
                                                           context,
-                                                          cloudinary,
+                                                          // cloudinary,
                                                           filePath.value)) {
                                                         clearAll(
                                                             usernameController,
@@ -719,7 +738,6 @@ class RegisterPage extends StatelessWidget {
                                                           seller,
                                                           sellerController,
                                                           context,
-                                                          cloudinary,
                                                           filePath.value)) {
                                                         clearAll(
                                                             usernameController,
@@ -793,34 +811,26 @@ class RegisterPage extends StatelessWidget {
     addressDetailController.value.clear();
     taxCodeController.value.clear();
     filePath.value = '';
+    // ignore: invalid_use_of_protected_member
     province.value = listProvince.value[0];
   }
 
-  Future<String?> uploadImage(Cloudinary cloudinary, filePath, String fileName,
-      String folderName, BuildContext context) async {
-    if (filePath != '') {
-      final response = await cloudinary.upload(
-        file: filePath,
-        // resourceType: CloudinaryResourceType.image,
-        folder: folderName,
-        fileName: fileName,
-        progressCallback: (count, total) {},
-      );
-      if (response.isSuccessful) {
-        return response.secureUrl;
-      } else {
-        return '';
-      }
-    }
-    return 'https://res.cloudinary.com/dg3p7nxyp/image/upload/v1723018608/account_default.png';
-  }
-
   Future<bool> createBuyer(Buyer buyer, BuyerController buyerController,
-      BuildContext context, Cloudinary cloudinary, String filePath) async {
-    if (await buyerController.checkExistUsername(buyer.username)) {
+      BuildContext context, String filePath) async {
+    if (await buyerController.checkExistUsername(buyer.username) ||
+        await Get.find<SellerController>().checkExistUsername(buyer.username)) {
       buyerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
+        titleTextStyle: const TextStyle(
+          color: Colors.green,
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
+        ),
+        descTextStyle: const TextStyle(
+          color: Colors.green,
+          fontSize: 16,
+        ),
         context: context,
         dialogType: DialogType.error,
         animType: AnimType.rightSlide,
@@ -830,10 +840,20 @@ class RegisterPage extends StatelessWidget {
       ).show();
       return false;
     }
-    if (await buyerController.checkExistPhone(buyer.phone)) {
+    if (await buyerController.checkExistPhone(buyer.phone) ||
+        await Get.find<SellerController>().checkExistPhone(buyer.phone)) {
       buyerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
+        titleTextStyle: const TextStyle(
+          color: Colors.green,
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
+        ),
+        descTextStyle: const TextStyle(
+          color: Colors.green,
+          fontSize: 16,
+        ),
         context: context,
         dialogType: DialogType.error,
         animType: AnimType.rightSlide,
@@ -843,10 +863,20 @@ class RegisterPage extends StatelessWidget {
       ).show();
       return false;
     }
-    if (await buyerController.checkExistEmail(buyer.email)) {
+    if (await buyerController.checkExistEmail(buyer.email) ||
+        await Get.find<SellerController>().checkExistEmail(buyer.email)) {
       buyerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
+        titleTextStyle: const TextStyle(
+          color: Colors.green,
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
+        ),
+        descTextStyle: const TextStyle(
+          color: Colors.green,
+          fontSize: 16,
+        ),
         context: context,
         dialogType: DialogType.error,
         animType: AnimType.rightSlide,
@@ -857,8 +887,8 @@ class RegisterPage extends StatelessWidget {
       return false;
     }
 
-    buyer.avatar = await uploadImage(
-        cloudinary, filePath, buyer.username, 'buyer', context);
+    buyer.avatar = await CloudinaryController()
+        .uploadImage(filePath, buyer.username, 'seller');
 
     await buyerController.createBuyer(buyer);
     buyerController.isLoading.value = false;
@@ -875,8 +905,9 @@ class RegisterPage extends StatelessWidget {
   }
 
   Future<bool> createSeller(Seller seller, SellerController sellerController,
-      BuildContext context, Cloudinary cloudinary, String filePath) async {
-    if (await sellerController.checkExistUsername(seller.username)) {
+      BuildContext context, String filePath) async {
+    if (await sellerController.checkExistUsername(seller.username) ||
+        await Get.find<BuyerController>().checkExistUsername(seller.username)) {
       sellerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
@@ -889,7 +920,8 @@ class RegisterPage extends StatelessWidget {
       ).show();
       return false;
     }
-    if (await sellerController.checkExistPhone(seller.phone)) {
+    if (await sellerController.checkExistPhone(seller.phone) ||
+        await Get.find<BuyerController>().checkExistPhone(seller.phone)) {
       sellerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
@@ -902,7 +934,8 @@ class RegisterPage extends StatelessWidget {
       ).show();
       return false;
     }
-    if (await sellerController.checkExistEmail(seller.email)) {
+    if (await sellerController.checkExistEmail(seller.email) ||
+        await Get.find<BuyerController>().checkExistEmail(seller.email)) {
       sellerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
@@ -915,8 +948,8 @@ class RegisterPage extends StatelessWidget {
       ).show();
       return false;
     }
-    seller.avatar = await uploadImage(
-        cloudinary, filePath, seller.username, 'seller', context);
+    seller.avatar = await CloudinaryController()
+        .uploadImage(filePath, seller.username, 'seller');
     await sellerController.createSeller(seller);
 
     sellerController.isLoading.value = false;

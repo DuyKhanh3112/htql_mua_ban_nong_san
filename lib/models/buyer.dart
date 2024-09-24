@@ -11,18 +11,21 @@ class Buyer {
   String password;
   String status;
   Timestamp create_at;
+  int? rate_order;
 
-  Buyer(
-      {required this.id,
-      required this.username,
-      required this.email,
-      required this.phone,
-      required this.password,
-      required this.name,
-      required this.create_at,
-      required this.status,
-      this.avatar,
-      this.cover});
+  Buyer({
+    required this.id,
+    required this.username,
+    required this.email,
+    required this.phone,
+    required this.password,
+    required this.name,
+    required this.create_at,
+    required this.status,
+    this.avatar,
+    this.cover,
+    this.rate_order,
+  });
 
   factory Buyer.initBuyer() {
     return Buyer(
@@ -50,6 +53,7 @@ class Buyer {
       status: json['status'],
       avatar: json['avatar'] ?? '',
       cover: json['cover'] ?? '',
+      rate_order: json['rate_order'],
     );
   }
 
@@ -64,7 +68,8 @@ class Buyer {
       'avatar': avatar,
       'cover': cover,
       'create_at': create_at,
-      'status': status
+      'status': status,
+      'rate_order': rate_order,
     };
   }
 

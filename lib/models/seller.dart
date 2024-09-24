@@ -13,7 +13,6 @@ class Seller {
   Timestamp create_at;
   String address_detail;
   String province_id;
-  double? ratting;
   String? tax_code;
 
   Seller({
@@ -29,7 +28,6 @@ class Seller {
     this.cover,
     required this.address_detail,
     required this.province_id,
-    this.ratting,
     this.tax_code,
   });
 
@@ -44,10 +42,9 @@ class Seller {
       avatar: '',
       cover: '',
       create_at: Timestamp.now(),
-      status: '',
+      status: 'draft',
       address_detail: '',
-      province_id: 'draft',
-      ratting: 0,
+      province_id: '',
       tax_code: '',
     );
   }
@@ -66,7 +63,6 @@ class Seller {
       status: json['status'],
       address_detail: json['address_detail'],
       province_id: json['province_id'],
-      ratting: json['ratting'],
       tax_code: json['tax_code'] ?? '',
     );
   }
@@ -85,7 +81,6 @@ class Seller {
       'status': status,
       'address_detail': address_detail,
       'province_id': province_id,
-      'ratting': ratting,
       'tax_code': tax_code,
     };
   }
@@ -104,7 +99,6 @@ class Seller {
       'status': status,
       'address_detail': address_detail,
       'province_id': province_id,
-      'ratting': ratting,
       'tax_code': tax_code,
     };
   }

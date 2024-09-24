@@ -1,12 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/address_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/models/admin.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/article/article_admin_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/buyer/buyer_home_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/category/category_home_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/product/product_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/account_setting_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_buyer/article/article_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_buyer/category/category_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/home_buyer_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/account/seller_information_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/article/article_seller_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/order/order_seller_home_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_home_page.dart';
 
 class MainController extends GetxController {
   static MainController get to => Get.find<MainController>();
@@ -24,14 +41,56 @@ class MainController extends GetxController {
   CollectionReference provinceCollection =
       FirebaseFirestore.instance.collection('Province');
 
+  Future<void> createProvince(String name) async {
+    isLoading.value = true;
+    Province province = Province(id: '', name: name);
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    String newProvinceId = provinceCollection.doc().id;
+    DocumentReference refProvince = provinceCollection.doc(newProvinceId);
+    batch.set(refProvince, province.toVal());
+
+    await batch.commit();
+    isLoading.value = false;
+  }
+
   RxBool isLoading = false.obs;
 
   List<Widget> page = [
     const HomeUserPage(),
+    const CategoryPage(),
+    const ArticlePage(),
     const AccountSettingPage(),
-    const AccountSettingPage(),
-    const AccountSettingPage(),
-    const AccountSettingPage(),
+  ];
+  List<Widget> pageAdmin = [
+    const CategoryHomePage(), // personal information
+    const BuyerHomePage(), //buyer
+    const BuyerHomePage(), //seller
+
+    const CategoryHomePage(),
+    const CategoryHomePage(), //Province
+    const ProductHomePage(),
+    const ArticleAdminPage(),
+  ];
+  RxInt indexAdmin = 0.obs;
+  // List<String> titleAdmin = [
+  //   'Thông tin cá nhân',
+  //   'Người mua',
+  //   'Người bán',
+  //   'Loại sản phẩm',
+  //   'Tỉnh thành phố',
+  //   'Sản phẩm',
+  // ];
+
+  List<Widget> pageSeller = [
+    const SellerInformationPage(),
+    const ProductSellerHomePage(),
+    const OrderSellerHomePage(),
+    const ArticleSellerPage(),
+  ];
+  RxInt indexSeller = 0.obs;
+  List<String> titleSeller = [
+    'Thông tin cá nhân',
+    'Sản phẩm',
   ];
 
   List<String> titles = [
@@ -45,6 +104,14 @@ class MainController extends GetxController {
   RxInt numPage = 0.obs;
 
   RxList<Province> listProvince = <Province>[].obs;
+
+  Future<bool> checkInternet() async {
+    isLoading.value = true;
+    var connectivityResult = await Connectivity().checkConnectivity();
+    isLoading.value = false;
+    // ignore: unrelated_type_equality_checks
+    return connectivityResult != ConnectivityResult.none;
+  }
 
   Future<bool> login(String uname, String pword) async {
     isLoading.value = true;
@@ -61,7 +128,10 @@ class MainController extends GetxController {
       data['id'] = snapshot.docs[0].id;
 
       buyer.value = Buyer.fromJson(data);
-      Get.toNamed('/');
+      await Get.find<CartController>().loadCartByBuyer();
+      await Get.find<AddressController>().loadAddressBuyer();
+      await Get.find<ProductController>().loadProductBoughtByBuyer();
+      // Get.toNamed('/');
       isLoading.value = false;
       return true;
     }
@@ -78,7 +148,7 @@ class MainController extends GetxController {
       data['id'] = snapshotSeller.docs[0].id;
 
       seller.value = Seller.fromJson(data);
-      Get.toNamed('/');
+      Get.toNamed('/seller');
       isLoading.value = false;
       return true;
     }
@@ -101,27 +171,33 @@ class MainController extends GetxController {
     return false;
   }
 
-  Future<void> logout() async {
-    buyer.value = Buyer.initBuyer();
-  }
+  // Future<void> logout() async {
+  //   buyer.value = Buyer.initBuyer();
+  //   admin.value= Admin.initAdmin();
+  //   seller.value= Seller.initSeller();
+
+  // }
 
   Future<void> loadAll() async {
     isLoading.value = true;
-    if (listProvince.value.isEmpty) {
-      await loadProvince();
-    }
+    await Get.find<ProvinceController>().loadProvince();
+    await Get.find<CategoryController>().loadCategory();
+    await Get.find<SellerController>().loadSeller();
+    Get.find<ProductController>().loadProductActive();
+    // await Get.find<ArticleController>().loadAllArticle();
     isLoading.value = false;
   }
 
   Future<void> loadProvince() async {
+    listProvince.value = [];
     final snapshot = await provinceCollection.get();
-    if (snapshot.docs.isNotEmpty) {
-      for (var snap in snapshot.docs) {
-        Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
-        data['id'] = snap.id;
-        Province province = Province.fromJson(data);
-        listProvince.value.add(province);
-      }
+    for (var snap in snapshot.docs) {
+      Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
+      // {'key': value}
+      data['id'] = snap.id;
+      Province province = Province.fromJson(data);
+      // ignore: invalid_use_of_protected_member
+      listProvince.value.add(province);
     }
   }
 }

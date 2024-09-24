@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/article_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
-import 'package:htql_mua_ban_nong_san/views/view_buyer/account_setting_page.dart';
-import 'package:htql_mua_ban_nong_san/login_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -13,6 +10,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(MainController());
     MainController mainController = Get.find<MainController>();
+
     return Obx(() {
       return SafeArea(
         child: Scaffold(
@@ -45,25 +43,30 @@ class HomePage extends StatelessWidget {
                 label: 'Trang Chủ',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.notes),
+                icon: Icon(Icons.menu),
                 label: 'Danh Mục',
               ),
+              // BottomNavigationBarItem(
+              //   icon: Icon(Icons.pending_actions_outlined),
+              //   label: 'Đơn Hàng',
+              // ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.pending_actions_outlined),
-                label: 'Đơn Hàng',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.production_quantity_limits_sharp),
-                label: 'Sản Phẩm',
+                icon: Icon(Icons.newspaper_rounded),
+                label: 'Bài Viết',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_circle_rounded),
                 label: 'Tài Khoản',
               ),
             ],
-            onTap: (index) {
-              // print(index);
+            onTap: (index) async {
               mainController.numPage.value = index;
+
+              if (index == 2) {
+                mainController.isLoading.value = true;
+                await Get.find<ArticleController>().loadAllArticleActive();
+                mainController.isLoading.value = false;
+              }
             },
             currentIndex: mainController.numPage.value,
           ),
