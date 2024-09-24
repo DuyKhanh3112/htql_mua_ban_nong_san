@@ -5,7 +5,9 @@ import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/review_controller.dart';
 import 'package:htql_mua_ban_nong_san/models/address.dart';
+import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 import 'package:htql_mua_ban_nong_san/models/cart.dart';
 import 'package:htql_mua_ban_nong_san/models/order.dart';
 import 'package:htql_mua_ban_nong_san/models/order_detail.dart';
@@ -37,6 +39,19 @@ class OrderController extends GetxController {
   Rx<Address> address = Address.initAddress().obs;
   RxList<Product> listProduct = <Product>[].obs;
   RxList<ProductImage> listProductImage = <ProductImage>[].obs;
+  RxList<Buyer> listBuyer = <Buyer>[].obs;
+
+  Future<void> loadAddressByOrder() async {
+    isLoading.value = true;
+    final snapshoot = await Get.find<AddressController>()
+        .addressCollection
+        .doc(order.value.address_id)
+        .get();
+    Map<String, dynamic> data = snapshoot.data() as Map<String, dynamic>;
+    data['id'] = snapshoot.id;
+    address.value = Address.fromJson(data);
+    isLoading.value = false;
+  }
 
   Future<void> loadOrderByBuyer() async {
     isLoading.value = true;
@@ -48,6 +63,7 @@ class OrderController extends GetxController {
       Map<String, dynamic> dataOrder = od.data() as Map<String, dynamic>;
       dataOrder['id'] = od.id;
       listOrder.add(Orders.fromJson(dataOrder));
+      await Get.find<ReviewController>().loadReviewByOrderID(od.id);
     }
 
     listOrder.sort((a, b) => b.update_at.compareTo(a.update_at));
@@ -57,7 +73,8 @@ class OrderController extends GetxController {
   Future<void> loadOrderBySeller() async {
     isLoading.value = true;
     listOrder.value = [];
-    await Get.find<BuyerController>().loadBuyer();
+    listBuyer.value = [];
+    // await Get.find<BuyerController>().loadBuyer();
     final snapOrder = await orderCollection
         .where('seller_id',
             isEqualTo: Get.find<MainController>().seller.value.id)
@@ -67,6 +84,17 @@ class OrderController extends GetxController {
       dataOrder['id'] = od.id;
 
       listOrder.add(Orders.fromJson(dataOrder));
+      if (listBuyer.where((p0) => p0.id == dataOrder['buyer_id']).isEmpty) {
+        final snapBuyer = await Get.find<BuyerController>()
+            .buyerCollection
+            .doc(dataOrder['buyer_id'])
+            .get();
+        Map<String, dynamic> dataBuyer =
+            snapBuyer.data() as Map<String, dynamic>;
+        dataBuyer['id'] = dataOrder['buyer_id'];
+        dataBuyer['rate_order'] = await getRateSuccessByBuyer(dataBuyer['id']);
+        listBuyer.add(Buyer.fromJson(dataBuyer));
+      }
     }
 
     listOrder.sort((a, b) => b.update_at.compareTo(a.update_at));
@@ -75,9 +103,7 @@ class OrderController extends GetxController {
 
   Future<void> loadOrderDetailByOrder(Orders ord) async {
     isLoading.value = true;
-
     listOrderDetail.value = [];
-
     listProduct.value = [];
     listProductImage.value = [];
     final snapODD =

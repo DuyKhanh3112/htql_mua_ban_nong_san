@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/article_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 
 class HomePage extends StatelessWidget {
@@ -10,11 +11,6 @@ class HomePage extends StatelessWidget {
     Get.put(MainController());
     MainController mainController = Get.find<MainController>();
 
-    // if (Get.find<MainController>().seller.value.id != '') {
-    //   Timer.periodic(Duration(seconds: 10), (timer) {
-    //     print('Hàm này sẽ được gọi sau mỗi 10 giây');
-    //   });
-    // }
     return Obx(() {
       return SafeArea(
         child: Scaffold(
@@ -47,7 +43,7 @@ class HomePage extends StatelessWidget {
                 label: 'Trang Chủ',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.notes),
+                icon: Icon(Icons.menu),
                 label: 'Danh Mục',
               ),
               // BottomNavigationBarItem(
@@ -55,7 +51,7 @@ class HomePage extends StatelessWidget {
               //   label: 'Đơn Hàng',
               // ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.article),
+                icon: Icon(Icons.newspaper_rounded),
                 label: 'Bài Viết',
               ),
               BottomNavigationBarItem(
@@ -63,8 +59,14 @@ class HomePage extends StatelessWidget {
                 label: 'Tài Khoản',
               ),
             ],
-            onTap: (index) {
+            onTap: (index) async {
               mainController.numPage.value = index;
+
+              if (index == 2) {
+                mainController.isLoading.value = true;
+                await Get.find<ArticleController>().loadAllArticleActive();
+                mainController.isLoading.value = false;
+              }
             },
             currentIndex: mainController.numPage.value,
           ),

@@ -6,9 +6,9 @@ class Product {
   String? description;
   double? expripy_date;
   String name;
-  double price;
+  dynamic price;
   String province_id;
-  double quantity;
+  dynamic quantity;
   String seller_id;
   String status;
   String unit;

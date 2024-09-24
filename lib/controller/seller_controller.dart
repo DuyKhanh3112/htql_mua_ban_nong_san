@@ -5,6 +5,16 @@ import 'package:htql_mua_ban_nong_san/models/seller.dart';
 class SellerController extends GetxController {
   static SellerController get to => Get.find<SellerController>();
 
+  RxList<dynamic> listStatus = [
+    {'value': 'draft', 'label': 'Đang chờ duyệt'},
+    {'value': 'active', 'label': 'Đang hoạt động'},
+    {
+      'value': 'warning',
+      'label': 'Cảnh báo',
+    },
+    {'value': 'inactive', 'label': 'Khóa'},
+  ].obs;
+
   CollectionReference sellerCollection =
       FirebaseFirestore.instance.collection('Seller');
 

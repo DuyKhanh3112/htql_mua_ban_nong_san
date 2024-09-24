@@ -12,12 +12,16 @@ import 'package:htql_mua_ban_nong_san/models/admin.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/article/article_admin_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/buyer/buyer_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/category/category_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/product/product_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/account_setting_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_buyer/article/article_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/category/category_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/home_buyer_page.dart';
-import 'package:htql_mua_ban_nong_san/views/view_buyer/order/order_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/account/seller_information_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/article/article_seller_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/order/order_seller_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_home_page.dart';
 
@@ -54,28 +58,34 @@ class MainController extends GetxController {
   List<Widget> page = [
     const HomeUserPage(),
     const CategoryPage(),
-    const OrderPage(),
-    // const AccountSettingPage(),
+    const ArticlePage(),
     const AccountSettingPage(),
   ];
   List<Widget> pageAdmin = [
     const CategoryHomePage(), // personal information
+    const BuyerHomePage(), //buyer
+    const BuyerHomePage(), //seller
+
     const CategoryHomePage(),
     const CategoryHomePage(), //Province
     const ProductHomePage(),
+    const ArticleAdminPage(),
   ];
   RxInt indexAdmin = 0.obs;
-  List<String> titleAdmin = [
-    'Thông tin cá nhân',
-    'Loại sản phẩm',
-    'Tỉnh thành phố',
-    'Sản phẩm',
-  ];
+  // List<String> titleAdmin = [
+  //   'Thông tin cá nhân',
+  //   'Người mua',
+  //   'Người bán',
+  //   'Loại sản phẩm',
+  //   'Tỉnh thành phố',
+  //   'Sản phẩm',
+  // ];
 
   List<Widget> pageSeller = [
-    // const HomeSellerPage(),
+    const SellerInformationPage(),
     const ProductSellerHomePage(),
     const OrderSellerHomePage(),
+    const ArticleSellerPage(),
   ];
   RxInt indexSeller = 0.obs;
   List<String> titleSeller = [
@@ -118,9 +128,10 @@ class MainController extends GetxController {
       data['id'] = snapshot.docs[0].id;
 
       buyer.value = Buyer.fromJson(data);
-      Get.find<CartController>().loadCartByBuyer();
-      Get.find<AddressController>().loadAddressBuyer();
-      Get.toNamed('/');
+      await Get.find<CartController>().loadCartByBuyer();
+      await Get.find<AddressController>().loadAddressBuyer();
+      await Get.find<ProductController>().loadProductBoughtByBuyer();
+      // Get.toNamed('/');
       isLoading.value = false;
       return true;
     }
@@ -160,16 +171,20 @@ class MainController extends GetxController {
     return false;
   }
 
-  Future<void> logout() async {
-    buyer.value = Buyer.initBuyer();
-  }
+  // Future<void> logout() async {
+  //   buyer.value = Buyer.initBuyer();
+  //   admin.value= Admin.initAdmin();
+  //   seller.value= Seller.initSeller();
+
+  // }
 
   Future<void> loadAll() async {
     isLoading.value = true;
     await Get.find<ProvinceController>().loadProvince();
     await Get.find<CategoryController>().loadCategory();
     await Get.find<SellerController>().loadSeller();
-    await Get.find<ProductController>().loadProductActive();
+    Get.find<ProductController>().loadProductActive();
+    // await Get.find<ArticleController>().loadAllArticle();
     isLoading.value = false;
   }
 

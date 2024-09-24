@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/admin_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/article_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
@@ -208,7 +210,22 @@ class DrawerAdmin extends StatelessWidget {
                         ),
                         ListTile(
                           leading: Image.asset(
-                            'assets/images/category_icon.png',
+                            'assets/images/buyer_icon.png',
+                            width: 40,
+                          ),
+                          title: const Text(
+                            'Người mua',
+                            style: TextStyle(color: Colors.green, fontSize: 18),
+                          ),
+                          onTap: () async {
+                            Get.back();
+                            mainController.indexAdmin.value = 1;
+                            await Get.find<BuyerController>().loadBuyer();
+                          },
+                        ),
+                        ListTile(
+                          leading: Image.asset(
+                            'assets/images/category_green.png',
                             width: 40,
                           ),
                           title: const Text(
@@ -218,13 +235,13 @@ class DrawerAdmin extends StatelessWidget {
                           onTap: () async {
                             Get.back();
 
-                            mainController.indexAdmin.value = 2;
+                            mainController.indexAdmin.value = 3;
                             await Get.find<CategoryController>().loadCategory();
                           },
                         ),
                         ListTile(
                           leading: Image.asset(
-                            'assets/images/category_icon.png',
+                            'assets/images/product_green.png',
                             width: 40,
                           ),
                           title: const Text(
@@ -234,8 +251,24 @@ class DrawerAdmin extends StatelessWidget {
                           onTap: () async {
                             Get.back();
                             // Get.toNamed('/product_admin');
-                            mainController.indexAdmin.value = 3;
+                            mainController.indexAdmin.value = 5;
                             Get.find<ProductController>().loadAllProduct();
+                          },
+                        ),
+                        ListTile(
+                          leading: Image.asset(
+                            'assets/icon/article_green.png',
+                            width: 40,
+                          ),
+                          title: const Text(
+                            'Bài viết',
+                            style: TextStyle(color: Colors.green, fontSize: 18),
+                          ),
+                          onTap: () async {
+                            Get.back();
+                            // Get.toNamed('/product_admin');
+                            mainController.indexAdmin.value = 6;
+                            Get.find<ArticleController>().loadAllArticle();
                           },
                         ),
                         ListTile(

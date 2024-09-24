@@ -53,7 +53,7 @@ class Buyer {
       status: json['status'],
       avatar: json['avatar'] ?? '',
       cover: json['cover'] ?? '',
-      rate_order: json['rate_order'] ?? 0,
+      rate_order: json['rate_order'],
     );
   }
 

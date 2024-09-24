@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:convert_vietnamese/convert_vietnamese.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ import 'package:htql_mua_ban_nong_san/models/category.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
-import 'package:htql_mua_ban_nong_san/views/view_admin/main_drawer.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/drawer_admin.dart';
 import 'package:intl/intl.dart';
 
 class ProductHomePage extends StatelessWidget {
@@ -88,21 +89,7 @@ class ProductHomePage extends StatelessWidget {
                                   value: Get.find<CategoryController>()
                                       .listCategory
                                       .firstWhereOrNull((element) =>
-                                          element.id == category.value.id &&
-                                          element.hide == false),
-                                  // items: Get.find<CategoryController>()
-                                  //     .listCategory.where((p0) => p0.hide==false)
-                                  //     .map(
-                                  //       (category) => DropdownMenuItem(
-                                  //         value: category,
-                                  //         child: Text(
-                                  //           category.name,
-                                  //           overflow: TextOverflow.ellipsis,
-                                  //           strutStyle: StrutStyle.disabled,
-                                  //         ),
-                                  //       ),
-                                  //     )
-                                  //     .toList(),
+                                          element.id == category.value.id),
                                   items: [
                                     DropdownMenuItem(
                                       value: Category.initCategory(),
@@ -114,8 +101,7 @@ class ProductHomePage extends StatelessWidget {
                                     ),
                                     for (var category
                                         in Get.find<CategoryController>()
-                                            .listCategory
-                                            .where((p0) => p0.hide == false))
+                                            .listCategory)
                                       DropdownMenuItem(
                                         value: category,
                                         child: Text(
@@ -373,8 +359,7 @@ class ProductHomePage extends StatelessWidget {
 
     Category category = Get.find<CategoryController>()
             .listCategory
-            .firstWhereOrNull(
-                (c) => c.id == product.category_id && c.hide == false) ??
+            .firstWhereOrNull((c) => c.id == product.category_id) ??
         Category.initCategory();
 
     Province province = Get.find<ProvinceController>()
@@ -521,6 +506,7 @@ class ProductHomePage extends StatelessWidget {
                           btnCancelText: 'Không',
                           btnOkOnPress: () async {
                             product.status = 'active';
+                            product.create_at = Timestamp.now();
                             await productController.updateProduct(product);
                           },
                           btnCancelOnPress: () {},

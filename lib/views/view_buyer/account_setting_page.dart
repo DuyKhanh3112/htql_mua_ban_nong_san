@@ -135,7 +135,7 @@ class AccountSettingPage extends StatelessWidget {
                                       ),
                                       child: ListTile(
                                         leading: const Icon(
-                                          Icons.inventory_outlined,
+                                          Icons.playlist_add_check_circle_sharp,
                                           color: Colors.green,
                                         ),
                                         title: const Text(
@@ -150,9 +150,12 @@ class AccountSettingPage extends StatelessWidget {
                                               BorderSide(color: Colors.green),
                                         ),
                                         onTap: () async {
-                                          Get.toNamed('order');
+                                          mainController.isLoading.value = true;
                                           await Get.find<OrderController>()
                                               .loadOrderByBuyer();
+                                          mainController.isLoading.value =
+                                              false;
+                                          Get.toNamed('order');
                                         },
                                       ),
                                     ),
