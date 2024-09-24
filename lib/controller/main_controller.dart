@@ -20,6 +20,7 @@ import 'package:htql_mua_ban_nong_san/views/view_buyer/account_setting_page.dart
 import 'package:htql_mua_ban_nong_san/views/view_buyer/article/article_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/category/category_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/home_buyer_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/account/seller_information_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/article/article_seller_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/order/order_seller_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_home_page.dart';
@@ -81,6 +82,7 @@ class MainController extends GetxController {
   // ];
 
   List<Widget> pageSeller = [
+    const SellerInformationPage(),
     const ProductSellerHomePage(),
     const OrderSellerHomePage(),
     const ArticleSellerPage(),

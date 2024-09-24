@@ -30,7 +30,7 @@ class InitialBindings extends Bindings {
     Get.put(AddressController(), permanent: true);
     Get.put(ArticleController(), permanent: true);
 
-    await Get.find<MainController>().loadAll();
+    Get.find<MainController>().loadAll();
   }
 
   Future<void> buyerController() async {

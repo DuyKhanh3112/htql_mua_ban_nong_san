@@ -117,58 +117,77 @@ class DrawerSeller extends StatelessWidget {
                     ),
                     onTap: () {
                       Get.back();
+                      mainController.indexSeller.value = 0;
                       // Get.toNamed('/seller');
                     },
                   ),
-                  ListTile(
-                    leading: Image.asset(
-                      'assets/images/product_icon.png',
-                      width: 40,
-                    ),
-                    title: const Text(
-                      'Sản phẩm',
-                      style: TextStyle(color: Colors.green, fontSize: 18),
-                    ),
-                    onTap: () async {
-                      // Get.toNamed('/product_seller');
-                      Get.back();
-                      mainController.indexSeller.value = 0;
-                      await Get.find<ProductController>().loadProductBySeller();
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.inventory_outlined,
-                      color: Colors.green,
-                      size: 40,
-                    ),
-                    title: const Text(
-                      'Đơn hàng',
-                      style: TextStyle(color: Colors.green, fontSize: 18),
-                    ),
-                    onTap: () async {
-                      Get.back();
-                      Get.find<MainController>().indexSeller.value = 1;
-                      await Get.find<OrderController>().loadOrderBySeller();
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.newspaper_rounded,
-                      color: Colors.green,
-                      size: 40,
-                    ),
-                    title: const Text(
-                      'Bài viết',
-                      style: TextStyle(color: Colors.green, fontSize: 18),
-                    ),
-                    onTap: () async {
-                      Get.back();
-                      Get.find<MainController>().indexSeller.value = 2;
+                  [
+                    'draft',
+                    'inactive'
+                  ].contains(Get.find<MainController>().seller.value.status)
+                      ? const SizedBox()
+                      : ListTile(
+                          leading: Image.asset(
+                            'assets/images/product_icon.png',
+                            width: 40,
+                          ),
+                          title: const Text(
+                            'Sản phẩm',
+                            style: TextStyle(color: Colors.green, fontSize: 18),
+                          ),
+                          onTap: () async {
+                            // Get.toNamed('/product_seller');
+                            Get.back();
+                            mainController.indexSeller.value = 1;
+                            await Get.find<ProductController>()
+                                .loadProductBySeller();
+                          },
+                        ),
+                  [
+                    'draft',
+                    'inactive'
+                  ].contains(Get.find<MainController>().seller.value.status)
+                      ? const SizedBox()
+                      : ListTile(
+                          leading: const Icon(
+                            Icons.inventory_outlined,
+                            color: Colors.green,
+                            size: 40,
+                          ),
+                          title: const Text(
+                            'Đơn hàng',
+                            style: TextStyle(color: Colors.green, fontSize: 18),
+                          ),
+                          onTap: () async {
+                            Get.back();
+                            Get.find<MainController>().indexSeller.value = 2;
+                            await Get.find<OrderController>()
+                                .loadOrderBySeller();
+                          },
+                        ),
+                  [
+                    'draft',
+                    'inactive'
+                  ].contains(Get.find<MainController>().seller.value.status)
+                      ? const SizedBox()
+                      : ListTile(
+                          leading: const Icon(
+                            Icons.newspaper_rounded,
+                            color: Colors.green,
+                            size: 40,
+                          ),
+                          title: const Text(
+                            'Bài viết',
+                            style: TextStyle(color: Colors.green, fontSize: 18),
+                          ),
+                          onTap: () async {
+                            Get.back();
+                            Get.find<MainController>().indexSeller.value = 3;
 
-                      await Get.find<ArticleController>().loadArticleBySeller();
-                    },
-                  ),
+                            await Get.find<ArticleController>()
+                                .loadArticleBySeller();
+                          },
+                        ),
                   ListTile(
                     leading: const Icon(
                       Icons.logout,

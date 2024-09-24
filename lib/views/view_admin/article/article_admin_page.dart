@@ -7,6 +7,7 @@ import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/article.dart';
 import 'package:htql_mua_ban_nong_san/models/article_image.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/drawer_admin.dart';
+import 'package:intl/intl.dart';
 
 class ArticleAdminPage extends StatelessWidget {
   const ArticleAdminPage({super.key});
@@ -96,6 +97,24 @@ class ArticleAdminPage extends StatelessWidget {
                                 margin: EdgeInsets.all(Get.height * 0.01),
                                 child: Column(
                                   children: [
+                                    // const Divider(),
+                                    SizedBox(
+                                      width: Get.width * 0.9,
+                                      child: Text(
+                                        DateFormat('HH:mm dd-MM-yyyy')
+                                            .format(article.update_at.toDate()),
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 14,
+                                          // fontWeight: FontWeight.bold,
+                                          fontStyle: FontStyle.italic,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: Get.height * 0.01,
+                                    ),
                                     SizedBox(
                                       width: Get.width * 0.9,
                                       child: Text(
