@@ -16,7 +16,7 @@ class DrawerSeller extends StatelessWidget {
     MainController mainController = Get.find<MainController>();
     return Obx(() {
       return Container(
-        width: Get.width * 2 / 3,
+        width: Get.width * 0.75,
         decoration: const BoxDecoration(
           color: Colors.white,
         ),
@@ -25,7 +25,7 @@ class DrawerSeller extends StatelessWidget {
             Container(
               // color: Colors.white,
               height: 150,
-              width: Get.width * 2 / 3,
+              width: Get.width * 0.75,
               decoration: const BoxDecoration(
                 color: Colors.green,
                 borderRadius: BorderRadius.only(
@@ -37,17 +37,17 @@ class DrawerSeller extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(
-                      bottom: 10,
-                      left: 5,
-                      right: 5,
+                    padding: EdgeInsets.only(
+                      bottom: Get.width * 0.02,
+                      left: Get.width * 0.02,
+                      right: Get.width * 0.01,
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          width: Get.width / 5,
+                          width: Get.width * 0.2,
                           height: 100,
                           // margin: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
@@ -71,31 +71,27 @@ class DrawerSeller extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              // color: Colors.amber,
-                              width: Get.width * 0.35,
-                              child: Text(
-                                mainController.seller.value.name,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  shadows: [
-                                    BoxShadow(
-                                      color: Colors.grey.shade400,
-                                      spreadRadius: 5,
-                                      blurRadius: 7,
-                                      offset: const Offset(
-                                          0, 3), // changes position of shadow
-                                    ),
-                                  ],
+                        Container(
+                          // color: Colors.amber,
+                          width: Get.width * 0.45,
+                          padding: EdgeInsets.only(left: Get.width * 0.05),
+                          child: Text(
+                            mainController.seller.value.name,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              shadows: [
+                                BoxShadow(
+                                  color: Colors.grey.shade400,
+                                  spreadRadius: 5,
+                                  blurRadius: 7,
+                                  offset: const Offset(
+                                      0, 3), // changes position of shadow
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
@@ -113,7 +109,11 @@ class DrawerSeller extends StatelessWidget {
                     ),
                     title: const Text(
                       'Thông tin cá nhân',
-                      style: TextStyle(color: Colors.green, fontSize: 18),
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     onTap: () {
                       Get.back();
@@ -133,7 +133,11 @@ class DrawerSeller extends StatelessWidget {
                           ),
                           title: const Text(
                             'Sản phẩm',
-                            style: TextStyle(color: Colors.green, fontSize: 18),
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           onTap: () async {
                             // Get.toNamed('/product_seller');
@@ -149,14 +153,17 @@ class DrawerSeller extends StatelessWidget {
                   ].contains(Get.find<MainController>().seller.value.status)
                       ? const SizedBox()
                       : ListTile(
-                          leading: const Icon(
-                            Icons.inventory_outlined,
-                            color: Colors.green,
-                            size: 40,
+                          leading: Image.asset(
+                            'assets/images/order_icon.png',
+                            width: 40,
                           ),
                           title: const Text(
                             'Đơn hàng',
-                            style: TextStyle(color: Colors.green, fontSize: 18),
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           onTap: () async {
                             Get.back();
@@ -171,14 +178,17 @@ class DrawerSeller extends StatelessWidget {
                   ].contains(Get.find<MainController>().seller.value.status)
                       ? const SizedBox()
                       : ListTile(
-                          leading: const Icon(
-                            Icons.newspaper_rounded,
-                            color: Colors.green,
-                            size: 40,
+                          leading: Image.asset(
+                            'assets/images/article_green.png',
+                            width: 40,
                           ),
                           title: const Text(
                             'Bài viết',
-                            style: TextStyle(color: Colors.green, fontSize: 18),
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           onTap: () async {
                             Get.back();
@@ -188,6 +198,70 @@ class DrawerSeller extends StatelessWidget {
                                 .loadArticleBySeller();
                           },
                         ),
+                  [
+                    'draft',
+                    'inactive'
+                  ].contains(Get.find<MainController>().seller.value.status)
+                      ? const SizedBox()
+                      : ExpansionTile(
+                          leading: Image.asset(
+                            'assets/images/statistics_icon.png',
+                            width: 40,
+                          ),
+                          title: const Text(
+                            'Thống kê báo cáo',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          collapsedIconColor: Colors.green,
+                          children: [
+                            ListTile(
+                              contentPadding:
+                                  EdgeInsets.only(left: Get.width * 0.1),
+                              leading: Image.asset(
+                                'assets/images/report_sell.png',
+                                width: 30,
+                              ),
+                              title: const Text(
+                                'Thống kê bán hàng',
+                                style: TextStyle(
+                                    color: Colors.green, fontSize: 18),
+                              ),
+                              onTap: () async {
+                                Get.back();
+                                Get.find<MainController>().indexSeller.value =
+                                    4;
+
+                                // await Get.find<ArticleController>()
+                                //     .loadArticleBySeller();
+                              },
+                            ),
+                            ListTile(
+                              contentPadding:
+                                  EdgeInsets.only(left: Get.width * 0.1),
+                              leading: Image.asset(
+                                'assets/images/report_product.png',
+                                width: 30,
+                              ),
+                              title: const Text(
+                                'Thống kê sản phẩm',
+                                style: TextStyle(
+                                    color: Colors.green, fontSize: 18),
+                              ),
+                              onTap: () async {
+                                Get.back();
+                                Get.find<MainController>().indexSeller.value =
+                                    5;
+
+                                // await Get.find<ArticleController>()
+                                //     .loadArticleBySeller();
+                              },
+                            ),
+                          ],
+                        ),
                   ListTile(
                     leading: const Icon(
                       Icons.logout,
@@ -196,7 +270,11 @@ class DrawerSeller extends StatelessWidget {
                     ),
                     title: const Text(
                       'Đăng xuất',
-                      style: TextStyle(color: Colors.green, fontSize: 18),
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     onTap: () {
                       Get.back();
