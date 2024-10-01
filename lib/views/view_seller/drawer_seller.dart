@@ -4,6 +4,7 @@ import 'package:htql_mua_ban_nong_san/controller/article_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/report_controller.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
 
 class DrawerSeller extends StatelessWidget {
@@ -237,6 +238,8 @@ class DrawerSeller extends StatelessWidget {
 
                                 // await Get.find<ArticleController>()
                                 //     .loadArticleBySeller();
+                                await Get.find<ReportController>()
+                                    .showReportOrder();
                               },
                             ),
                             ListTile(

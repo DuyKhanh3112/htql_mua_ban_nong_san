@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/address_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
@@ -19,11 +20,11 @@ class OrderController extends GetxController {
   RxBool isLoading = false.obs;
 
   RxList<dynamic> listStatus = [
-    {'value': 'unconfirm', 'label': 'Chờ xác nhận'},
-    {'value': 'delivering', 'label': 'Đang giao'},
-    {'value': 'delivered', 'label': 'Đã giao'},
-    {'value': 'cancelled', 'label': 'Đã hủy'},
-    {'value': 'failed', 'label': 'Không nhận'}
+    {'value': 'unconfirm', 'label': 'Chờ xác nhận', 'color': Colors.grey},
+    {'value': 'delivering', 'label': 'Đang giao', 'color': Colors.blue},
+    {'value': 'delivered', 'label': 'Đã giao', 'color': Colors.green},
+    {'value': 'cancelled', 'label': 'Đã hủy', 'color': Colors.orange},
+    {'value': 'failed', 'label': 'Không nhận', 'color': Colors.red}
   ].obs;
   RxInt orderIndex = 0.obs;
 

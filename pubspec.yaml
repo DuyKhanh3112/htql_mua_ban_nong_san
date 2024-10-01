@@ -43,6 +43,9 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   card_banner: ^0.0.1+2
   printing: ^5.12.0
+  d_chart: ^2.6.9
+  fl_chart: ^0.69.0
+  flutter_date_range_picker: ^0.1.1
 
 dev_dependencies:
   flutter_test:

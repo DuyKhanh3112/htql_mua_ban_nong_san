@@ -25,7 +25,7 @@ import 'package:htql_mua_ban_nong_san/views/view_seller/article/article_seller_p
 import 'package:htql_mua_ban_nong_san/views/view_seller/order/order_seller_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/report/report_product_seller_page.dart';
-import 'package:htql_mua_ban_nong_san/views/view_seller/report/report_sell_seller_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/report/report_order_seller_page.dart';
 
 class MainController extends GetxController {
   static MainController get to => Get.find<MainController>();
