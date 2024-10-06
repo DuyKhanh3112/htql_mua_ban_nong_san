@@ -9,6 +9,7 @@ import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/report_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/review_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 // import 'package:htql_mua_ban_nong_san/controller/user_controller.dart';
@@ -31,13 +32,7 @@ class InitialBindings extends Bindings {
     Get.put(ArticleController(), permanent: true);
 
     Get.find<MainController>().loadAll();
-  }
 
-  Future<void> buyerController() async {
-    Get.put(BuyerController(), permanent: true);
-  }
-
-  Future<void> sellerController() async {
-    Get.put(SellerController(), permanent: true);
+    Get.put(ReportController(), permanent: true);
   }
 }

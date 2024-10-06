@@ -24,6 +24,8 @@ import 'package:htql_mua_ban_nong_san/views/view_seller/account/seller_informati
 import 'package:htql_mua_ban_nong_san/views/view_seller/article/article_seller_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/order/order_seller_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_home_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/report/report_product_seller_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/report/report_order_seller_page.dart';
 
 class MainController extends GetxController {
   static MainController get to => Get.find<MainController>();
@@ -82,10 +84,12 @@ class MainController extends GetxController {
   // ];
 
   List<Widget> pageSeller = [
-    const SellerInformationPage(),
-    const ProductSellerHomePage(),
-    const OrderSellerHomePage(),
-    const ArticleSellerPage(),
+    const SellerInformationPage(), //0
+    const ProductSellerHomePage(), //1
+    const OrderSellerHomePage(), //2
+    const ArticleSellerPage(), //3
+    const ReportSellSellerPage(), //4
+    const ReportProductSellerPage(), //5
   ];
   RxInt indexSeller = 0.obs;
   List<String> titleSeller = [

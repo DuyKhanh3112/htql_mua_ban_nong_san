@@ -257,7 +257,7 @@ class DrawerAdmin extends StatelessWidget {
                         ),
                         ListTile(
                           leading: Image.asset(
-                            'assets/icon/article_green.png',
+                            'assets/images/article_green.png',
                             width: 40,
                           ),
                           title: const Text(

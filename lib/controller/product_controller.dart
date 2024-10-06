@@ -39,11 +39,11 @@ class ProductController extends GetxController {
   RxInt indexProductPage = 0.obs;
 
   RxList<dynamic> listStatus = [
-    {'value': 'draft', 'label': 'Chờ duyệt'},
-    {'value': 'active', 'label': 'Còn hàng'},
-    {'value': 'inactive', 'label': 'Hêt hàng'},
-    {'value': 'hide', 'label': 'Ẩn'},
-    {'value': 'lock', 'label': 'Vi phạm'}
+    {'value': 'draft', 'label': 'Chờ duyệt', 'color': Colors.grey},
+    {'value': 'active', 'label': 'Còn hàng', 'color': Colors.green},
+    {'value': 'inactive', 'label': 'Hêt hàng', 'color': Colors.orange},
+    {'value': 'hide', 'label': 'Ẩn', 'color': Colors.blue},
+    {'value': 'lock', 'label': 'Vi phạm', 'color': Colors.red}
   ].obs;
 
   Future<void> updateProduct(Product pro) async {
@@ -85,6 +85,39 @@ class ProductController extends GetxController {
       Map<String, dynamic> data = item.data() as Map<String, dynamic>;
 
       data['id'] = item.id;
+      // data['sale_num'] =
+      //     await Get.find<OrderController>().getNumOfSale(data['id']);
+      // data['ratting'] =
+      //     await Get.find<ReviewController>().getRatting(data['id']);
+      listProduct.add(Product.fromJson(data));
+
+      await loadProductImage(item.id);
+    }
+    isLoading.value = false;
+  }
+
+  Future<void> loadProductAllBySeller() async {
+    isLoading.value = true;
+    listProduct.value = [];
+    listProductImage.value = [];
+    final snapshotProduct = await productCollection
+        .where('seller_id',
+            isEqualTo: Get.find<MainController>().seller.value.id)
+        .where('category_id',
+            whereIn: Get.find<CategoryController>()
+                .listCategory
+                .where((p0) => p0.hide == false)
+                .map((element) => element.id)
+                .toList())
+        .get();
+    for (var item in snapshotProduct.docs) {
+      Map<String, dynamic> data = item.data() as Map<String, dynamic>;
+
+      data['id'] = item.id;
+      data['sale_num'] =
+          await Get.find<OrderController>().getNumOfSale(data['id']);
+      data['ratting'] =
+          await Get.find<ReviewController>().getRatting(data['id']);
       listProduct.add(Product.fromJson(data));
 
       await loadProductImage(item.id);
@@ -119,6 +152,10 @@ class ProductController extends GetxController {
       Map<String, dynamic> data = item.data() as Map<String, dynamic>;
 
       data['id'] = item.id;
+      // data['sale_num'] =
+      //     await Get.find<OrderController>().getNumOfSale(data['id']);
+      // data['ratting'] =
+      //     await Get.find<ReviewController>().getRatting(data['id']);
 
       listProduct.add(Product.fromJson(data));
 
