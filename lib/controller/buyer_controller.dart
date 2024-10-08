@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
@@ -18,12 +19,21 @@ class BuyerController extends GetxController {
   RxBool isLoading = false.obs;
   RxList<int> listCart = <int>[].obs;
   RxList<dynamic> listStatus = [
-    {'value': 'active', 'label': 'Đang hoạt động'},
+    {
+      'value': 'active',
+      'label': 'Đang hoạt động',
+      'color': Colors.green,
+    },
     {
       'value': 'warning',
       'label': 'Cảnh báo',
+      'color': Colors.orange,
     },
-    {'value': 'inactive', 'label': 'Khóa'},
+    {
+      'value': 'inactive',
+      'label': 'Khóa',
+      'color': Colors.red,
+    },
   ].obs;
   RxInt indexBuyer = 0.obs;
 

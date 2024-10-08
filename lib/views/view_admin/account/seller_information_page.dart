@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/admin_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
-import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
-import 'package:htql_mua_ban_nong_san/views/view_seller/drawer_seller.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/drawer_admin.dart';
 
-class SellerInformationPage extends StatelessWidget {
-  const SellerInformationPage({super.key});
+class AdminInformationPage extends StatelessWidget {
+  const AdminInformationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
     return Obx(() {
-      return Get.find<SellerController>().isLoading.value
+      return Get.find<AdminController>().isLoading.value
           ? const LoadingPage()
           : SafeArea(
               child: Scaffold(
@@ -98,7 +98,7 @@ class SellerInformationPage extends StatelessWidget {
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           image: Get.find<MainController>()
-                                                      .seller
+                                                      .admin
                                                       .value
                                                       .avatar ==
                                                   null
@@ -106,7 +106,7 @@ class SellerInformationPage extends StatelessWidget {
                                               : DecorationImage(
                                                   image: NetworkImage(
                                                       Get.find<MainController>()
-                                                          .seller
+                                                          .admin
                                                           .value
                                                           .avatar!),
                                                   fit: BoxFit.fill,
@@ -123,7 +123,7 @@ class SellerInformationPage extends StatelessWidget {
                               TextFormField(
                                 controller: TextEditingController(
                                     text: Get.find<MainController>()
-                                        .seller
+                                        .admin
                                         .value
                                         .name),
                                 readOnly: true,
@@ -210,7 +210,7 @@ class SellerInformationPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                drawer: const DrawerSeller(),
+                drawer: const DrawerAdmin(),
               ),
             );
     });
