@@ -4,7 +4,6 @@ import 'package:htql_mua_ban_nong_san/controller/admin_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/drawer_admin.dart';
-import 'package:htql_mua_ban_nong_san/views/view_seller/drawer_seller.dart';
 
 class AdminInformationPage extends StatelessWidget {
   const AdminInformationPage({super.key});
