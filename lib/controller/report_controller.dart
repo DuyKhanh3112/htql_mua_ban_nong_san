@@ -1,11 +1,15 @@
 import 'package:d_chart/d_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
+import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 import 'package:htql_mua_ban_nong_san/models/order.dart';
 import 'package:htql_mua_ban_nong_san/models/order_detail.dart';
+import 'package:htql_mua_ban_nong_san/models/seller.dart';
 
 class ReportController extends GetxController {
   static ReportController get to => Get.find<ReportController>();
@@ -20,6 +24,104 @@ class ReportController extends GetxController {
       DateTimeRange(start: DateTime.now(), end: DateTime.now()).obs;
 
   RxList<OrdinalData> reportProductStatus = <OrdinalData>[].obs;
+
+  //admin
+  Rx<DateTimeRange> selectedDateRangeSeller =
+      DateTimeRange(start: DateTime.now(), end: DateTime.now()).obs;
+  Rx<DateTimeRange> selectedDateRangeBuyer =
+      DateTimeRange(start: DateTime.now(), end: DateTime.now()).obs;
+
+  RxList<OrdinalData> reportBuyer = <OrdinalData>[].obs;
+  RxList<OrdinalData> reportSeller = <OrdinalData>[].obs;
+
+  RxInt countBuyer = 0.obs;
+  RxInt countSeller = 0.obs;
+
+  Future<void> showReportBuyer() async {
+    isLoading.value = true;
+    reportBuyer.value = [];
+    final snapBuyer = await Get.find<BuyerController>()
+        .buyerCollection
+        .where('create_at',
+            isLessThanOrEqualTo: selectedDateRangeBuyer.value.end)
+        .where('create_at',
+            isGreaterThanOrEqualTo: selectedDateRangeBuyer.value.start)
+        .get();
+    List<Buyer> listBuyer = [];
+    for (var item in snapBuyer.docs) {
+      Map<String, dynamic> data = item.data() as Map<String, dynamic>;
+      data['id'] = item.id;
+      data['rate_order'] =
+          await Get.find<OrderController>().getRateSuccessByBuyer(item.id);
+      if (data['status'] == 'active' && data['rate_order'] < 80) {
+        data['status'] = 'warning';
+      }
+      listBuyer.add(Buyer.fromJson(data));
+    }
+    countBuyer.value = listBuyer.length;
+    if (countBuyer.value != 0) {
+      for (var status in Get.find<BuyerController>().listStatus) {
+        var dataBuyer =
+            listBuyer.where((element) => element.status == status['value']);
+        // if (dataBuyer.isNotEmpty) {
+        reportBuyer.add(
+          OrdinalData(
+              domain: status['label'],
+              measure: dataBuyer.length,
+              color: status['color'],
+              other: {
+                'rate': dataBuyer.length / countBuyer.value,
+                // 'revenue': total,
+              }),
+        );
+        // }
+      }
+    }
+    isLoading.value = false;
+  }
+
+  Future<void> showReportSeller() async {
+    isLoading.value = true;
+    reportSeller.value = [];
+    final snapSeller = await Get.find<SellerController>()
+        .sellerCollection
+        .where('create_at',
+            isLessThanOrEqualTo: selectedDateRangeSeller.value.end)
+        .where('create_at',
+            isGreaterThanOrEqualTo: selectedDateRangeSeller.value.start)
+        .get();
+    List<Seller> listSeller = [];
+    for (var item in snapSeller.docs) {
+      Map<String, dynamic> data = item.data() as Map<String, dynamic>;
+      data['id'] = item.id;
+      int countLock =
+          await Get.find<ProductController>().getProductLock(item.id);
+      if (countLock >= 3 && data['status'] != 'inactive') {
+        data['status'] = 'warning';
+      }
+      listSeller.add(Seller.fromJson(data));
+    }
+    countSeller.value = listSeller.length;
+    if (countSeller.value != 0) {
+      for (var status in Get.find<SellerController>().listStatus) {
+        var dataSeller =
+            listSeller.where((element) => element.status == status['value']);
+        // if (dataBuyer.isNotEmpty) {
+        reportSeller.add(
+          OrdinalData(
+              domain: status['label'],
+              measure: dataSeller.length,
+              color: status['color'],
+              other: {
+                'rate': dataSeller.length / countSeller.value,
+                // 'revenue': total,
+              }),
+        );
+        // }
+      }
+    }
+    isLoading.value = false;
+  }
 
   Future<void> showReportOrder() async {
     isLoading.value = true;
@@ -156,94 +258,4 @@ class ReportController extends GetxController {
     }
     isLoading.value = false;
   }
-
-  // Future<void> showReportRevenue() async {
-  //   isLoading.value = true;
-  //   reportRevenue.value = [];
-  //   totalRevenue.value = 0;
-  //   final snapOrder = await Get.find<OrderController>()
-  //       .orderCollection
-  //       .where('status', isEqualTo: 'delivered')
-  //       .where('order_date',
-  //           isLessThanOrEqualTo: selectedDateRangeRevenue.value.end)
-  //       .where('order_date',
-  //           isGreaterThanOrEqualTo: selectedDateRangeRevenue.value.start)
-  //       .get();
-  //   if (snapOrder.docs.isNotEmpty) {
-  //     final snapProduct = await Get.find<ProductController>()
-  //         .productCollection
-  //         .where('seller_id',
-  //             isEqualTo: Get.find<MainController>().seller.value.id)
-  //         .get();
-  //     for (var product in snapProduct.docs) {
-  //       Map<String, dynamic> dataPro = product.data() as Map<String, dynamic>;
-  //       dataPro['id'] = product.id;
-  //       final snapODD = await Get.find<OrderController>()
-  //           .orderDetailCollection
-  //           .where('product_id', isEqualTo: dataPro['id'])
-  //           .where('order_id',
-  //               whereIn: snapOrder.docs.map((e) => e.id).toList())
-  //           .get();
-  //       double revenue = 0;
-  //       for (var item in snapODD.docs) {
-  //         Map<String, dynamic> dataODD = item.data() as Map<String, dynamic>;
-  //         dataODD['id'] = item.id;
-  //         revenue += OrderDetail.fromJson(dataODD).quantity *
-  //             OrderDetail.fromJson(dataODD).sell_price;
-  //       }
-  //       totalRevenue.value += revenue;
-  //       reportRevenue.add(
-  //         OrdinalData(domain: dataPro['name'], measure: revenue),
-  //       );
-  //     }
-  //   }
-  //   reportRevenue.sort((b, a) => a.measure.compareTo(b.measure));
-  //   isLoading.value = false;
-  // }
-
-  // Future<void> showReportProduct() async {
-  //   isLoading.value = true;
-  //   reportProduct.value = [];
-  //   final snapOrder = await Get.find<OrderController>()
-  //       .orderCollection
-  //       .where('status',
-  //           whereIn: Get.find<OrderController>()
-  //               .listStatus
-  //               .where((p0) => p0['value'] != 'failed')
-  //               .map((e) => e['value'])
-  //               .toList())
-  //       .where('order_date',
-  //           isLessThanOrEqualTo: selectedDateRangeProduct.value.end)
-  //       .where('order_date',
-  //           isGreaterThanOrEqualTo: selectedDateRangeProduct.value.start)
-  //       .get();
-  //   if (snapOrder.docs.isNotEmpty) {
-  //     final snapProduct = await Get.find<ProductController>()
-  //         .productCollection
-  //         .where('seller_id',
-  //             isEqualTo: Get.find<MainController>().seller.value.id)
-  //         .get();
-  //     for (var product in snapProduct.docs) {
-  //       Map<String, dynamic> dataPro = product.data() as Map<String, dynamic>;
-  //       dataPro['id'] = product.id;
-  //       final snapODD = await Get.find<OrderController>()
-  //           .orderDetailCollection
-  //           .where('product_id', isEqualTo: dataPro['id'])
-  //           .where('order_id',
-  //               whereIn: snapOrder.docs.map((e) => e.id).toList())
-  //           .get();
-  //       double quantity = 0;
-  //       for (var item in snapODD.docs) {
-  //         Map<String, dynamic> dataODD = item.data() as Map<String, dynamic>;
-  //         dataODD['id'] = item.id;
-  //         quantity += OrderDetail.fromJson(dataODD).quantity;
-  //       }
-  //       reportProduct.add(
-  //         OrdinalData(domain: dataPro['name'], measure: quantity),
-  //       );
-  //     }
-  //   }
-  //   reportProduct.sort((b, a) => a.measure.compareTo(b.measure));
-  //   isLoading.value = false;
-  // }
 }

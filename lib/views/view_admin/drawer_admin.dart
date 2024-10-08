@@ -6,6 +6,8 @@ import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/report_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/admin.dart';
 
@@ -199,7 +201,11 @@ class DrawerAdmin extends StatelessWidget {
                           ),
                           title: const Text(
                             'Thông tin cá nhân',
-                            style: TextStyle(color: Colors.green, fontSize: 18),
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           onTap: () {
                             // Get.toNamed('/personal_admin');
@@ -215,7 +221,11 @@ class DrawerAdmin extends StatelessWidget {
                           ),
                           title: const Text(
                             'Người mua',
-                            style: TextStyle(color: Colors.green, fontSize: 18),
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           onTap: () async {
                             Get.back();
@@ -225,12 +235,35 @@ class DrawerAdmin extends StatelessWidget {
                         ),
                         ListTile(
                           leading: Image.asset(
+                            'assets/images/seller_icon.png',
+                            width: 40,
+                          ),
+                          title: const Text(
+                            'Người bán',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          onTap: () async {
+                            Get.back();
+                            mainController.indexAdmin.value = 2;
+                            await Get.find<SellerController>().loadAllSeller();
+                          },
+                        ),
+                        ListTile(
+                          leading: Image.asset(
                             'assets/images/category_green.png',
                             width: 40,
                           ),
                           title: const Text(
                             'Loại sản phẩm',
-                            style: TextStyle(color: Colors.green, fontSize: 18),
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           onTap: () async {
                             Get.back();
@@ -246,7 +279,11 @@ class DrawerAdmin extends StatelessWidget {
                           ),
                           title: const Text(
                             'Sản phẩm',
-                            style: TextStyle(color: Colors.green, fontSize: 18),
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           onTap: () async {
                             Get.back();
@@ -262,7 +299,11 @@ class DrawerAdmin extends StatelessWidget {
                           ),
                           title: const Text(
                             'Bài viết',
-                            style: TextStyle(color: Colors.green, fontSize: 18),
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           onTap: () async {
                             Get.back();
@@ -271,11 +312,96 @@ class DrawerAdmin extends StatelessWidget {
                             Get.find<ArticleController>().loadAllArticle();
                           },
                         ),
+                        ExpansionTile(
+                          leading: Image.asset(
+                            'assets/images/statistics_icon.png',
+                            width: 40,
+                          ),
+                          title: const Text(
+                            'Thống kê báo cáo',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          collapsedIconColor: Colors.green,
+                          children: [
+                            // ListTile(
+                            //   contentPadding:
+                            //       EdgeInsets.only(left: Get.width * 0.1),
+                            //   leading: Image.asset(
+                            //     'assets/images/report_sell.png',
+                            //     width: 30,
+                            //   ),
+                            //   title: const Text(
+                            //     'Thống kê bán hàng',
+                            //     style: TextStyle(
+                            //         color: Colors.green, fontSize: 18),
+                            //   ),
+                            //   onTap: () async {
+                            //     Get.back();
+                            //     Get.find<MainController>().indexSeller.value =
+                            //         4;
+                            //     await Get.find<ReportController>()
+                            //         .showReportOrder();
+                            //   },
+                            // ),
+                            ListTile(
+                              contentPadding:
+                                  EdgeInsets.only(left: Get.width * 0.1),
+                              leading: Image.asset(
+                                'assets/images/report_seller.png',
+                                width: 30,
+                              ),
+                              title: const Text(
+                                'Thống kê người bán',
+                                style: TextStyle(
+                                    color: Colors.green, fontSize: 18),
+                              ),
+                              onTap: () async {
+                                Get.back();
+                                Get.find<MainController>().indexAdmin.value = 7;
+
+                                await Get.find<ReportController>()
+                                    .showReportSeller();
+                              },
+                            ),
+
+                            ListTile(
+                              contentPadding:
+                                  EdgeInsets.only(left: Get.width * 0.1),
+                              leading: Image.asset(
+                                'assets/images/report_buyer.png',
+                                width: 30,
+                              ),
+                              title: const Text(
+                                'Thống kê người mua',
+                                style: TextStyle(
+                                    color: Colors.green, fontSize: 18),
+                              ),
+                              onTap: () async {
+                                Get.back();
+                                Get.find<MainController>().indexAdmin.value = 8;
+
+                                // await Get.find<ReportController>()
+                                //     .showReportProduct();
+                              },
+                            ),
+                          ],
+                        ),
                         ListTile(
-                          leading: const Icon(Icons.logout),
+                          leading: const Icon(
+                            Icons.logout,
+                            color: Colors.green,
+                          ),
                           title: const Text(
                             'Logout',
-                            style: TextStyle(color: Colors.green, fontSize: 18),
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           onTap: () {
                             Get.toNamed('/login');

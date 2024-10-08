@@ -125,6 +125,14 @@ class ProductController extends GetxController {
     isLoading.value = false;
   }
 
+  Future<int> getProductLock(String sellerID) async {
+    final snapshotProduct = await productCollection
+        .where('seller_id', isEqualTo: sellerID)
+        .where('status', isEqualTo: 'lock')
+        .get();
+    return snapshotProduct.docs.length;
+  }
+
   Future<void> loadProductImage(String productId) async {
     final snapshotImg = await productImageCollection
         .where('product_id', isEqualTo: productId)
