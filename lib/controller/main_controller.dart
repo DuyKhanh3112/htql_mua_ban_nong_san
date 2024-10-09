@@ -12,7 +12,7 @@ import 'package:htql_mua_ban_nong_san/models/admin.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
-import 'package:htql_mua_ban_nong_san/views/view_admin/account/seller_information_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/account/admin_information_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/article/article_admin_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/buyer/buyer_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/category/category_home_page.dart';

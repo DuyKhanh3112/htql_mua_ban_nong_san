@@ -3,14 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/review_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
+import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 import 'package:htql_mua_ban_nong_san/models/cart.dart';
+import 'package:htql_mua_ban_nong_san/models/order.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:htql_mua_ban_nong_san/models/review.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
 import 'package:intl/intl.dart';
 
@@ -32,7 +38,9 @@ class ProductDetailPage extends StatelessWidget {
     final currencyFormatter =
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
     return Obx(() {
-      return mainController.isLoading.value
+      // print(Get.find<ReviewController>().listReview.length);
+      return mainController.isLoading.value ||
+              Get.find<ReviewController>().isLoading.value
           ? const LoadingPage()
           : SafeArea(
               child: Scaffold(
@@ -220,7 +228,6 @@ class ProductDetailPage extends StatelessWidget {
                               ),
                             ),
                           ),
-
                           //Product Name
                           Container(
                             margin: EdgeInsets.symmetric(
@@ -315,7 +322,7 @@ class ProductDetailPage extends StatelessWidget {
                             thickness: Get.height * 0.01,
                             color: Colors.grey[200],
                           ),
-//shop
+                          //shop
                           Container(
                             width: Get.width,
                             decoration: const BoxDecoration(
@@ -443,9 +450,8 @@ class ProductDetailPage extends StatelessWidget {
                                     ),
                                   ],
                                 ),
+                          // description
                           Container(
-                            // height: Get.width * 0.15,
-                            // width: Get.width * 0.8,
                             padding: EdgeInsets.only(
                                 bottom: Get.width * 0.01,
                                 top: Get.width * 0.01),
@@ -460,12 +466,10 @@ class ProductDetailPage extends StatelessWidget {
                               ),
                             ),
                           ),
-
                           Container(
                             margin: EdgeInsets.all(Get.width * 0.03),
                             padding: EdgeInsets.all(Get.width * 0.03),
                             height: Get.height * 0.35,
-                            // width: Get.width * 0.8,
                             decoration: const BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.all(
@@ -499,19 +503,165 @@ class ProductDetailPage extends StatelessWidget {
                               ],
                             ),
                           ),
+                          Get.find<ReviewController>().listReview.isEmpty
+                              ? const SizedBox()
+                              : Column(
+                                  children: [
+                                    Divider(
+                                      thickness: Get.height * 0.01,
+                                      color: Colors.grey[200],
+                                    ),
+                                    // review
+                                    Container(
+                                      // height: Get.width * 0.15,
+                                      // width: Get.width * 0.8,
+                                      padding: EdgeInsets.only(
+                                          bottom: Get.width * 0.01,
+                                          top: Get.width * 0.01),
+                                      alignment: Alignment.bottomCenter,
+                                      child: const Text(
+                                        'Đánh giá: ',
+                                        style: TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: Get.width * 0.02),
+                                          alignment: Alignment.centerRight,
+                                          width: Get.width * 0.5,
+                                          child: productController
+                                                      .product.value.ratting ==
+                                                  0
+                                              ? const Text(
+                                                  'Chưa có đánh giá',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.green,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                )
+                                              : Row(
+                                                  children: [
+                                                    Container(
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      width: Get.width * 0.3,
+                                                      child: RatingBarIndicator(
+                                                        rating:
+                                                            productController
+                                                                    .product
+                                                                    .value
+                                                                    .ratting ??
+                                                                0,
+                                                        itemBuilder:
+                                                            (context, index) =>
+                                                                const Icon(
+                                                          Icons.star,
+                                                          color: Colors.amber,
+                                                        ),
+                                                        itemCount: 5,
+                                                        itemSize:
+                                                            Get.width * 0.055,
+                                                        direction:
+                                                            Axis.horizontal,
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      width: Get.width * 0.1,
+                                                      child: Text(
+                                                        '(${NumberFormat.decimalPatternDigits(decimalDigits: 1).format(productController.product.value.ratting)})',
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          color: Colors.green,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                        ),
+                                        Container(
+                                          alignment: Alignment.centerRight,
+                                          width: Get.width * 0.4,
+                                          margin: EdgeInsets.symmetric(
+                                            horizontal: Get.width * 0.05,
+                                          ),
+                                          child: Text(
+                                            '${Get.find<ReviewController>().listReview.length} lượt đánh giá',
+                                            style: const TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              overflow: TextOverflow.clip,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.all(Get.width * 0.03),
+                                      padding: EdgeInsets.all(Get.width * 0.03),
+                                      height: Get.height * 0.35,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                        // border: Border.all(
+                                        //   color: Colors.grey.shade300,
+                                        // ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey,
+                                            offset: Offset(4.0, 4.0),
+                                            blurRadius: 10.0,
+                                            spreadRadius: 2.0,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Expanded(
+                                            child: ListView(
+                                              children:
+                                                  Get.find<ReviewController>()
+                                                      .listReview
+                                                      .map(
+                                                (item) {
+                                                  return reviewDetail(item);
+                                                },
+                                              ).toList(),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                         ],
                       ),
                     ),
                     Get.find<MainController>().buyer.value.id == ''
                         ? const SizedBox()
                         : Container(
-                            // height: Get.height * 0.1,
                             padding: EdgeInsets.symmetric(
                               horizontal: Get.width * 0.05,
                             ),
                             width: Get.width,
-                            // color: Colors.green,
-
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -520,7 +670,6 @@ class ProductDetailPage extends StatelessWidget {
                                     Rx<TextEditingController>
                                         quantityController =
                                         TextEditingController(text: '1').obs;
-
                                     ProductImage productImage =
                                         productController.listProductImage
                                                 .firstWhereOrNull((item) =>
@@ -1262,5 +1411,161 @@ class ProductDetailPage extends StatelessWidget {
               ),
             );
     });
+  }
+
+  Container reviewDetail(Review item) {
+    Orders order = Get.find<OrderController>()
+            .listOrder
+            .firstWhereOrNull((element) => element.id == item.order_id) ??
+        Orders.initOrder();
+    Buyer buyer = Get.find<BuyerController>()
+            .listBuyer
+            .firstWhereOrNull((element) => element.id == order.buyer_id) ??
+        Buyer.initBuyer();
+    return Container(
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(
+          Radius.circular(20),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey,
+            offset: Offset(4.0, 4.0),
+            blurRadius: 10.0,
+            spreadRadius: 2.0,
+          ),
+        ],
+        color: Colors.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: Get.width,
+            margin: EdgeInsets.symmetric(
+              horizontal: Get.width * 0.02,
+            ),
+            padding: EdgeInsets.symmetric(
+              vertical: Get.width * 0.01,
+              horizontal: Get.width * 0.01,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  height: Get.width * 0.1,
+                  width: Get.width * 0.1,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: buyer.avatar!.isEmpty
+                        ? null
+                        : DecorationImage(
+                            image: NetworkImage(buyer.avatar ?? ''),
+                            fit: BoxFit.fill,
+                          ),
+                  ),
+                ),
+                SizedBox(
+                  width: Get.width * 0.02,
+                ),
+                Container(
+                  // height: Get.width * 0.1,
+                  width: Get.width * 0.6,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    buyer.name,
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
+                alignment: Alignment.centerRight,
+                width: Get.width * 0.85,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          width: Get.width * 0.15,
+                          child: RatingBarIndicator(
+                            rating: item.ratting,
+                            itemBuilder: (context, index) => const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                            itemCount: 5,
+                            itemSize: Get.width * 0.03,
+                            direction: Axis.horizontal,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          width: Get.width * 0.1,
+                          child: Text(
+                            '(${NumberFormat.decimalPatternDigits(decimalDigits: 1).format(item.ratting)})',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.green,
+                              overflow: TextOverflow.ellipsis,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      alignment: Alignment.centerRight,
+                      width: Get.width * 0.5,
+                      child: Text(
+                        DateFormat('kk:mm a - dd/MM/yyyy')
+                            .format(item.create_at.toDate()),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.green,
+                          overflow: TextOverflow.ellipsis,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const Divider(),
+          Container(
+            width: Get.width * 0.9,
+            // padding: EdgeInsets.symmetric(
+            //   horizontal: Get.width * 0.02,
+            //   vertical: Get.width * 0.02,
+            // ),
+            padding: EdgeInsets.only(
+              bottom: Get.width * 0.02,
+              right: Get.width * 0.02,
+              left: Get.width * 0.02,
+            ),
+            child: Text(
+              item.comment,
+              textAlign: TextAlign.justify,
+              style: const TextStyle(
+                color: Colors.green,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -101,7 +101,7 @@ class AdminInformationPage extends StatelessWidget {
                                                       .admin
                                                       .value
                                                       .avatar ==
-                                                  null
+                                                  ''
                                               ? null
                                               : DecorationImage(
                                                   image: NetworkImage(

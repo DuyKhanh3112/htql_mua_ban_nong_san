@@ -259,4 +259,13 @@ class OrderController extends GetxController {
 
     isLoading.value = false;
   }
+
+  Future<void> loadOrderByID(String id) async {
+    final snapshot = await orderCollection.doc(id).get();
+
+    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+    data['id'] = id;
+    await Get.find<BuyerController>().loadBuyerByID(data['buyer_id']);
+    listOrder.add(Orders.fromJson(data));
+  }
 }
