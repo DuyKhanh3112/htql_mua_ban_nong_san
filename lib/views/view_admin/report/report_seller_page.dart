@@ -285,6 +285,13 @@ class ReportSellerPage extends StatelessWidget {
                                                                       .centerLeft,
                                                               child: Text(
                                                                 item['label'],
+                                                                textAlign: i %
+                                                                            2 ==
+                                                                        0
+                                                                    ? TextAlign
+                                                                        .right
+                                                                    : TextAlign
+                                                                        .left,
                                                                 style:
                                                                     const TextStyle(
                                                                   fontSize: 14,
