@@ -137,9 +137,9 @@ class MainController extends GetxController {
       data['id'] = snapshot.docs[0].id;
 
       buyer.value = Buyer.fromJson(data);
+      Get.find<AddressController>().loadAddressBuyer();
+      Get.find<ProductController>().loadProductBoughtByBuyer();
       await Get.find<CartController>().loadCartByBuyer();
-      await Get.find<AddressController>().loadAddressBuyer();
-      await Get.find<ProductController>().loadProductBoughtByBuyer();
       // Get.toNamed('/');
       isLoading.value = false;
       return true;

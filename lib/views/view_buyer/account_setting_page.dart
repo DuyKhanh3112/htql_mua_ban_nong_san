@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
@@ -13,7 +14,8 @@ class AccountSettingPage extends StatelessWidget {
     Get.put(MainController());
     MainController mainController = Get.find<MainController>();
     return Obx(() {
-      return mainController.isLoading.value
+      return mainController.isLoading.value ||
+              Get.find<BuyerController>().isLoading.value
           ? const LoadingPage()
           : SafeArea(
               child: Scaffold(
@@ -230,7 +232,501 @@ class AccountSettingPage extends StatelessWidget {
                                           bottom:
                                               BorderSide(color: Colors.green),
                                         ),
-                                        onTap: () {},
+                                        onTap: () async {
+                                          final formKey =
+                                              GlobalKey<FormState>();
+                                          Rx<TextEditingController>
+                                              newPassController =
+                                              TextEditingController().obs;
+                                          Rx<TextEditingController>
+                                              confPassController =
+                                              TextEditingController().obs;
+                                          RxBool hidePass = true.obs;
+                                          Get.dialog(
+                                            Obx(
+                                              () => AlertDialog(
+                                                title: Column(
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        const Text(
+                                                          'Cập nhật mật khẩu',
+                                                          style: TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.green),
+                                                        ),
+                                                        InkWell(
+                                                          child: const Icon(
+                                                            Icons.close,
+                                                            color: Colors.green,
+                                                          ),
+                                                          onTap: () {
+                                                            Get.back();
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const Divider(),
+                                                  ],
+                                                ),
+                                                content: SizedBox(
+                                                  width: Get.width * 0.8,
+                                                  height: Get.height * 0.5,
+                                                  child: ListView(
+                                                    children: [
+                                                      Form(
+                                                        key: formKey,
+                                                        child: Column(
+                                                          children: [
+                                                            TextFormField(
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Colors
+                                                                    .green,
+                                                                fontSize: 14,
+                                                              ),
+                                                              // controller: nameController,
+
+                                                              validator:
+                                                                  (value) {
+                                                                if (value!
+                                                                        .isEmpty ||
+                                                                    value.trim() ==
+                                                                        '') {
+                                                                  return 'Mật khẩu không được rỗng';
+                                                                }
+                                                                final RegExp
+                                                                    passRegExp =
+                                                                    RegExp(
+                                                                        r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$");
+                                                                if (!passRegExp
+                                                                    .hasMatch(
+                                                                        value)) {
+                                                                  return 'Mật khẩu ít nhất 6 ký tự. Bao gồm: \nchữ hoa, chữ thường, số và ký tự đặc biệt.';
+                                                                }
+
+                                                                if (value !=
+                                                                    Get.find<
+                                                                            MainController>()
+                                                                        .buyer
+                                                                        .value
+                                                                        .password) {
+                                                                  return 'Mật khẩu cũ không đúng';
+                                                                }
+                                                                return null;
+                                                              },
+                                                              obscureText:
+                                                                  hidePass
+                                                                      .value,
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                suffixIcon:
+                                                                    IconButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    hidePass.value =
+                                                                        !hidePass
+                                                                            .value;
+                                                                  },
+                                                                  icon: hidePass
+                                                                          .value
+                                                                      ? const Icon(
+                                                                          Icons
+                                                                              .remove_red_eye_outlined,
+                                                                          color:
+                                                                              Colors.green,
+                                                                        )
+                                                                      : const Icon(
+                                                                          Icons
+                                                                              .remove_red_eye_rounded,
+                                                                          color:
+                                                                              Colors.green,
+                                                                        ),
+                                                                ),
+                                                                enabledBorder:
+                                                                    const OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.green),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .all(
+                                                                    Radius
+                                                                        .circular(
+                                                                            20),
+                                                                  ),
+                                                                ),
+                                                                focusedBorder:
+                                                                    const OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.green),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .all(
+                                                                    Radius
+                                                                        .circular(
+                                                                            20),
+                                                                  ),
+                                                                ),
+                                                                border:
+                                                                    const OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .all(
+                                                                    Radius
+                                                                        .circular(
+                                                                            20),
+                                                                  ),
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.green),
+                                                                ),
+                                                                labelText:
+                                                                    'Mật khẩu cũ',
+                                                                labelStyle:
+                                                                    const TextStyle(
+                                                                  color: Colors
+                                                                      .green,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height:
+                                                                  Get.height *
+                                                                      0.01,
+                                                            ),
+                                                            TextFormField(
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Colors
+                                                                    .green,
+                                                                fontSize: 14,
+                                                              ),
+                                                              controller:
+                                                                  newPassController
+                                                                      .value,
+                                                              validator:
+                                                                  (value) {
+                                                                if (value!
+                                                                        .isEmpty ||
+                                                                    value.trim() ==
+                                                                        '') {
+                                                                  return 'Mật khẩu không được rỗng';
+                                                                }
+                                                                final RegExp
+                                                                    passRegExp =
+                                                                    RegExp(
+                                                                        r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$");
+                                                                if (!passRegExp
+                                                                    .hasMatch(
+                                                                        value)) {
+                                                                  return 'Mật khẩu ít nhất 6 ký tự. Bao gồm: \nchữ hoa, chữ thường, số và ký tự đặc biệt.';
+                                                                }
+                                                                return null;
+                                                              },
+                                                              obscureText:
+                                                                  hidePass
+                                                                      .value,
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                suffixIcon:
+                                                                    IconButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    hidePass.value =
+                                                                        !hidePass
+                                                                            .value;
+                                                                  },
+                                                                  icon: hidePass
+                                                                          .value
+                                                                      ? const Icon(
+                                                                          Icons
+                                                                              .remove_red_eye_outlined,
+                                                                          color:
+                                                                              Colors.green,
+                                                                        )
+                                                                      : const Icon(
+                                                                          Icons
+                                                                              .remove_red_eye_rounded,
+                                                                          color:
+                                                                              Colors.green,
+                                                                        ),
+                                                                ),
+                                                                enabledBorder:
+                                                                    const OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.green),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .all(
+                                                                    Radius
+                                                                        .circular(
+                                                                            20),
+                                                                  ),
+                                                                ),
+                                                                focusedBorder:
+                                                                    const OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.green),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .all(
+                                                                    Radius
+                                                                        .circular(
+                                                                            20),
+                                                                  ),
+                                                                ),
+                                                                border:
+                                                                    const OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .all(
+                                                                    Radius
+                                                                        .circular(
+                                                                            20),
+                                                                  ),
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.green),
+                                                                ),
+                                                                labelText:
+                                                                    'Mật khẩu mới',
+                                                                labelStyle:
+                                                                    const TextStyle(
+                                                                  color: Colors
+                                                                      .green,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height:
+                                                                  Get.height *
+                                                                      0.01,
+                                                            ),
+                                                            TextFormField(
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Colors
+                                                                    .green,
+                                                                fontSize: 14,
+                                                              ),
+                                                              controller:
+                                                                  confPassController
+                                                                      .value,
+                                                              validator:
+                                                                  (value) {
+                                                                if (value!
+                                                                        .isEmpty ||
+                                                                    value.trim() ==
+                                                                        '') {
+                                                                  return 'Mật khẩu không được rỗng';
+                                                                }
+                                                                final RegExp
+                                                                    passRegExp =
+                                                                    RegExp(
+                                                                        r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$");
+                                                                if (!passRegExp
+                                                                    .hasMatch(
+                                                                        value)) {
+                                                                  return 'Mật khẩu ít nhất 6 ký tự. Bao gồm: \nchữ hoa, chữ thường, số và ký tự đặc biệt.';
+                                                                }
+                                                                if (value !=
+                                                                    newPassController
+                                                                        .value
+                                                                        .text) {
+                                                                  return 'Xác nhận mật khẩu không trùng khớp.';
+                                                                }
+                                                                return null;
+                                                              },
+                                                              obscureText:
+                                                                  hidePass
+                                                                      .value,
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                suffixIcon:
+                                                                    IconButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    hidePass.value =
+                                                                        !hidePass
+                                                                            .value;
+                                                                  },
+                                                                  icon: hidePass
+                                                                          .value
+                                                                      ? const Icon(
+                                                                          Icons
+                                                                              .remove_red_eye_outlined,
+                                                                          color:
+                                                                              Colors.green,
+                                                                        )
+                                                                      : const Icon(
+                                                                          Icons
+                                                                              .remove_red_eye_rounded,
+                                                                          color:
+                                                                              Colors.green,
+                                                                        ),
+                                                                ),
+                                                                enabledBorder:
+                                                                    const OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.green),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .all(
+                                                                    Radius
+                                                                        .circular(
+                                                                            20),
+                                                                  ),
+                                                                ),
+                                                                focusedBorder:
+                                                                    const OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.green),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .all(
+                                                                    Radius
+                                                                        .circular(
+                                                                            20),
+                                                                  ),
+                                                                ),
+                                                                border:
+                                                                    const OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .all(
+                                                                    Radius
+                                                                        .circular(
+                                                                            20),
+                                                                  ),
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.green),
+                                                                ),
+                                                                labelText:
+                                                                    'Xác nhận mật khẩu',
+                                                                labelStyle:
+                                                                    const TextStyle(
+                                                                  color: Colors
+                                                                      .green,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                actions: [
+                                                  Container(
+                                                    alignment: Alignment.center,
+                                                    width: Get.width,
+                                                    child: ElevatedButton(
+                                                      style: const ButtonStyle(
+                                                        backgroundColor:
+                                                            MaterialStatePropertyAll(
+                                                                Colors.green),
+                                                        foregroundColor:
+                                                            MaterialStatePropertyAll(
+                                                                Colors.white),
+                                                      ),
+                                                      onPressed: () async {
+                                                        if (formKey
+                                                            .currentState!
+                                                            .validate()) {
+                                                          Get.find<MainController>()
+                                                                  .buyer
+                                                                  .value
+                                                                  .password =
+                                                              newPassController
+                                                                  .value.text;
+                                                          Get.back();
+                                                          await Get.find<
+                                                                  BuyerController>()
+                                                              .updatePassword(
+                                                                  Get.find<
+                                                                          MainController>()
+                                                                      .buyer
+                                                                      .value);
+                                                          // ignore: use_build_context_synchronously
+                                                          await AwesomeDialog(
+                                                            titleTextStyle:
+                                                                const TextStyle(
+                                                              color:
+                                                                  Colors.green,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 22,
+                                                            ),
+                                                            descTextStyle:
+                                                                const TextStyle(
+                                                              color:
+                                                                  Colors.green,
+                                                              fontSize: 16,
+                                                            ),
+                                                            context: context,
+                                                            dialogType:
+                                                                DialogType
+                                                                    .success,
+                                                            animType: AnimType
+                                                                .rightSlide,
+                                                            title:
+                                                                'Cập nhật mật khẩu thành công',
+                                                            btnOkOnPress: () {},
+                                                          ).show();
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        decoration:
+                                                            const BoxDecoration(),
+                                                        // width: Get.width * 0.8,
+                                                        child: const Text(
+                                                          'Cập nhật',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ),
                                     Container(

@@ -64,7 +64,11 @@ class OrderController extends GetxController {
       Map<String, dynamic> dataOrder = od.data() as Map<String, dynamic>;
       dataOrder['id'] = od.id;
       listOrder.add(Orders.fromJson(dataOrder));
-      await Get.find<ReviewController>().loadReviewByOrderID(od.id);
+
+      // await loadOrderDetailByOrder(Orders.fromJson(dataOrder));
+      if (dataOrder['status'] == 'delivered') {
+        await Get.find<ReviewController>().loadReviewByOrderID(od.id);
+      }
     }
 
     listOrder.sort((a, b) => b.update_at.compareTo(a.update_at));

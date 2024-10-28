@@ -283,8 +283,7 @@ class CheckoutPage extends StatelessWidget {
                                 child: Text(
                                   currencyFormatter.format(
                                       Get.find<CartController>()
-                                          .totalCart
-                                          .value),
+                                          .getAmountListCartChoose()),
                                   style: const TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,

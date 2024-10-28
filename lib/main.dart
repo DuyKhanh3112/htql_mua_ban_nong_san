@@ -58,9 +58,7 @@ void main() async {
   // Tự động lưu giỏ hàng 60s 1 lần
   Timer.periodic(const Duration(seconds: 60), (timer) async {
     if (Get.find<MainController>().buyer.value.id != '') {
-      log('60s save cart 1 lan');
       await Get.find<CartController>().saveCart();
-      log('done=======');
     }
   });
 }
@@ -100,7 +98,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/seller', page: () => const HomeSellerPage()),
         GetPage(
             name: '/product_seller', page: () => const ProductSellerHomePage()),
-        GetPage( 
+        GetPage(
             name: '/product_form', page: () => const ProductSellerFormPage()),
         GetPage(name: '/product_detail', page: () => const ProductDetailPage()),
         GetPage(name: "/address", page: () => const AddressPage()),

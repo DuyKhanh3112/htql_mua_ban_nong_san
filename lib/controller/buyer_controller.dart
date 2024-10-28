@@ -76,6 +76,13 @@ class BuyerController extends GetxController {
     isLoading.value = false;
   }
 
+  Future<void> updatePassword(Buyer buyer) async {
+    isLoading.value = true;
+    await buyerCollection.doc(buyer.id).update(buyer.toVal());
+
+    isLoading.value = false;
+  }
+
   Future<void> createBuyer(
     Buyer buyer,
   ) async {

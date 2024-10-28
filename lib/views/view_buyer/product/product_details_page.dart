@@ -1335,7 +1335,40 @@ class ProductDetailPage extends StatelessWidget {
                                                   ),
                                                   const Divider(),
                                                   ElevatedButton(
-                                                    onPressed: () {},
+                                                    onPressed: () {
+                                                      Get.find<CartController>()
+                                                          .listCartChoose
+                                                          .value = [];
+                                                      Get.find<CartController>()
+                                                          .listCartChoose
+                                                          .add(
+                                                            Cart(
+                                                                id: '',
+                                                                buyer_id: Get.find<
+                                                                        MainController>()
+                                                                    .buyer
+                                                                    .value
+                                                                    .id,
+                                                                product_id:
+                                                                    productController
+                                                                        .product
+                                                                        .value
+                                                                        .id,
+                                                                quantity: int.parse(
+                                                                        quantityController
+                                                                            .value
+                                                                            .text)
+                                                                    .toDouble(),
+                                                                create_at:
+                                                                    Timestamp
+                                                                        .now()),
+                                                          );
+                                                      // print(Get.find<
+                                                      //         CartController>()
+                                                      //     .listCartChoose
+                                                      //     .length);
+                                                      Get.toNamed('checkout');
+                                                    },
                                                     style: const ButtonStyle(
                                                       backgroundColor:
                                                           MaterialStatePropertyAll(
