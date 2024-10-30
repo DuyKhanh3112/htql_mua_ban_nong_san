@@ -2,16 +2,20 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/address_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/review_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/address.dart';
+import 'package:htql_mua_ban_nong_san/models/order.dart';
 import 'package:htql_mua_ban_nong_san/models/order_detail.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
+import 'package:htql_mua_ban_nong_san/models/review.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/address/address_page.dart';
 import 'package:intl/intl.dart';
 
@@ -434,15 +438,18 @@ class OrderDetailPage extends StatelessWidget {
                         : const SizedBox(),
                     Get.find<OrderController>().order.value.status ==
                             'delivering'
-                        ? btnDelivering()
+                        ? btnDelivering(context)
                         : const SizedBox(),
                     Get.find<OrderController>().order.value.status ==
                             'delivered'
-                        ? btnDelivered()
+                        ? btnDelivered(context)
                         : const SizedBox(),
                     Get.find<OrderController>().order.value.status ==
                             'cancelled'
                         ? btnCancel()
+                        : const SizedBox(),
+                    Get.find<OrderController>().order.value.status == 'failed'
+                        ? btnFailed()
                         : const SizedBox(),
                   ],
                 ),
@@ -452,6 +459,40 @@ class OrderDetailPage extends StatelessWidget {
   }
 
   Row btnCancel() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // btnViewDetail(order),
+        Container(
+          alignment: Alignment.center,
+          width: Get.width,
+          child: ElevatedButton(
+            onPressed: () async {
+              await Get.find<OrderController>()
+                  .rebuy(Get.find<OrderController>().order.value);
+              Get.toNamed('/cart');
+            },
+            child: Container(
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(),
+              width: Get.width * 0.8,
+              child: const Text(
+                'Mua lại',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row btnFailed() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -541,7 +582,7 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  Row btnDelivering() {
+  Row btnDelivering(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -551,32 +592,31 @@ class OrderDetailPage extends StatelessWidget {
           width: Get.width,
           child: ElevatedButton(
             onPressed: () async {
-              // await AwesomeDialog(
-              //         titleTextStyle: const TextStyle(
-              //           color: Colors.green,
-              //           fontWeight: FontWeight.bold,
-              //           fontSize: 22,
-              //         ),
-              //         descTextStyle: const TextStyle(
-              //           color: Colors.green,
-              //           fontSize: 16,
-              //         ),
-              //         context: context,
-              //         dialogType: DialogType.question,
-              //         animType: AnimType.rightSlide,
-              //         title: 'Xác nhận',
-              //         desc:
-              //             'Bạn có muốn hủy đơn hàng này không',
-              //         btnOkText: 'Xác nhận',
-              //         btnCancelText: 'Không',
-              //         btnOkOnPress: () async {
-              //           // Orders ord = order;
-              //           // ord.status = 'cancelled';
-              //           // await Get.find<OrderController>()
-              //           //     .cancelOrder(ord);
-              //         },
-              //         btnCancelOnPress: () {})
-              //     .show();
+              await AwesomeDialog(
+                      titleTextStyle: const TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22,
+                      ),
+                      descTextStyle: const TextStyle(
+                        color: Colors.green,
+                        fontSize: 16,
+                      ),
+                      context: context,
+                      dialogType: DialogType.question,
+                      animType: AnimType.rightSlide,
+                      title: 'Xác nhận',
+                      desc: 'Xác nhận đã nhận đơn hàng này',
+                      btnOkText: 'Xác nhận',
+                      btnCancelText: 'Không',
+                      btnOkOnPress: () async {
+                        Orders ord = Get.find<OrderController>().order.value;
+                        ord.status = 'delivered';
+                        ord.received_date = Timestamp.now();
+                        await Get.find<OrderController>().updateOrder(ord);
+                      },
+                      btnCancelOnPress: () {})
+                  .show();
             },
             child: Container(
               alignment: Alignment.center,
@@ -598,7 +638,7 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  Container btnDelivered() {
+  Container btnDelivered(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
       child: Row(
@@ -634,7 +674,186 @@ class OrderDetailPage extends StatelessWidget {
             alignment: Alignment.center,
             width: Get.width * 0.45,
             child: ElevatedButton(
-              onPressed: () async {},
+              onPressed: () async {
+                Rx<TextEditingController> contentController =
+                    TextEditingController().obs;
+                RxDouble ratting = 5.0.obs;
+                Rx<Review> review = (Get.find<ReviewController>()
+                            .listReview
+                            .firstWhereOrNull((p0) =>
+                                p0.order_id ==
+                                Get.find<OrderController>().order.value.id) ??
+                        Review.initReview())
+                    .obs;
+                contentController.value.text = review.value.comment;
+                ratting.value = review.value.ratting;
+                Get.dialog(
+                  Obx(
+                    () {
+                      return AlertDialog(
+                        title: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Đánh giá',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    Get.back();
+                                  },
+                                  child: const Icon(
+                                    Icons.close,
+                                    color: Colors.green,
+                                  ),
+                                )
+                              ],
+                            ),
+                            const Divider(),
+                          ],
+                        ),
+                        content: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Container(
+                            decoration: const BoxDecoration(),
+                            width: Get.width * 0.8,
+                            child: Form(
+                              child: Column(
+                                children: [
+                                  RatingBar.builder(
+                                    initialRating: ratting.value,
+                                    minRating: 1,
+                                    direction: Axis.horizontal,
+                                    // allowHalfRating: true,
+                                    itemCount: 5,
+                                    itemPadding: EdgeInsets.symmetric(
+                                        horizontal: Get.width * 0.01),
+                                    itemBuilder: (context, _) => const Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                    ),
+                                    onRatingUpdate: (value) {
+                                      ratting.value = value;
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: Get.height * 0.01,
+                                  ),
+                                  TextFormField(
+                                    style: const TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 16,
+                                    ),
+                                    controller: contentController.value,
+                                    minLines: 3,
+                                    maxLines: 4,
+                                    decoration: const InputDecoration(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.green),
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.green),
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(20),
+                                        ),
+                                        borderSide:
+                                            BorderSide(color: Colors.green),
+                                      ),
+                                      labelText: 'Nội dung',
+                                      labelStyle: TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        actions: [
+                          const Divider(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () async {
+                                  Review re = Review(
+                                      id: review.value.id,
+                                      order_id: Get.find<OrderController>()
+                                          .order
+                                          .value
+                                          .id,
+                                      comment: contentController.value.text,
+                                      ratting: ratting.value,
+                                      create_at: Timestamp.now(),
+                                      update_at: Timestamp.now());
+                                  Get.back();
+                                  print(re.toJson());
+                                  if (re.id == '') {
+                                    await Get.find<ReviewController>()
+                                        .createReview(re);
+                                  } else {
+                                    await Get.find<ReviewController>()
+                                        .updateReview(re);
+                                  }
+                                  // ignore: use_build_context_synchronously
+                                  await AwesomeDialog(
+                                    titleTextStyle: const TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22,
+                                    ),
+                                    descTextStyle: const TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 16,
+                                    ),
+                                    context: context,
+                                    dialogType: DialogType.success,
+                                    animType: AnimType.rightSlide,
+                                    title: 'Đánh giá đơn hàng thành công.',
+                                    btnOkOnPress: () {},
+                                  ).show();
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  decoration: const BoxDecoration(),
+                                  width: Get.width * 0.35,
+                                  child: const Text(
+                                    'Lưu đánh giá',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                );
+              },
               child: Container(
                 alignment: Alignment.center,
                 decoration: const BoxDecoration(),

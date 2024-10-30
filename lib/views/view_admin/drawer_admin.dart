@@ -209,6 +209,9 @@ class DrawerAdmin extends StatelessWidget {
                           ),
                           onTap: () {
                             // Get.toNamed('/personal_admin');
+
+                            Get.back();
+                            mainController.indexAdmin.value = 0;
                           },
                         ),
                         const SizedBox(

@@ -24,6 +24,18 @@ class CartController extends GetxController {
   RxList<Cart> listCartChoose = <Cart>[].obs;
   Rx<Address> address = Address.initAddress().obs;
 
+  double getAmountListCartChoose() {
+    double amount = 0;
+    for (var item in listCartChoose) {
+      Product product = Get.find<ProductController>()
+              .listProduct
+              .firstWhereOrNull((element) => element.id == item.product_id) ??
+          Product.initProduct();
+      amount += item.quantity * product.price;
+    }
+    return amount;
+  }
+
   Future<void> loadCartByBuyer() async {
     // double count = 0;
     final snapshotCart = await cartCollection

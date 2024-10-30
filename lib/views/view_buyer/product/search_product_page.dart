@@ -9,6 +9,7 @@ import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/review_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
@@ -404,9 +405,10 @@ class SearchProductPage extends StatelessWidget {
             ),
           ],
         ),
-        onTap: () {
+        onTap: () async {
           Get.find<ProductController>().product.value = product;
           Get.toNamed('/product_detail');
+          await Get.find<ReviewController>().loadReviewByProductID(product.id);
         },
       ),
     );

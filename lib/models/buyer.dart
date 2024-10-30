@@ -29,16 +29,17 @@ class Buyer {
 
   factory Buyer.initBuyer() {
     return Buyer(
-        id: '',
-        username: '',
-        email: '',
-        phone: '',
-        password: '',
-        name: '',
-        avatar: '',
-        cover: '',
-        create_at: Timestamp.now(),
-        status: '');
+      id: '',
+      username: '',
+      email: '',
+      phone: '',
+      password: '',
+      name: '',
+      avatar: '',
+      cover: '',
+      create_at: Timestamp.now(),
+      status: '',
+    );
   }
 
   static Buyer fromJson(Map<String, dynamic> json) {

@@ -172,6 +172,34 @@ class OrderPage extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 width: Get.width * 0.4,
                 child: const Text(
+                  'Mã đơn hàng:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+              Container(
+                alignment: Alignment.centerRight,
+                width: Get.width * 0.5,
+                child: Text(
+                  order.id.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                width: Get.width * 0.4,
+                child: const Text(
                   'Ngày đặt:',
                   style: TextStyle(
                     fontSize: 16,
@@ -327,12 +355,23 @@ class OrderPage extends StatelessWidget {
               ? btnDelivered(order, context)
               : const SizedBox(),
           order.status == 'cancelled' ? btnCancel(order) : const SizedBox(),
+          order.status == 'failed' ? btnFailed(order) : const SizedBox(),
         ],
       ),
     );
   }
 
   Row btnCancel(Orders order) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        btnViewDetail(order),
+        btnRebuy(order),
+      ],
+    );
+  }
+
+  Row btnFailed(Orders order) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -362,14 +401,9 @@ class OrderPage extends StatelessWidget {
                   .obs;
               contentController.value.text = review.value.comment;
               ratting.value = review.value.ratting;
-              // review.value = (Get.find<ReviewController>()
-              //         .listReview
-              //         .firstWhereOrNull((p0) => p0.order_id == order.id) ??
-              //     Review.initReview());
               Get.dialog(
                 Obx(
                   () {
-                    // print(ratting.value);
                     return AlertDialog(
                       title: Column(
                         children: [

@@ -64,7 +64,11 @@ class OrderController extends GetxController {
       Map<String, dynamic> dataOrder = od.data() as Map<String, dynamic>;
       dataOrder['id'] = od.id;
       listOrder.add(Orders.fromJson(dataOrder));
-      await Get.find<ReviewController>().loadReviewByOrderID(od.id);
+
+      // await loadOrderDetailByOrder(Orders.fromJson(dataOrder));
+      if (dataOrder['status'] == 'delivered') {
+        await Get.find<ReviewController>().loadReviewByOrderID(od.id);
+      }
     }
 
     listOrder.sort((a, b) => b.update_at.compareTo(a.update_at));
@@ -258,5 +262,14 @@ class OrderController extends GetxController {
     }
 
     isLoading.value = false;
+  }
+
+  Future<void> loadOrderByID(String id) async {
+    final snapshot = await orderCollection.doc(id).get();
+
+    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+    data['id'] = id;
+    await Get.find<BuyerController>().loadBuyerByID(data['buyer_id']);
+    listOrder.add(Orders.fromJson(data));
   }
 }

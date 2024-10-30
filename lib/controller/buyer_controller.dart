@@ -56,6 +56,16 @@ class BuyerController extends GetxController {
     isLoading.value = false;
   }
 
+  Future<void> loadBuyerByID(String id) async {
+    isLoading.value = true;
+    if (listBuyer.where((p0) => p0.id == id).isEmpty) {
+      final snapshot = await buyerCollection.doc(id).get();
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      data['id'] = id;
+      listBuyer.add(Buyer.fromJson(data));
+    }
+  }
+
   Future<void> updateBuyer(Buyer buyer) async {
     isLoading.value = true;
     await buyerCollection.doc(buyer.id).update(buyer.toVal());
@@ -63,6 +73,13 @@ class BuyerController extends GetxController {
     if (buyer.status == 'active' && buyer.rate_order! < 80) {
       buyer.status = 'warning';
     }
+    isLoading.value = false;
+  }
+
+  Future<void> updatePassword(Buyer buyer) async {
+    isLoading.value = true;
+    await buyerCollection.doc(buyer.id).update(buyer.toVal());
+
     isLoading.value = false;
   }
 

@@ -8,15 +8,16 @@ class Admin {
   String username;
   String password;
 
-  Admin(
-      {required this.id,
-      required this.username,
-      required this.email,
-      required this.phone,
-      required this.password,
-      required this.name,
-      this.avatar,
-      this.cover});
+  Admin({
+    required this.id,
+    required this.username,
+    required this.email,
+    required this.phone,
+    required this.password,
+    required this.name,
+    this.avatar,
+    this.cover,
+  });
 
   factory Admin.initAdmin() {
     return Admin(

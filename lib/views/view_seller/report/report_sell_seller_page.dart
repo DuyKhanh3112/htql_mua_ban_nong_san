@@ -223,7 +223,7 @@ class ReportSellSellerPage extends StatelessWidget {
                 ),
               ),
               AspectRatio(
-                aspectRatio: 1.5,
+                aspectRatio: 1.75,
                 child: DChartPieO(
                   data: Get.find<ReportController>().reportOrderStatus,
                   animate: true,

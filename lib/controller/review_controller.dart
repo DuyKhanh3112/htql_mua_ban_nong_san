@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/models/order.dart';
@@ -61,7 +62,7 @@ class ReviewController extends GetxController {
   }
 
   Future<void> loadReviewByOrderID(String orderId) async {
-    isLoading.value = true;
+    // isLoading.value = true;
     final snapshot =
         await reviewCollection.where('order_id', isEqualTo: orderId).get();
 
@@ -69,6 +70,35 @@ class ReviewController extends GetxController {
       Map<String, dynamic> data = item.data() as Map<String, dynamic>;
       data['id'] = item.id;
       listReview.add(Review.fromJson(data));
+    }
+    // isLoading.value = false;
+  }
+
+  Future<void> loadReviewByProductID(String productID) async {
+    isLoading.value = true;
+    listReview.value = [];
+    Get.find<BuyerController>().listBuyer.value = [];
+    Get.find<OrderController>().listOrder.value = [];
+
+    final snapOdd = await Get.find<OrderController>()
+        .orderDetailCollection
+        .where('product_id', isEqualTo: productID)
+        .get();
+
+    for (var odd in snapOdd.docs) {
+      String orderId = (odd.data() as Map<String, dynamic>)['order_id'];
+      await loadReviewByOrderID(orderId);
+      // final snapOrder =
+      //     await Get.find<OrderController>().orderCollection.doc(orderId).get();
+      // Map<String, dynamic> dataOrder = snapOrder.data() as Map<String, dynamic>;
+      // dataOrder['id'] = orderId;
+      // await Get.find<BuyerController>()
+      //     .loadBuyerByID(Orders.fromJson(dataOrder).buyer_id);
+      // await Get.find<OrderController>().loadOrderByID(orderId);
+    }
+
+    for (var review in listReview) {
+      await Get.find<OrderController>().loadOrderByID(review.order_id);
     }
     isLoading.value = false;
   }
