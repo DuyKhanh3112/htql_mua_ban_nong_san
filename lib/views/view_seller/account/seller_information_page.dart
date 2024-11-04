@@ -101,7 +101,7 @@ class SellerInformationPage extends StatelessWidget {
                                                       .seller
                                                       .value
                                                       .avatar ==
-                                                  null
+                                                  ''
                                               ? null
                                               : DecorationImage(
                                                   image: NetworkImage(

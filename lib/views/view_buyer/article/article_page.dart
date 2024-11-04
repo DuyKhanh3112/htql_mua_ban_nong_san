@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/article_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
@@ -42,14 +43,15 @@ class ArticlePage extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Icon(Icons.search),
                         Container(
                           margin: EdgeInsets.only(top: Get.width * 0.01),
                           padding: EdgeInsets.only(
                               left: Get.width * 0.02, right: Get.width * 0.02),
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Colors.white, style: BorderStyle.solid),
+                              color: Colors.white,
+                              style: BorderStyle.solid,
+                            ),
                             borderRadius: const BorderRadius.all(
                               Radius.circular(40),
                             ),
@@ -72,50 +74,52 @@ class ArticlePage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // Get.find<MainController>().buyer.value.id == ''
-                        //     ? const SizedBox()
-                        //     : InkWell(
-                        //         onTap: () async {
-                        //           mainController.isLoading.value = true;
-                        //           await Get.find<CartController>()
-                        //               .getCartGroupBySeller();
-                        //           Get.find<CartController>()
-                        //               .listCartChoose
-                        //               .value = [];
-                        //           mainController.isLoading.value = false;
-                        //           Get.toNamed('/cart');
-                        //         },
-                        //         child: Container(
-                        //           margin: EdgeInsets.symmetric(
-                        //               horizontal: Get.width * 0.1),
-                        //           child: Get.find<CartController>()
-                        //                       .countCart
-                        //                       .value ==
-                        //                   0
-                        //               ? const Icon(
-                        //                   Icons.shopping_cart,
-                        //                   color: Colors.white,
-                        //                   size: 35,
-                        //                 )
-                        //               : Badge(
-                        //                   label: Text(
-                        //                     NumberFormat.decimalPattern()
-                        //                         .format(
-                        //                             Get.find<CartController>()
-                        //                                 .countCart
-                        //                                 .value),
-                        //                     style: const TextStyle(
-                        //                         color: Colors.white,
-                        //                         fontSize: 12),
-                        //                   ),
-                        //                   child: const Icon(
-                        //                     Icons.shopping_cart,
-                        //                     color: Colors.white,
-                        //                     size: 35,
-                        //                   ),
-                        //                 ),
-                        //         ),
-                        //       ),
+                        Get.find<MainController>().buyer.value.id == ''
+                            ? const SizedBox()
+                            : InkWell(
+                                onTap: () async {
+                                  Get.find<MainController>().isLoading.value =
+                                      true;
+                                  await Get.find<CartController>()
+                                      .getCartGroupBySeller();
+                                  Get.find<CartController>()
+                                      .listCartChoose
+                                      .value = [];
+                                  Get.find<MainController>().isLoading.value =
+                                      false;
+                                  Get.toNamed('/cart');
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.1),
+                                  child: Get.find<CartController>()
+                                              .countCart
+                                              .value ==
+                                          0
+                                      ? const Icon(
+                                          Icons.shopping_cart,
+                                          color: Colors.white,
+                                          size: 35,
+                                        )
+                                      : Badge(
+                                          label: Text(
+                                            NumberFormat.decimalPattern()
+                                                .format(
+                                                    Get.find<CartController>()
+                                                        .countCart
+                                                        .value),
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12),
+                                          ),
+                                          child: const Icon(
+                                            Icons.shopping_cart,
+                                            color: Colors.white,
+                                            size: 35,
+                                          ),
+                                        ),
+                                ),
+                              ),
                       ],
                     ),
                   ),

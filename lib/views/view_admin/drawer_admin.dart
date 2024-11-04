@@ -9,7 +9,7 @@ import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/report_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
-import 'package:htql_mua_ban_nong_san/models/admin.dart';
+import 'package:htql_mua_ban_nong_san/models/seller.dart';
 
 class DrawerAdmin extends StatelessWidget {
   const DrawerAdmin({
@@ -397,9 +397,10 @@ class DrawerAdmin extends StatelessWidget {
                           leading: const Icon(
                             Icons.logout,
                             color: Colors.green,
+                            size: 40,
                           ),
                           title: const Text(
-                            'Logout',
+                            'Đăng xuất',
                             style: TextStyle(
                               color: Colors.green,
                               fontSize: 18,
@@ -408,7 +409,7 @@ class DrawerAdmin extends StatelessWidget {
                           ),
                           onTap: () {
                             Get.toNamed('/login');
-                            mainController.admin.value = Admin.initAdmin();
+                            mainController.seller.value = Seller.initSeller();
                           },
                         ),
                       ],

@@ -45,10 +45,12 @@ class PersonalAdminPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.amber,
-                        image: DecorationImage(
-                          image: NetworkImage(admin.value.avatar!),
-                          // fit: BoxFit.fill,
-                        ),
+                        image: admin.value.avatar == ''
+                            ? null
+                            : DecorationImage(
+                                image: NetworkImage(admin.value.avatar!),
+                                // fit: BoxFit.fill,
+                              ),
                       ),
                     ),
                   ],
