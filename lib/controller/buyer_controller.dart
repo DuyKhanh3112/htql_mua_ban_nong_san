@@ -132,4 +132,18 @@ class BuyerController extends GetxController {
     Get.toNamed('/');
     isLoading.value = false;
   }
+
+  Future<void> forgotPassword(String email, String password) async {
+    isLoading.value = true;
+    final snapshot =
+        await buyerCollection.where('email', isEqualTo: email).get();
+    for (var item in snapshot.docs) {
+      Map<String, dynamic> data = item.data() as Map<String, dynamic>;
+      data['id'] = item.id;
+      data['password'] = password;
+      Buyer buyer = Buyer.fromJson(data);
+      await buyerCollection.doc(buyer.id).update(buyer.toJson());
+    }
+    isLoading.value = false;
+  }
 }

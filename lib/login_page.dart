@@ -2,8 +2,10 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
@@ -221,7 +223,15 @@ class LoginPage extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    onTap: () async {},
+                                    onTap: () async {
+                                      showFormEmail(context);
+
+                                      // await Get.find<MainController>().sendMail(
+                                      //     'emailSeller',
+                                      //     'subject',
+                                      //     'text',
+                                      //     'html');
+                                    },
                                   ),
                                   const SizedBox(
                                     height: 10,
@@ -356,5 +366,501 @@ class LoginPage extends StatelessWidget {
               ),
             );
     });
+  }
+
+  void showFormEmail(BuildContext context) {
+    MainController mainController = Get.find<MainController>();
+    TextEditingController emailController = TextEditingController();
+    var keyForgot = GlobalKey<FormState>();
+
+    Get.dialog(
+      AlertDialog(
+        title: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Quên mật khẩu',
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Get.back();
+                  },
+                  child: const Icon(
+                    Icons.close,
+                    color: Colors.green,
+                  ),
+                )
+              ],
+            ),
+            const Divider(),
+          ],
+        ),
+        content: Container(
+          width: Get.width * 0.9,
+          height: Get.height * 0.15,
+          decoration: const BoxDecoration(),
+          child: Form(
+            key: keyForgot,
+            child: ListView(
+              children: [
+                TextFormField(
+                  controller: emailController,
+                  validator: (value) {
+                    if (value == '' || value!.isEmpty) {
+                      return 'Hãy nhập email';
+                    }
+                    final RegExp emailRegExp =
+                        RegExp(r"^[\w-\.]+@([\w-]+\.){1,}[\w-]{1,}$");
+                    if (!emailRegExp.hasMatch(value)) {
+                      return 'Email không hợp lệ.';
+                    }
+                    return null;
+                  },
+                  decoration: const InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.green),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.green),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                      borderSide: BorderSide(color: Colors.green),
+                    ),
+                    labelText: 'Email',
+                    labelStyle: TextStyle(
+                      color: Colors.green,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () async {
+              if (keyForgot.currentState!.validate()) {
+                if (await Get.find<BuyerController>()
+                    .checkExistEmail(emailController.text)) {
+                  mainController.typeForgot.value = 'buyer';
+                } else if (await Get.find<SellerController>()
+                    .checkExistEmail(emailController.text)) {
+                  mainController.typeForgot.value = 'seller';
+                } else {
+                  mainController.typeForgot.value = '';
+                }
+                if (mainController.typeForgot.value == '') {
+                  // ignore: use_build_context_synchronously
+                  await AwesomeDialog(
+                    titleTextStyle: const TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                    ),
+                    descTextStyle: const TextStyle(
+                      color: Colors.green,
+                      fontSize: 16,
+                    ),
+                    context: context,
+                    dialogType: DialogType.error,
+                    animType: AnimType.rightSlide,
+                    title: 'Lỗi!',
+                    desc: 'Email không tồn tại.',
+                    btnOkOnPress: () {},
+                  ).show();
+                } else {
+                  Get.back();
+                  mainController.sendOtp(emailController.text);
+                  showFormOTP(emailController.text);
+                }
+              }
+            },
+            style: const ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(Colors.green),
+              shape: MaterialStatePropertyAll(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                ),
+              ),
+            ),
+            child: Container(
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(),
+              height: Get.width * 0.1,
+              width: Get.width * 0.8,
+              child: const Text(
+                'Gửi mã OTP',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showFormOTP(String email) {
+    MainController mainController = Get.find<MainController>();
+    TextEditingController otpController = TextEditingController();
+    var keyOTP = GlobalKey<FormState>();
+    Get.dialog(
+      AlertDialog(
+        title: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Quên mật khẩu',
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Get.back();
+                  },
+                  child: const Icon(
+                    Icons.close,
+                    color: Colors.green,
+                  ),
+                )
+              ],
+            ),
+            const Divider(),
+          ],
+        ),
+        content: Container(
+          width: Get.width * 0.9,
+          height: Get.height * 0.15,
+          decoration: const BoxDecoration(),
+          child: Form(
+            key: keyOTP,
+            child: ListView(
+              children: [
+                TextFormField(
+                  controller: otpController,
+                  validator: (value) {
+                    if (value == '' || value!.isEmpty) {
+                      return 'Hãy nhập mã OTP';
+                    }
+                    if (value != mainController.otpCode.value) {
+                      return 'Mã OTP không đúng';
+                    }
+                    return null;
+                  },
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.green),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.green),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                      borderSide: BorderSide(color: Colors.green),
+                    ),
+                    labelText: 'Mã OTP',
+                    labelStyle: TextStyle(
+                      color: Colors.green,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () async {
+              if (keyOTP.currentState!.validate()) {
+                Get.back();
+                showFormChangePassword(email);
+              }
+            },
+            style: const ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(Colors.green),
+              shape: MaterialStatePropertyAll(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                ),
+              ),
+            ),
+            child: Container(
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(),
+              height: Get.width * 0.1,
+              width: Get.width * 0.8,
+              child: const Text(
+                'Xác nhận',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showFormChangePassword(String email) {
+    var keyFormPass = GlobalKey<FormState>();
+    Rx<TextEditingController> newPassController = TextEditingController().obs;
+    Rx<TextEditingController> confPassController = TextEditingController().obs;
+    RxBool hidePass = true.obs;
+    RxBool hidePassConf = true.obs;
+    Get.dialog(
+      Obx(
+        () => AlertDialog(
+          title: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Quên mật khẩu',
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.green,
+                    ),
+                  )
+                ],
+              ),
+              const Divider(),
+            ],
+          ),
+          content: Container(
+            width: Get.width * 0.9,
+            height: Get.height * 0.2,
+            decoration: const BoxDecoration(),
+            child: Form(
+                key: keyFormPass,
+                child: ListView(
+                  children: [
+                    TextFormField(
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontSize: 14,
+                      ),
+                      controller: newPassController.value,
+                      validator: (value) {
+                        if (value!.isEmpty || value.trim() == '') {
+                          return 'Mật khẩu không được rỗng';
+                        }
+                        final RegExp passRegExp = RegExp(
+                            r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$");
+                        if (!passRegExp.hasMatch(value)) {
+                          return 'Mật khẩu ít nhất 6 ký tự. Bao gồm: \nchữ hoa, chữ thường, số và ký tự đặc biệt.';
+                        }
+                        return null;
+                      },
+                      obscureText: hidePass.value,
+                      decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            hidePass.value = !hidePass.value;
+                          },
+                          icon: hidePass.value
+                              ? const Icon(
+                                  Icons.remove_red_eye_outlined,
+                                  color: Colors.green,
+                                )
+                              : const Icon(
+                                  Icons.remove_red_eye_rounded,
+                                  color: Colors.green,
+                                ),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.green),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          ),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.green),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          ),
+                        ),
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          ),
+                          borderSide: BorderSide(color: Colors.green),
+                        ),
+                        labelText: 'Mật khẩu mới',
+                        labelStyle: const TextStyle(
+                          color: Colors.green,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: Get.height * 0.01,
+                    ),
+                    TextFormField(
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontSize: 14,
+                      ),
+                      controller: confPassController.value,
+                      validator: (value) {
+                        if (value!.isEmpty || value.trim() == '') {
+                          return 'Mật khẩu không được rỗng';
+                        }
+                        final RegExp passRegExp = RegExp(
+                            r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$");
+                        if (!passRegExp.hasMatch(value)) {
+                          return 'Mật khẩu ít nhất 6 ký tự. Bao gồm: \nchữ hoa, chữ thường, số và ký tự đặc biệt.';
+                        }
+                        if (value != newPassController.value.text) {
+                          return 'Xác nhận mật khẩu không trùng khớp.';
+                        }
+                        return null;
+                      },
+                      obscureText: hidePassConf.value,
+                      decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            hidePassConf.value = !hidePassConf.value;
+                          },
+                          icon: hidePassConf.value
+                              ? const Icon(
+                                  Icons.remove_red_eye_outlined,
+                                  color: Colors.green,
+                                )
+                              : const Icon(
+                                  Icons.remove_red_eye_rounded,
+                                  color: Colors.green,
+                                ),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.green),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          ),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.green),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          ),
+                        ),
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          ),
+                          borderSide: BorderSide(color: Colors.green),
+                        ),
+                        labelText: 'Xác nhận mật khẩu',
+                        labelStyle: const TextStyle(
+                          color: Colors.green,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () async {
+                if (keyFormPass.currentState!.validate()) {
+                  Get.back();
+                  Get.find<MainController>().isLoading.value = true;
+                  if (Get.find<MainController>().typeForgot.value == 'buyer') {
+                    await Get.find<BuyerController>()
+                        .forgotPassword(email, newPassController.value.text);
+                  } else if (Get.find<MainController>().typeForgot.value ==
+                      'seller') {
+                    await Get.find<SellerController>()
+                        .forgotPassword(email, newPassController.value.text);
+                  }
+
+                  Get.find<MainController>().isLoading.value = false;
+                }
+              },
+              style: const ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll(Colors.green),
+                shape: MaterialStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20),
+                    ),
+                  ),
+                ),
+              ),
+              child: Container(
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(),
+                height: Get.width * 0.1,
+                width: Get.width * 0.8,
+                child: const Text(
+                  'Cập nhật mật khẩu',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -43,6 +43,7 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   card_banner: ^0.0.1+2
   d_chart: ^2.6.9
+  mailer: ^6.2.0
 
 dev_dependencies:
   flutter_test:

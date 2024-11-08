@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/article_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 
 class HomePage extends StatelessWidget {
@@ -61,11 +62,13 @@ class HomePage extends StatelessWidget {
             ],
             onTap: (index) async {
               mainController.numPage.value = index;
-
               if (index == 2) {
                 mainController.isLoading.value = true;
                 await Get.find<ArticleController>().loadAllArticleActive();
                 mainController.isLoading.value = false;
+              }
+              if (index == 3) {
+                Get.find<BuyerController>().isLoading.value = false;
               }
             },
             currentIndex: mainController.numPage.value,
