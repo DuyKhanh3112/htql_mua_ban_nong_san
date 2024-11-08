@@ -1456,6 +1456,9 @@ class ProductDetailPage extends StatelessWidget {
             .firstWhereOrNull((element) => element.id == order.buyer_id) ??
         Buyer.initBuyer();
     return Container(
+      margin: EdgeInsets.only(
+        bottom: Get.height * 0.015,
+      ),
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(
           Radius.circular(20),

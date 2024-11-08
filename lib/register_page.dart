@@ -840,8 +840,7 @@ class RegisterPage extends StatelessWidget {
       ).show();
       return false;
     }
-    if (await buyerController.checkExistPhone(buyer.phone) ||
-        await Get.find<SellerController>().checkExistPhone(buyer.phone)) {
+    if (await buyerController.checkExistPhone(buyer.phone)) {
       buyerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(
@@ -863,6 +862,7 @@ class RegisterPage extends StatelessWidget {
       ).show();
       return false;
     }
+
     if (await buyerController.checkExistEmail(buyer.email) ||
         await Get.find<SellerController>().checkExistEmail(buyer.email)) {
       buyerController.isLoading.value = false;
@@ -920,8 +920,7 @@ class RegisterPage extends StatelessWidget {
       ).show();
       return false;
     }
-    if (await sellerController.checkExistPhone(seller.phone) ||
-        await Get.find<BuyerController>().checkExistPhone(seller.phone)) {
+    if (await sellerController.checkExistPhone(seller.phone)) {
       sellerController.isLoading.value = false;
       // ignore: use_build_context_synchronously
       await AwesomeDialog(

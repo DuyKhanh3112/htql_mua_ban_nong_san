@@ -234,7 +234,9 @@ class AccountSettingPage extends StatelessWidget {
                                         Rx<TextEditingController>
                                             confPassController =
                                             TextEditingController().obs;
+                                        RxBool hideOldPass = true.obs;
                                         RxBool hidePass = true.obs;
+                                        RxBool hidePassConf = true.obs;
                                         Get.dialog(
                                           Obx(
                                             () => AlertDialog(
@@ -314,17 +316,19 @@ class AccountSettingPage extends StatelessWidget {
                                                               return null;
                                                             },
                                                             obscureText:
-                                                                hidePass.value,
+                                                                hideOldPass
+                                                                    .value,
                                                             decoration:
                                                                 InputDecoration(
                                                               suffixIcon:
                                                                   IconButton(
                                                                 onPressed: () {
-                                                                  hidePass.value =
-                                                                      !hidePass
+                                                                  hideOldPass
+                                                                          .value =
+                                                                      !hideOldPass
                                                                           .value;
                                                                 },
-                                                                icon: hidePass
+                                                                icon: hideOldPass
                                                                         .value
                                                                     ? const Icon(
                                                                         Icons
@@ -534,17 +538,19 @@ class AccountSettingPage extends StatelessWidget {
                                                               return null;
                                                             },
                                                             obscureText:
-                                                                hidePass.value,
+                                                                hidePassConf
+                                                                    .value,
                                                             decoration:
                                                                 InputDecoration(
                                                               suffixIcon:
                                                                   IconButton(
                                                                 onPressed: () {
-                                                                  hidePass.value =
-                                                                      !hidePass
+                                                                  hidePassConf
+                                                                          .value =
+                                                                      !hidePassConf
                                                                           .value;
                                                                 },
-                                                                icon: hidePass
+                                                                icon: hidePassConf
                                                                         .value
                                                                     ? const Icon(
                                                                         Icons
