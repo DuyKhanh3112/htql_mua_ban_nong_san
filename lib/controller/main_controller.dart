@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -228,11 +227,10 @@ class MainController extends GetxController {
 
     try {
       // Gửi email
-      final sendReport = await send(message, smtpServer);
-      print('Email đã được gửi: $sendReport');
+      await send(message, smtpServer);
     } on MailerException catch (e) {
-      print('Không thể gửi email: $e');
       for (var p in e.problems) {
+        // ignore: avoid_print
         print('Lỗi: ${p.code}: ${p.msg}');
       }
     }
