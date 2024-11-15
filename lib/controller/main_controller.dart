@@ -5,6 +5,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/address_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/article_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
@@ -193,7 +194,7 @@ class MainController extends GetxController {
     await Get.find<CategoryController>().loadCategory();
     await Get.find<SellerController>().loadSeller();
     Get.find<ProductController>().loadProductActive();
-    // await Get.find<ArticleController>().loadAllArticle();
+    Get.find<ArticleController>().loadAllArticle();
     isLoading.value = false;
   }
 

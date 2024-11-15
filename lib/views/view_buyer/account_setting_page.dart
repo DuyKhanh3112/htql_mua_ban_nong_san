@@ -151,7 +151,7 @@ class AccountSettingPage extends StatelessWidget {
                                       ),
                                       onTap: () async {
                                         mainController.isLoading.value = true;
-                                        await Get.find<OrderController>()
+                                        Get.find<OrderController>()
                                             .loadOrderByBuyer();
                                         mainController.isLoading.value = false;
                                         Get.toNamed('order');

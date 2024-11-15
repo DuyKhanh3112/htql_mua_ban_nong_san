@@ -17,8 +17,8 @@ class ReviewController extends GetxController {
   Future<void> createReview(Review re) async {
     isLoading.value = true;
     WriteBatch batch = FirebaseFirestore.instance.batch();
-    DocumentReference refReview =
-        reviewCollection.doc(reviewCollection.doc().id);
+    re.id = reviewCollection.doc().id;
+    DocumentReference refReview = reviewCollection.doc(re.id);
     batch.set(refReview, re.toVal());
     await batch.commit();
     await Get.find<OrderController>().loadOrderDetailByOrder(
@@ -35,6 +35,7 @@ class ReviewController extends GetxController {
         product.ratting = await getRatting(product.id);
       }
     }
+    listReview.add(re);
     isLoading.value = false;
   }
 

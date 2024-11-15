@@ -37,6 +37,43 @@ class SellerController extends GetxController {
   RxInt indexSeller = 0.obs;
 
   RxBool isLoading = false.obs;
+  Rx<Seller> seller = Seller.initSeller().obs;
+
+  Future<void> getSeller(String id) async {
+    isLoading.value = true;
+    final snapshot = await sellerCollection.doc(id).get();
+    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+    data['id'] = id;
+    seller.value = Seller.fromJson(data);
+    isLoading.value = false;
+  }
+
+  double getRatting() {
+    double count = 0;
+    double ratting = 0;
+    for (var item in Get.find<ProductController>()
+        .listProduct
+        .where((p0) => p0.seller_id == seller.value.id)) {
+      if (item.sale_num! > 0 && item.ratting! > 0) {
+        count += 1;
+        ratting += item.ratting!;
+      }
+    }
+    if (count == 0) {
+      return 0;
+    }
+    return ratting / count;
+  }
+
+  double getSaleNum() {
+    double count = 0;
+    for (var item in Get.find<ProductController>()
+        .listProduct
+        .where((p0) => p0.seller_id == seller.value.id)) {
+      count += item.sale_num!;
+    }
+    return count;
+  }
 
   Future<void> updateSeller(Seller seller) async {
     isLoading.value = true;
