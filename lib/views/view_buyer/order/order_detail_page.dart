@@ -422,8 +422,11 @@ class OrderDetailPage extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            for (var odd
-                                in Get.find<OrderController>().listOrderDetail)
+                            for (var odd in Get.find<OrderController>()
+                                .listOrderDetail
+                                .where((p0) =>
+                                    p0.order_id ==
+                                    Get.find<OrderController>().order.value.id))
                               orderDetailItem(odd),
                             SizedBox(
                               height: Get.height * 0.01,

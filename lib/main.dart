@@ -28,6 +28,7 @@ import 'package:htql_mua_ban_nong_san/views/view_seller/order/order_seller_detai
 import 'package:htql_mua_ban_nong_san/views/view_seller/order/order_seller_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_form_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/product/product_seller_home_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_seller/seller_page.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 
 void main() async {
@@ -110,6 +111,7 @@ class MyApp extends StatelessWidget {
             page: () => const OrderSellerDetailPage()),
         GetPage(
             name: '/article_form', page: () => const ArticleSellerFormPage()),
+        GetPage(name: '/view_seller', page: () => const SellerPage()),
       ],
     );
   }

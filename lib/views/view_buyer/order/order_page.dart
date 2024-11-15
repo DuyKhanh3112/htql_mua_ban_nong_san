@@ -516,7 +516,6 @@ class OrderPage extends StatelessWidget {
                                     create_at: Timestamp.now(),
                                     update_at: Timestamp.now());
                                 Get.back();
-                                print(re.toJson());
                                 if (re.id == '') {
                                   await Get.find<ReviewController>()
                                       .createReview(re);

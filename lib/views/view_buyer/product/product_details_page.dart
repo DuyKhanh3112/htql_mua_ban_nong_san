@@ -295,6 +295,7 @@ class ProductDetailPage extends StatelessWidget {
                                                 Icons.star,
                                                 color: Colors.amber,
                                               ),
+                                              unratedColor: Colors.grey,
                                               itemCount: 5,
                                               itemSize: Get.width * 0.055,
                                               direction: Axis.horizontal,
@@ -379,7 +380,12 @@ class ProductDetailPage extends StatelessWidget {
                                   // height: Get.width * 0.15,
                                   width: Get.width * 0.25,
                                   child: ElevatedButton(
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      Get.toNamed('/view_seller');
+                                      await Get.find<SellerController>()
+                                          .getSeller(productController
+                                              .product.value.seller_id);
+                                    },
                                     style: const ButtonStyle(
                                       shape: MaterialStatePropertyAll(
                                         RoundedRectangleBorder(

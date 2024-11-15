@@ -5,6 +5,7 @@ import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/report_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
 
 class DrawerSeller extends StatelessWidget {
@@ -277,6 +278,31 @@ class DrawerSeller extends StatelessWidget {
                             ),
                           ],
                         ),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.store_mall_directory_outlined,
+                      color: Colors.green,
+                      size: 40,
+                    ),
+                    title: const Text(
+                      'Xem cửa hàng',
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onTap: () async {
+                      Get.toNamed('/view_seller');
+                      Get.find<SellerController>().seller.value =
+                          mainController.seller.value;
+                      // await Get.find<SellerController>()
+                      //     .getSeller(mainController.seller.value.id);
+                      // Get.back();
+                      // mainController.seller.value = Seller.initSeller();
+                      // Get.toNamed('/login');
+                    },
+                  ),
                   ListTile(
                     leading: const Icon(
                       Icons.logout,
