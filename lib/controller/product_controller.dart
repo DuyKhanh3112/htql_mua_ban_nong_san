@@ -46,6 +46,8 @@ class ProductController extends GetxController {
     {'value': 'lock', 'label': 'Vi phạm', 'color': Colors.red}
   ].obs;
 
+  Rx<String> sortType = ''.obs;
+
   Future<void> updateProduct(Product pro) async {
     isLoading.value = true;
     if (pro.quantity == 0 && pro.status == 'active') {

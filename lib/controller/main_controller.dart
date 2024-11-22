@@ -184,6 +184,7 @@ class MainController extends GetxController {
       isLoading.value = false;
       return true;
     }
+
     isLoading.value = false;
     return false;
   }

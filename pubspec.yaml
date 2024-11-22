@@ -34,7 +34,7 @@ dependencies:
   flutter_localization: ^0.2.1
   convert_vietnamese: ^0.0.9
   connectivity_plus: ^6.0.3
-  intl: 0.18.1
+  intl: 0.19.0
   badges: ^3.1.2
   dotted_border: ^2.1.0
   dropdown_button2: ^2.3.9

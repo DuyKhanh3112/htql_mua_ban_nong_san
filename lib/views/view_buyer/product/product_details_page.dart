@@ -387,7 +387,7 @@ class ProductDetailPage extends StatelessWidget {
                                               .product.value.seller_id);
                                     },
                                     style: const ButtonStyle(
-                                      shape: MaterialStatePropertyAll(
+                                      shape: WidgetStatePropertyAll(
                                         RoundedRectangleBorder(
                                           borderRadius: BorderRadius.all(
                                             Radius.circular(20),
@@ -814,7 +814,7 @@ class ProductDetailPage extends StatelessWidget {
                                                                 ),
                                                                 // height: Get.height * 0.075,
                                                                 child: Text(
-                                                                  "Kho: ${productController.product.value.quantity} ${productController.product.value.unit}",
+                                                                  "Kho: ${NumberFormat.decimalPatternDigits(decimalDigits: 0).format(productController.product.value.quantity)} ${productController.product.value.unit}",
                                                                   style:
                                                                       const TextStyle(
                                                                     color: Colors
@@ -879,7 +879,7 @@ class ProductDetailPage extends StatelessWidget {
                                                                     if (int.parse(quantityController
                                                                             .value
                                                                             .text) >
-                                                                        0) {
+                                                                        1) {
                                                                       quantityController
                                                                           .value
                                                                           .text = '${int.parse(quantityController.value.text) - 1}';
@@ -897,18 +897,18 @@ class ProductDetailPage extends StatelessWidget {
                                                                       TextFormField(
                                                                     validator:
                                                                         (value) {
-                                                                      if (double.parse(
-                                                                              value!) <=
-                                                                          0) {
-                                                                        return 'Số lượng phải lớn hơn 0';
-                                                                      }
-                                                                      if (double.parse(
-                                                                              value) >
-                                                                          productController
-                                                                              .product
-                                                                              .value
-                                                                              .quantity) {
-                                                                        return 'Số lượng trong kho không đủ';
+                                                                      if (value!
+                                                                          .isEmpty) {
+                                                                        return 'Không hợp lệ';
+                                                                      } else {
+                                                                        if (double.parse(value) <=
+                                                                            0) {
+                                                                          return 'Không hợp lệ';
+                                                                        }
+                                                                        if (double.parse(value) >
+                                                                            productController.product.value.quantity) {
+                                                                          return 'Không hợp lệ';
+                                                                        }
                                                                       }
                                                                       return null;
                                                                     },
@@ -947,10 +947,17 @@ class ProductDetailPage extends StatelessWidget {
                                                                         .green,
                                                                   ),
                                                                   onTap: () {
-                                                                    quantityController
+                                                                    if (int.parse(quantityController
                                                                             .value
-                                                                            .text =
-                                                                        '${int.parse(quantityController.value.text) + 1}';
+                                                                            .text) <
+                                                                        productController
+                                                                            .product
+                                                                            .value
+                                                                            .quantity) {
+                                                                      quantityController
+                                                                          .value
+                                                                          .text = '${int.parse(quantityController.value.text) + 1}';
+                                                                    }
                                                                   },
                                                                 ),
                                                               ],
@@ -1017,10 +1024,10 @@ class ProductDetailPage extends StatelessWidget {
                                                       },
                                                       style: const ButtonStyle(
                                                         backgroundColor:
-                                                            MaterialStatePropertyAll(
+                                                            WidgetStatePropertyAll(
                                                                 Colors.green),
                                                         shape:
-                                                            MaterialStatePropertyAll(
+                                                            WidgetStatePropertyAll(
                                                           RoundedRectangleBorder(
                                                             borderRadius:
                                                                 BorderRadius
@@ -1060,8 +1067,8 @@ class ProductDetailPage extends StatelessWidget {
                                   },
                                   style: const ButtonStyle(
                                     backgroundColor:
-                                        MaterialStatePropertyAll(Colors.green),
-                                    shape: MaterialStatePropertyAll(
+                                        WidgetStatePropertyAll(Colors.green),
+                                    shape: WidgetStatePropertyAll(
                                       RoundedRectangleBorder(
                                         borderRadius: BorderRadius.all(
                                           Radius.circular(20),
@@ -1099,317 +1106,368 @@ class ProductDetailPage extends StatelessWidget {
                                                             .product.value.id &&
                                                     item.is_default) ??
                                             ProductImage.initProductImage();
+                                    final formKey = GlobalKey<FormState>();
 
                                     await showModalBottomSheet(
                                         context: context,
-                                        builder: (BuildContext context) {
-                                          return Obx(
-                                            () => SizedBox(
+                                        isScrollControlled: true,
+                                        builder: (context) {
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                  .viewInsets
+                                                  .bottom, // Thêm khoảng cách để tránh bị bàn phím che
+                                            ),
+                                            child: SizedBox(
                                               height: Get.height * 0.4,
                                               width: Get.width,
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Container(
-                                                        margin: EdgeInsets.all(
-                                                            Get.width * 0.05),
-                                                        width: Get.width * 0.2,
-                                                        height: Get.width * 0.3,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          image: DecorationImage(
-                                                              image: NetworkImage(
-                                                                  productImage
-                                                                      .image)),
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                  .all(
-                                                            Radius.circular(20),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        // height: Get.width * 0.25,
-                                                        alignment:
-                                                            Alignment.topRight,
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            Container(
-                                                              alignment: Alignment
-                                                                  .centerLeft,
-                                                              width: Get.width *
-                                                                  0.6,
-                                                              margin: EdgeInsets
-                                                                  .symmetric(
-                                                                horizontal:
-                                                                    Get.width *
-                                                                        0.05,
-                                                              ),
-                                                              // height: Get.height * 0.075,
-                                                              child: Text(
-                                                                productController
-                                                                    .product
-                                                                    .value
-                                                                    .name,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .green,
-                                                                  fontSize: 20,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .clip,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Container(
-                                                              alignment: Alignment
-                                                                  .centerLeft,
-                                                              width: Get.width *
-                                                                  0.6,
-                                                              margin: EdgeInsets
-                                                                  .symmetric(
-                                                                horizontal:
-                                                                    Get.width *
-                                                                        0.05,
-                                                              ),
-                                                              // height: Get.height * 0.075,
-                                                              child: Text(
-                                                                '${currencyFormatter.format(productController.product.value.price)}/${productController.product.value.unit}',
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .green,
-                                                                  fontSize: 14,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .clip,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Container(
-                                                              alignment: Alignment
-                                                                  .centerLeft,
-                                                              width: Get.width *
-                                                                  0.6,
-                                                              margin: EdgeInsets
-                                                                  .symmetric(
-                                                                horizontal:
-                                                                    Get.width *
-                                                                        0.05,
-                                                              ),
-                                                              // height: Get.height * 0.075,
-                                                              child: Text(
-                                                                "Kho: ${productController.product.value.quantity} ${productController.product.value.unit}",
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .green,
-                                                                  fontSize: 14,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .clip,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  const Divider(),
-                                                  Container(
-                                                    margin:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal:
-                                                                Get.width *
-                                                                    0.05),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
+                                              child: Form(
+                                                key: formKey,
+                                                child: Column(
+                                                  children: [
+                                                    Row(
                                                       children: [
-                                                        const Text(
-                                                          "Số lượng:",
-                                                          style: TextStyle(
-                                                            color: Colors.green,
-                                                            fontSize: 18,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .clip,
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.all(
+                                                                  Get.width *
+                                                                      0.05),
+                                                          width:
+                                                              Get.width * 0.2,
+                                                          height:
+                                                              Get.width * 0.3,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            image: DecorationImage(
+                                                                image: NetworkImage(
+                                                                    productImage
+                                                                        .image)),
+                                                            borderRadius:
+                                                                const BorderRadius
+                                                                    .all(
+                                                              Radius.circular(
+                                                                  20),
+                                                            ),
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                          width:
-                                                              Get.width * 0.5,
-                                                          child: Row(
+                                                        Container(
+                                                          // height: Get.width * 0.25,
+                                                          alignment: Alignment
+                                                              .topRight,
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
                                                             children: [
-                                                              InkWell(
-                                                                child:
-                                                                    const Icon(
-                                                                  Icons
-                                                                      .remove_circle_outline,
-                                                                  size: 30,
-                                                                  color: Colors
-                                                                      .green,
-                                                                ),
-                                                                onTap: () {
-                                                                  if (int.parse(quantityController
-                                                                          .value
-                                                                          .text) >
-                                                                      0) {
-                                                                    quantityController
-                                                                            .value
-                                                                            .text =
-                                                                        '${int.parse(quantityController.value.text) - 1}';
-                                                                  }
-                                                                },
-                                                              ),
                                                               Container(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .center,
+                                                                alignment: Alignment
+                                                                    .centerLeft,
                                                                 width:
                                                                     Get.width *
-                                                                        0.2,
-                                                                child:
-                                                                    TextFormField(
-                                                                  onChanged:
-                                                                      (value) {},
-                                                                  controller:
-                                                                      quantityController
-                                                                          .value,
-                                                                  keyboardType:
-                                                                      TextInputType
-                                                                          .number,
-                                                                  inputFormatters: [
-                                                                    FilteringTextInputFormatter
-                                                                        .digitsOnly
-                                                                  ],
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  decoration:
-                                                                      const InputDecoration(
-                                                                    border:
-                                                                        InputBorder
-                                                                            .none,
+                                                                        0.6,
+                                                                margin: EdgeInsets
+                                                                    .symmetric(
+                                                                  horizontal:
+                                                                      Get.width *
+                                                                          0.05,
+                                                                ),
+                                                                // height: Get.height * 0.075,
+                                                                child: Text(
+                                                                  productController
+                                                                      .product
+                                                                      .value
+                                                                      .name,
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    color: Colors
+                                                                        .green,
+                                                                    fontSize:
+                                                                        20,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .clip,
                                                                   ),
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          20,
-                                                                      color: Colors
-                                                                          .green),
                                                                 ),
                                                               ),
-                                                              InkWell(
-                                                                child:
-                                                                    const Icon(
-                                                                  Icons
-                                                                      .add_circle_outline,
-                                                                  size: 30,
-                                                                  color: Colors
-                                                                      .green,
+                                                              Container(
+                                                                alignment: Alignment
+                                                                    .centerLeft,
+                                                                width:
+                                                                    Get.width *
+                                                                        0.6,
+                                                                margin: EdgeInsets
+                                                                    .symmetric(
+                                                                  horizontal:
+                                                                      Get.width *
+                                                                          0.05,
                                                                 ),
-                                                                onTap: () {
-                                                                  quantityController
-                                                                          .value
-                                                                          .text =
-                                                                      '${int.parse(quantityController.value.text) + 1}';
-                                                                },
+                                                                // height: Get.height * 0.075,
+                                                                child: Text(
+                                                                  '${currencyFormatter.format(productController.product.value.price)}/${productController.product.value.unit}',
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    color: Colors
+                                                                        .green,
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .clip,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                alignment: Alignment
+                                                                    .centerLeft,
+                                                                width:
+                                                                    Get.width *
+                                                                        0.6,
+                                                                margin: EdgeInsets
+                                                                    .symmetric(
+                                                                  horizontal:
+                                                                      Get.width *
+                                                                          0.05,
+                                                                ),
+                                                                // height: Get.height * 0.075,
+                                                                child: Text(
+                                                                  "Kho: ${NumberFormat.decimalPatternDigits(decimalDigits: 0).format(productController.product.value.quantity)} ${productController.product.value.unit}",
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    color: Colors
+                                                                        .green,
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .clip,
+                                                                  ),
+                                                                ),
                                                               ),
                                                             ],
                                                           ),
-                                                        ),
+                                                        )
                                                       ],
                                                     ),
-                                                  ),
-                                                  const Divider(),
-                                                  ElevatedButton(
-                                                    onPressed: () {
-                                                      Get.find<CartController>()
-                                                          .listCartChoose
-                                                          .value = [];
-                                                      Get.find<CartController>()
-                                                          .listCartChoose
-                                                          .add(
-                                                            Cart(
-                                                                id: '',
-                                                                buyer_id: Get.find<
-                                                                        MainController>()
-                                                                    .buyer
-                                                                    .value
-                                                                    .id,
-                                                                product_id:
-                                                                    productController
-                                                                        .product
+                                                    const Divider(),
+                                                    Container(
+                                                      margin:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal:
+                                                                  Get.width *
+                                                                      0.05),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          const Text(
+                                                            "Số lượng:",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.green,
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .clip,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width:
+                                                                Get.width * 0.5,
+                                                            child: Row(
+                                                              children: [
+                                                                InkWell(
+                                                                  child:
+                                                                      const Icon(
+                                                                    Icons
+                                                                        .remove_circle_outline,
+                                                                    size: 30,
+                                                                    color: Colors
+                                                                        .green,
+                                                                  ),
+                                                                  onTap: () {
+                                                                    if (int.parse(quantityController
+                                                                            .value
+                                                                            .text) >
+                                                                        1) {
+                                                                      quantityController
+                                                                          .value
+                                                                          .text = '${int.parse(quantityController.value.text) - 1}';
+                                                                    }
+                                                                  },
+                                                                ),
+                                                                Container(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .center,
+                                                                  width:
+                                                                      Get.width *
+                                                                          0.2,
+                                                                  child:
+                                                                      TextFormField(
+                                                                    validator:
+                                                                        (value) {
+                                                                      if (value!
+                                                                          .isEmpty) {
+                                                                        return 'Không hợp lệ';
+                                                                      } else {
+                                                                        if (double.parse(value) <=
+                                                                            0) {
+                                                                          return 'Không hợp lệ';
+                                                                        }
+                                                                        if (double.parse(value) >
+                                                                            productController.product.value.quantity) {
+                                                                          return 'Không hợp lệ';
+                                                                        }
+                                                                      }
+                                                                      return null;
+                                                                    },
+                                                                    controller:
+                                                                        quantityController
+                                                                            .value,
+                                                                    keyboardType:
+                                                                        TextInputType
+                                                                            .number,
+                                                                    inputFormatters: [
+                                                                      FilteringTextInputFormatter
+                                                                          .digitsOnly
+                                                                    ],
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                    decoration:
+                                                                        const InputDecoration(
+                                                                      border: InputBorder
+                                                                          .none,
+                                                                    ),
+                                                                    style: const TextStyle(
+                                                                        fontSize:
+                                                                            20,
+                                                                        color: Colors
+                                                                            .green),
+                                                                  ),
+                                                                ),
+                                                                InkWell(
+                                                                  child:
+                                                                      const Icon(
+                                                                    Icons
+                                                                        .add_circle_outline,
+                                                                    size: 30,
+                                                                    color: Colors
+                                                                        .green,
+                                                                  ),
+                                                                  onTap: () {
+                                                                    if (int.parse(quantityController
+                                                                            .value
+                                                                            .text) <
+                                                                        productController
+                                                                            .product
+                                                                            .value
+                                                                            .quantity) {
+                                                                      quantityController
+                                                                          .value
+                                                                          .text = '${int.parse(quantityController.value.text) + 1}';
+                                                                    }
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const Divider(),
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        if (formKey
+                                                            .currentState!
+                                                            .validate()) {
+                                                          Get.find<
+                                                                  CartController>()
+                                                              .listCartChoose
+                                                              .value = [];
+                                                          Get.find<
+                                                                  CartController>()
+                                                              .listCartChoose
+                                                              .add(
+                                                                Cart(
+                                                                    id: '',
+                                                                    buyer_id: Get.find<
+                                                                            MainController>()
+                                                                        .buyer
                                                                         .value
                                                                         .id,
-                                                                quantity: int.parse(
-                                                                        quantityController
+                                                                    product_id:
+                                                                        productController
+                                                                            .product
+                                                                            .value
+                                                                            .id,
+                                                                    quantity: int.parse(quantityController
                                                                             .value
                                                                             .text)
-                                                                    .toDouble(),
-                                                                create_at:
-                                                                    Timestamp
-                                                                        .now()),
-                                                          );
-                                                      // print(Get.find<
-                                                      //         CartController>()
-                                                      //     .listCartChoose
-                                                      //     .length);
-                                                      Get.toNamed('checkout');
-                                                    },
-                                                    style: const ButtonStyle(
-                                                      backgroundColor:
-                                                          MaterialStatePropertyAll(
-                                                              Colors.green),
-                                                      shape:
-                                                          MaterialStatePropertyAll(
-                                                        RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                            Radius.circular(20),
+                                                                        .toDouble(),
+                                                                    create_at:
+                                                                        Timestamp
+                                                                            .now()),
+                                                              );
+                                                          // print(Get.find<
+                                                          //         CartController>()
+                                                          //     .listCartChoose
+                                                          //     .length);
+                                                          Get.toNamed(
+                                                              'checkout');
+                                                        }
+                                                      },
+                                                      style: const ButtonStyle(
+                                                        backgroundColor:
+                                                            WidgetStatePropertyAll(
+                                                                Colors.green),
+                                                        shape:
+                                                            WidgetStatePropertyAll(
+                                                          RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .all(
+                                                              Radius.circular(
+                                                                  20),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      child: Container(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        decoration:
+                                                            const BoxDecoration(),
+                                                        // height: Get.width * 0.1,
+                                                        width: Get.width * 0.8,
+                                                        child: const Text(
+                                                          'Đặt hàng',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                           ),
                                                         ),
                                                       ),
                                                     ),
-                                                    child: Container(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      decoration:
-                                                          const BoxDecoration(),
-                                                      // height: Get.width * 0.1,
-                                                      width: Get.width * 0.8,
-                                                      child: const Text(
-                                                        'Đặt hàng',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           );
@@ -1417,8 +1475,8 @@ class ProductDetailPage extends StatelessWidget {
                                   },
                                   style: const ButtonStyle(
                                     backgroundColor:
-                                        MaterialStatePropertyAll(Colors.green),
-                                    shape: MaterialStatePropertyAll(
+                                        WidgetStatePropertyAll(Colors.green),
+                                    shape: WidgetStatePropertyAll(
                                       RoundedRectangleBorder(
                                         borderRadius: BorderRadius.all(
                                           Radius.circular(20),

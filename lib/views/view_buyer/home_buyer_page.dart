@@ -282,6 +282,10 @@ class HomeUserPage extends StatelessWidget {
                                                     .sort((a, b) => b.create_at
                                                         .compareTo(
                                                             a.create_at));
+                                                Get.find<ProductController>()
+                                                        .category
+                                                        .value =
+                                                    Category.initCategory();
                                                 Get.toNamed('search_product');
                                               },
                                             ),
@@ -350,6 +354,10 @@ class HomeUserPage extends StatelessWidget {
                                                     .sort((a, b) => b.sale_num!
                                                         .compareTo(
                                                             a.sale_num!));
+                                                Get.find<ProductController>()
+                                                        .category
+                                                        .value =
+                                                    Category.initCategory();
                                                 Get.toNamed('search_product');
                                               },
                                             ),
@@ -414,6 +422,10 @@ class HomeUserPage extends StatelessWidget {
                                                     .listProduct
                                                     .sort((a, b) => b.ratting!
                                                         .compareTo(a.ratting!));
+                                                Get.find<ProductController>()
+                                                        .category
+                                                        .value =
+                                                    Category.initCategory();
                                                 Get.toNamed('search_product');
                                               },
                                             ),
@@ -442,26 +454,28 @@ class HomeUserPage extends StatelessWidget {
       RxList<Product> topProductRatting,
       MainController mainController,
       RxList<Product> productBought) {
-    topProductBestSeller.value = Get.find<ProductController>()
-        .listProduct
-        .where((p0) => p0.status == 'active')
-        .toList();
-    topProductBestSeller.sort((a, b) => b.sale_num!.compareTo(a.sale_num!));
+    if (Get.find<ProductController>().listProduct.isNotEmpty) {
+      topProductBestSeller.value = Get.find<ProductController>()
+          .listProduct
+          .where((p0) => p0.status == 'active')
+          .toList();
+      topProductBestSeller.sort((a, b) => b.sale_num!.compareTo(a.sale_num!));
 
-    topProductNew.value = Get.find<ProductController>()
-        .listProduct
-        .where((p0) => p0.status == 'active')
-        .toList();
-    topProductNew.sort((a, b) => b.create_at.compareTo(a.create_at));
+      topProductNew.value = Get.find<ProductController>()
+          .listProduct
+          .where((p0) => p0.status == 'active')
+          .toList();
+      topProductNew.sort((a, b) => b.create_at.compareTo(a.create_at));
 
-    topProductRatting.value = Get.find<ProductController>()
-        .listProduct
-        .where((p0) => p0.status == 'active')
-        .toList();
-    topProductRatting.sort((a, b) => b.ratting!.compareTo(a.ratting!));
+      topProductRatting.value = Get.find<ProductController>()
+          .listProduct
+          .where((p0) => p0.status == 'active')
+          .toList();
+      topProductRatting.sort((a, b) => b.ratting!.compareTo(a.ratting!));
 
-    if (mainController.buyer.value.id != '') {
-      productBought.value = Get.find<BuyerController>().listProductBought;
+      if (mainController.buyer.value.id != '') {
+        productBought.value = Get.find<BuyerController>().listProductBought;
+      }
     }
   }
 

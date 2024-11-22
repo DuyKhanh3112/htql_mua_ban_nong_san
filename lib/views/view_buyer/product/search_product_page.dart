@@ -1,5 +1,6 @@
 import 'package:card_banner/card_banner.dart';
 import 'package:convert_vietnamese/convert_vietnamese.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flexible_grid_view/flexible_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -12,6 +13,7 @@ import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/review_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
+import 'package:htql_mua_ban_nong_san/models/category.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
@@ -21,39 +23,50 @@ import 'package:intl/intl.dart';
 class SearchProductPage extends StatelessWidget {
   const SearchProductPage({super.key});
   void loadData(RxList<Product> listProduct) {
-    List<String> listCategoryID = [];
+    // List<String> listCategoryID = [];
     ProductController productController = Get.find<ProductController>();
+    // if (productController.searchProductController.value.text.isNotEmpty) {
+    //   for (var element in Get.find<CategoryController>()
+    //       .listCategory
+    //       .where((p0) => p0.hide == false)
+    //       .where((p0) =>
+    //           productController.searchProductController.value.text.isEmpty ||
+    //           removeDiacritics(p0.name.toLowerCase()).contains(removeDiacritics(
+    //               productController.searchProductController.value.text
+    //                   .toLowerCase())))) {
+    //     listCategoryID.add(element.id);
+    //   }
+    //   listProduct.value = Get.find<ProductController>()
+    //       .listProduct
+    //       .where((p0) =>
+    //           p0.status == 'active' &&
+    //           (removeDiacritics(p0.name.toLowerCase()).contains(
+    //                   removeDiacritics(productController
+    //                       .searchProductController.value.text
+    //                       .toLowerCase())) ||
+    //               listCategoryID.contains(p0.category_id)))
+    //       .toList();
+    // } else if (productController.category.value.id != '') {
+    //   listProduct.value = Get.find<ProductController>()
+    //       .listProduct
+    //       .where((p0) =>
+    //           p0.status == 'active' &&
+    //           p0.category_id == productController.category.value.id)
+    //       .toList();
+    // } else {
+    //   listProduct.value = productController.listProduct;
+    // }
+    listProduct.value = productController.listProduct;
     if (productController.searchProductController.value.text.isNotEmpty) {
-      for (var element in Get.find<CategoryController>()
-          .listCategory
-          .where((p0) => p0.hide == false)
-          .where((p0) =>
-              productController.searchProductController.value.text.isEmpty ||
-              removeDiacritics(p0.name.toLowerCase()).contains(removeDiacritics(
-                  productController.searchProductController.value.text
-                      .toLowerCase())))) {
-        listCategoryID.add(element.id);
-      }
-
       listProduct.value = Get.find<ProductController>()
           .listProduct
           .where((p0) =>
               p0.status == 'active' &&
               (removeDiacritics(p0.name.toLowerCase()).contains(
-                      removeDiacritics(productController
-                          .searchProductController.value.text
-                          .toLowerCase())) ||
-                  listCategoryID.contains(p0.category_id)))
+                  removeDiacritics(productController
+                      .searchProductController.value.text
+                      .toLowerCase()))))
           .toList();
-    } else if (productController.category.value.id != '') {
-      listProduct.value = Get.find<ProductController>()
-          .listProduct
-          .where((p0) =>
-              p0.status == 'active' &&
-              p0.category_id == productController.category.value.id)
-          .toList();
-    } else {
-      listProduct.value = productController.listProduct;
     }
   }
 
@@ -63,9 +76,42 @@ class SearchProductPage extends StatelessWidget {
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
     MainController mainController = Get.find<MainController>();
     RxList<Product> listProduct = <Product>[].obs;
+    TextEditingController categoryController = TextEditingController();
+    TextEditingController provinceController = TextEditingController();
+    Rx<Category> category = Category.initCategory().obs;
+    Rx<Province> province = Province.initProvince().obs;
+    // List<dynamic> listSortType = [
+    //   {'value': 'new', 'label': 'Mới nhất'},
+    //   {'value': 'sell', 'label': 'Bán chạy nhất'},
+    //   {'value': 'ratting', 'label': 'Đánh giá cao nhất'},
+    //   {'value': 'price_asc', 'label': 'Giá tăng dần'},
+    //   {'value': 'price_desc', 'label': 'Giá giảm dần'},
+    // ];
+    category.value = Get.find<ProductController>().category.value;
 
     return Obx(() {
       loadData(listProduct);
+      if (category.value.id != '') {
+        listProduct.value = listProduct
+            .where(
+              (p0) => p0.category_id == category.value.id,
+            )
+            .toList();
+      }
+      if (province.value.id != '') {
+        listProduct.value = listProduct
+            .where(
+              (p0) => p0.province_id == province.value.id,
+            )
+            .toList();
+      }
+      // if (Get.find<ProductController>().sortType.value == 'new') {
+      //   listProduct.sort((a, b) => a.create_at.compareTo(b.create_at));
+      // }
+      // if (Get.find<ProductController>().sortType.value == 'ratting') {
+      //   listProduct.sort((a, b) => a.ratting!.compareTo(b.ratting!));
+      // }
+
       return mainController.isLoading.value
           ? const LoadingPage()
           : SafeArea(
@@ -198,12 +244,291 @@ class SearchProductPage extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     const SizedBox(
                       height: 10,
                     ),
-
-                    // const Divider(),
+                    Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: Get.width * 0.01),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: Get.width * 0.4,
+                            padding: const EdgeInsets.all(5),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Loại sản phẩm',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                DropdownButtonHideUnderline(
+                                  child: DropdownButton2(
+                                    value: Get.find<CategoryController>()
+                                        .listCategory
+                                        .firstWhereOrNull((element) =>
+                                            element.id == category.value.id),
+                                    items: [
+                                      DropdownMenuItem(
+                                        value: Category.initCategory(),
+                                        child: const Text(
+                                          'Tất cả',
+                                          overflow: TextOverflow.ellipsis,
+                                          strutStyle: StrutStyle.disabled,
+                                        ),
+                                      ),
+                                      for (var category
+                                          in Get.find<CategoryController>()
+                                              .listCategory)
+                                        DropdownMenuItem(
+                                          value: category,
+                                          child: Text(
+                                            category.name,
+                                            overflow: TextOverflow.ellipsis,
+                                            strutStyle: StrutStyle.disabled,
+                                          ),
+                                        ),
+                                    ],
+                                    style: const TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 18,
+                                    ),
+                                    isExpanded: true,
+                                    onChanged: (value) {
+                                      category.value = value!;
+                                    },
+                                    dropdownStyleData: DropdownStyleData(
+                                      maxHeight: Get.height / 2,
+                                      width: Get.width * 0.75,
+                                      // padding: EdgeInsets.all(5),
+                                    ),
+                                    buttonStyleData: ButtonStyleData(
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.green,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      padding: const EdgeInsets.all(5),
+                                    ),
+                                    dropdownSearchData: DropdownSearchData(
+                                        searchController: categoryController,
+                                        searchInnerWidgetHeight:
+                                            Get.height * 0.05,
+                                        searchInnerWidget: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              8, 8, 8, 0),
+                                          child: TextField(
+                                            controller: categoryController,
+                                            textAlignVertical:
+                                                TextAlignVertical.center,
+                                            decoration: InputDecoration(
+                                                border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    borderSide:
+                                                        const BorderSide(
+                                                            color: Colors.red)),
+                                                hintText:
+                                                    'Tìm kiếm loại sản phẩm theo tên',
+                                                contentPadding:
+                                                    const EdgeInsets.all(10)),
+                                          ),
+                                        ),
+                                        searchMatchFn:
+                                            (DropdownMenuItem<Category> item,
+                                                searchValue) {
+                                          return removeDiacritics(item
+                                                  .value!.name
+                                                  .toLowerCase())
+                                              .contains(removeDiacritics(
+                                                  searchValue.toLowerCase()));
+                                        }),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: Get.width * 0.4,
+                            padding: const EdgeInsets.all(5),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Tỉnh thành',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                DropdownButtonHideUnderline(
+                                  child: DropdownButton2(
+                                    value: Get.find<ProvinceController>()
+                                        .listProvince
+                                        .firstWhereOrNull((element) =>
+                                            element.id == province.value.id),
+                                    items: [
+                                      DropdownMenuItem(
+                                        value: Province.initProvince(),
+                                        child: const Text(
+                                          'Tất cả',
+                                          overflow: TextOverflow.ellipsis,
+                                          strutStyle: StrutStyle.disabled,
+                                        ),
+                                      ),
+                                      for (var province
+                                          in Get.find<ProvinceController>()
+                                              .listProvince)
+                                        DropdownMenuItem(
+                                          value: province,
+                                          child: Text(
+                                            province.name,
+                                            overflow: TextOverflow.ellipsis,
+                                            strutStyle: StrutStyle.disabled,
+                                          ),
+                                        ),
+                                    ],
+                                    style: const TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 18,
+                                    ),
+                                    isExpanded: true,
+                                    onChanged: (value) {
+                                      province.value = value!;
+                                    },
+                                    dropdownStyleData: DropdownStyleData(
+                                      maxHeight: Get.height / 2,
+                                      width: Get.width * 0.75,
+                                      // padding: EdgeInsets.all(5),
+                                    ),
+                                    buttonStyleData: ButtonStyleData(
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.green,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      padding: const EdgeInsets.all(5),
+                                    ),
+                                    dropdownSearchData: DropdownSearchData(
+                                        searchController: provinceController,
+                                        searchInnerWidgetHeight:
+                                            Get.height * 0.05,
+                                        searchInnerWidget: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              8, 8, 8, 0),
+                                          child: TextField(
+                                            controller: provinceController,
+                                            textAlignVertical:
+                                                TextAlignVertical.center,
+                                            decoration: InputDecoration(
+                                                border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    borderSide:
+                                                        const BorderSide(
+                                                            color: Colors.red)),
+                                                hintText:
+                                                    'Tìm kiếm tỉnh thành theo tên',
+                                                contentPadding:
+                                                    const EdgeInsets.all(10)),
+                                          ),
+                                        ),
+                                        searchMatchFn:
+                                            (DropdownMenuItem<Province> item,
+                                                searchValue) {
+                                          return removeDiacritics(item
+                                                  .value!.name
+                                                  .toLowerCase())
+                                              .contains(removeDiacritics(
+                                                  searchValue.toLowerCase()));
+                                        }),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Container(
+                          //   width: Get.width * 0.3,
+                          //   padding: const EdgeInsets.all(5),
+                          //   child: Column(
+                          //     crossAxisAlignment: CrossAxisAlignment.start,
+                          //     children: [
+                          //       const Text(
+                          //         'Sắp xếp',
+                          //         style: TextStyle(
+                          //           fontSize: 16,
+                          //           color: Colors.green,
+                          //         ),
+                          //       ),
+                          //       DropdownButtonHideUnderline(
+                          //         child: DropdownButton2(
+                          //           value: listSortType.firstWhereOrNull((item) =>
+                          //               item['value'] ==
+                          //               Get.find<ProductController>()
+                          //                   .sortType
+                          //                   .value),
+                          //           items: listSortType
+                          //               .map(
+                          //                 (item) => DropdownMenuItem(
+                          //                   value: item,
+                          //                   child: Text(
+                          //                     item['label'],
+                          //                     overflow: TextOverflow.ellipsis,
+                          //                     strutStyle: StrutStyle.disabled,
+                          //                   ),
+                          //                 ),
+                          //               )
+                          //               .toList(),
+                          //           style: const TextStyle(
+                          //             color: Colors.green,
+                          //             fontSize: 18,
+                          //           ),
+                          //           isExpanded: true,
+                          //           onChanged: (item) {
+                          //             if (item != null) {
+                          //               Map<String, dynamic> data =
+                          //                   item as Map<String, dynamic>;
+                          //               Get.find<ProductController>()
+                          //                   .sortType
+                          //                   .value = data["value"];
+                          //             }
+                          //           },
+                          //           dropdownStyleData: DropdownStyleData(
+                          //             maxHeight: Get.height / 2,
+                          //             width: Get.width * 0.75,
+                          //             // padding: EdgeInsets.all(5),
+                          //           ),
+                          //           buttonStyleData: ButtonStyleData(
+                          //             height: 40,
+                          //             decoration: BoxDecoration(
+                          //               border: Border.all(
+                          //                 color: Colors.green,
+                          //               ),
+                          //               borderRadius: BorderRadius.circular(10),
+                          //             ),
+                          //             padding: const EdgeInsets.all(5),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Expanded(
                       child: FlexibleGridView(
                         axisCount: GridLayoutEnum.twoElementsInRow,
