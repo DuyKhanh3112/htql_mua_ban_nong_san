@@ -32,8 +32,10 @@ class OrderDetailPage extends StatelessWidget {
                 p0.id ==
                 Get.find<OrderController>().address.value.province_id) ??
         Province.initProvince();
+    List paymentMethod = ['Thanh toán bằng tiền mặt'];
     return Obx(() {
-      return Get.find<OrderController>().isLoading.value
+      return Get.find<OrderController>().isLoading.value ||
+              Get.find<ReviewController>().isLoading.value
           ? const LoadingPage()
           : SafeArea(
               child: Scaffold(
@@ -305,6 +307,46 @@ class OrderDetailPage extends StatelessWidget {
                                     alignment: Alignment.centerLeft,
                                     width: Get.width * 0.4,
                                     child: const Text(
+                                      'Mã đơn hàng:',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.centerRight,
+                                    width: Get.width * 0.5,
+                                    child: Text(
+                                      Get.find<OrderController>()
+                                          .order
+                                          .value
+                                          .id
+                                          .toUpperCase(),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: Get.width * 0.05,
+                                vertical: Get.width * 0.01,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    width: Get.width * 0.4,
+                                    child: const Text(
                                       'Ngày đặt:',
                                       style: TextStyle(
                                         fontSize: 16,
@@ -381,6 +423,106 @@ class OrderDetailPage extends StatelessWidget {
                                       ],
                                     ),
                                   ),
+                            for (var odd in Get.find<OrderController>()
+                                .listOrderDetail
+                                .where((p0) =>
+                                    p0.order_id ==
+                                    Get.find<OrderController>().order.value.id))
+                              orderDetailItem(odd),
+                            SizedBox(
+                              height: Get.height * 0.01,
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: Get.width * 0.05,
+                                vertical: Get.width * 0.01,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    width: Get.width * 0.4,
+                                    child: const Text(
+                                      'Tiền hàng:',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.centerRight,
+                                    width: Get.width * 0.5,
+                                    child: Text(
+                                      NumberFormat.currency(
+                                              locale: 'vi_VN', symbol: 'VNĐ')
+                                          .format(Get.find<OrderController>()
+                                              .order
+                                              .value
+                                              .order_amount),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: Get.width * 0.05,
+                                vertical: Get.width * 0.01,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    width: Get.width * 0.4,
+                                    child: const Text(
+                                      'Phí vận chuyển:',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.centerRight,
+                                    width: Get.width * 0.5,
+                                    child: Text(
+                                      NumberFormat.currency(
+                                              locale: 'vi_VN', symbol: 'VNĐ')
+                                          .format(Get.find<OrderController>()
+                                                  .order
+                                                  .value
+                                                  .fee ??
+                                              0),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(
+                                left: Get.width * 0.5,
+                                right: Get.width * 0.05,
+                              ),
+                              width: Get.width,
+                              child: const Divider(),
+                            ),
                             Container(
                               margin: EdgeInsets.symmetric(
                                 horizontal: Get.width * 0.05,
@@ -409,9 +551,14 @@ class OrderDetailPage extends StatelessWidget {
                                       NumberFormat.currency(
                                               locale: 'vi_VN', symbol: 'VNĐ')
                                           .format(Get.find<OrderController>()
-                                              .order
-                                              .value
-                                              .order_amount),
+                                                  .order
+                                                  .value
+                                                  .order_amount +
+                                              (Get.find<OrderController>()
+                                                      .order
+                                                      .value
+                                                      .fee ??
+                                                  0)),
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -422,14 +569,83 @@ class OrderDetailPage extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            for (var odd in Get.find<OrderController>()
-                                .listOrderDetail
-                                .where((p0) =>
-                                    p0.order_id ==
-                                    Get.find<OrderController>().order.value.id))
-                              orderDetailItem(odd),
-                            SizedBox(
-                              height: Get.height * 0.01,
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: Get.width * 0.05,
+                                vertical: Get.width * 0.01,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    width: Get.width * 0.4,
+                                    child: const Text(
+                                      'Phương thức thanh toán:',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.centerRight,
+                                    width: Get.width * 0.5,
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton2(
+                                        value: paymentMethod[0],
+                                        items: paymentMethod
+                                            .map(
+                                              (item) => DropdownMenuItem(
+                                                value: item,
+                                                child: Text(
+                                                  item,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  strutStyle:
+                                                      StrutStyle.disabled,
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                        style: const TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        isExpanded: true,
+                                        onChanged: Get.find<OrderController>()
+                                                    .order
+                                                    .value
+                                                    .status ==
+                                                'unconfirm'
+                                            ? (value) {
+                                                onChange.value = true;
+                                              }
+                                            : null,
+                                        dropdownStyleData: DropdownStyleData(
+                                          maxHeight: Get.height / 2,
+                                          width: Get.width * 0.5,
+                                          // padding: EdgeInsets.all(5),
+                                        ),
+                                        buttonStyleData: ButtonStyleData(
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.green,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          padding: const EdgeInsets.all(5),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -680,6 +896,8 @@ class OrderDetailPage extends StatelessWidget {
               onPressed: () async {
                 Rx<TextEditingController> contentController =
                     TextEditingController().obs;
+                Rx<TextEditingController> responseController =
+                    TextEditingController().obs;
                 RxDouble ratting = 5.0.obs;
                 Rx<Review> review = (Get.find<ReviewController>()
                             .listReview
@@ -689,6 +907,8 @@ class OrderDetailPage extends StatelessWidget {
                         Review.initReview())
                     .obs;
                 contentController.value.text = review.value.comment;
+                responseController.value.text = review.value.response ?? '';
+
                 ratting.value = review.value.ratting;
                 Get.dialog(
                   Obx(
@@ -785,6 +1005,49 @@ class OrderDetailPage extends StatelessWidget {
                                       ),
                                     ),
                                   ),
+                                  SizedBox(
+                                    height: Get.height * 0.01,
+                                  ),
+                                  review.value.response == ''
+                                      ? const SizedBox()
+                                      : TextFormField(
+                                          style: const TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 16,
+                                          ),
+                                          controller: responseController.value,
+                                          readOnly: true,
+                                          minLines: 2,
+                                          maxLines: 3,
+                                          decoration: const InputDecoration(
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.green),
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(20),
+                                              ),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.green),
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(20),
+                                              ),
+                                            ),
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(20),
+                                              ),
+                                              borderSide: BorderSide(
+                                                  color: Colors.green),
+                                            ),
+                                            labelText: 'Phản hồi của người bán',
+                                            labelStyle: TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
                                 ],
                               ),
                             ),
@@ -804,11 +1067,11 @@ class OrderDetailPage extends StatelessWidget {
                                           .value
                                           .id,
                                       comment: contentController.value.text,
+                                      response: responseController.value.text,
                                       ratting: ratting.value,
                                       create_at: Timestamp.now(),
                                       update_at: Timestamp.now());
                                   Get.back();
-                                  print(re.toJson());
                                   if (re.id == '') {
                                     await Get.find<ReviewController>()
                                         .createReview(re);

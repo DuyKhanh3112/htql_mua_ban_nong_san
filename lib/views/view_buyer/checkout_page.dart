@@ -29,7 +29,11 @@ class CheckoutPage extends StatelessWidget {
         Address.initAddress();
     final currencyFormatter =
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
+    RxDouble total = 0.0.obs;
+    List paymentMethod = ['Thanh toán bằng tiền mặt'];
+
     return Obx(() {
+      total.value = 0;
       return mainController.isLoading.value ||
               Get.find<CartController>().isLoading.value
           ? const LoadingPage()
@@ -229,6 +233,9 @@ class CheckoutPage extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                              SizedBox(
+                                height: Get.height * 0.01,
+                              ),
                             ],
                           ),
                           SizedBox(
@@ -236,9 +243,76 @@ class CheckoutPage extends StatelessWidget {
                           ),
                           for (var item in Get.find<CartController>()
                               .getChooseCartGroupBySeller())
-                            cartSeller(item, context),
+                            cartSeller(item, context, total),
                           SizedBox(
                             height: Get.height * 0.01,
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                              horizontal: Get.width * 0.05,
+                              vertical: Get.width * 0.01,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  width: Get.width * 0.4,
+                                  child: const Text(
+                                    'Phương thức thanh toán:',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  alignment: Alignment.centerRight,
+                                  width: Get.width * 0.5,
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton2(
+                                      value: paymentMethod[0],
+                                      items: paymentMethod
+                                          .map(
+                                            (item) => DropdownMenuItem(
+                                              value: item,
+                                              child: Text(
+                                                item,
+                                                overflow: TextOverflow.ellipsis,
+                                                strutStyle: StrutStyle.disabled,
+                                              ),
+                                            ),
+                                          )
+                                          .toList(),
+                                      style: const TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      isExpanded: true,
+                                      onChanged: (value) {},
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: Get.height / 2,
+                                        width: Get.width * 0.5,
+                                        // padding: EdgeInsets.all(5),
+                                      ),
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.green,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        padding: const EdgeInsets.all(5),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -269,7 +343,7 @@ class CheckoutPage extends StatelessWidget {
                                 alignment: Alignment.centerLeft,
                                 width: Get.width * 0.4,
                                 child: const Text(
-                                  'Thanh toán:',
+                                  'Tổng:',
                                   style: TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
@@ -281,9 +355,7 @@ class CheckoutPage extends StatelessWidget {
                                 alignment: Alignment.centerRight,
                                 width: Get.width * 0.5,
                                 child: Text(
-                                  currencyFormatter.format(
-                                      Get.find<CartController>()
-                                          .getAmountListCartChoose()),
+                                  currencyFormatter.format(total.value),
                                   style: const TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
@@ -352,8 +424,8 @@ class CheckoutPage extends StatelessWidget {
                             },
                             style: const ButtonStyle(
                               backgroundColor:
-                                  MaterialStatePropertyAll(Colors.green),
-                              shape: MaterialStatePropertyAll(
+                                  WidgetStatePropertyAll(Colors.green),
+                              shape: WidgetStatePropertyAll(
                                 RoundedRectangleBorder(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(20),
@@ -391,9 +463,19 @@ class CheckoutPage extends StatelessWidget {
     });
   }
 
-  Widget cartSeller(item, context) {
+  Widget cartSeller(item, context, total) {
     final currencyFormatter =
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
+    Seller seller = item[0] as Seller;
+    RxDouble fee = 0.0.obs;
+    if (Get.find<CartController>().address.value.province_id ==
+        seller.province_id) {
+      fee.value = 15000;
+    } else {
+      fee.value = 30000;
+    }
+    total.value += item[2] + fee.value;
+
     return Container(
       padding: const EdgeInsets.all(10),
       margin: const EdgeInsets.only(top: 5, bottom: 5),
@@ -457,9 +539,9 @@ class CheckoutPage extends StatelessWidget {
                     width: Get.width * 0.4,
                     alignment: Alignment.centerLeft,
                     child: const Text(
-                      'Tổng: ',
+                      'Tiền hàng: ',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         color: Colors.green,
                         fontWeight: FontWeight.bold,
                       ),
@@ -471,8 +553,72 @@ class CheckoutPage extends StatelessWidget {
                     child: Text(
                       currencyFormatter.format(item[2]),
                       style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Container(
+                    width: Get.width * 0.4,
+                    alignment: Alignment.centerLeft,
+                    child: const Text(
+                      'Phí vận chuyển: ',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: Get.width * 0.5,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      currencyFormatter.format(fee.value),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: EdgeInsets.only(
+                  left: Get.width * 0.5,
+                ),
+                width: Get.width,
+                child: const Divider(),
+              ),
+              Row(
+                children: [
+                  Container(
+                    width: Get.width * 0.4,
+                    alignment: Alignment.centerLeft,
+                    child: const Text(
+                      'Thanh toán: ',
+                      style: TextStyle(
                         fontSize: 18,
                         color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: Get.width * 0.5,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      currencyFormatter.format(item[2] + fee.value),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),

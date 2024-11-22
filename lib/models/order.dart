@@ -10,6 +10,7 @@ class Orders {
   Timestamp order_date;
   Timestamp? received_date;
   Timestamp update_at;
+  double? fee;
 
   Orders({
     required this.id,
@@ -21,6 +22,7 @@ class Orders {
     required this.order_date,
     required this.update_at,
     this.received_date,
+    this.fee,
   });
 
   factory Orders.initOrder() {
@@ -33,6 +35,7 @@ class Orders {
       order_date: Timestamp.now(),
       update_at: Timestamp.now(),
       order_amount: 0,
+      fee: 0,
     );
   }
   static Orders fromJson(Map<String, dynamic> json) {
@@ -46,6 +49,7 @@ class Orders {
       order_date: json['order_date'],
       update_at: json['update_at'],
       received_date: json['received_date'],
+      fee: json['fee'] ?? 0,
     );
   }
 
@@ -60,6 +64,7 @@ class Orders {
       'order_date': order_date,
       'update_at': update_at,
       'received_date': received_date,
+      'fee': fee,
     };
   }
 
@@ -74,6 +79,7 @@ class Orders {
       'order_date': order_date,
       'update_at': update_at,
       'received_date': received_date,
+      'fee': fee,
     };
   }
 }

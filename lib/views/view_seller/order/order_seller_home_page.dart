@@ -1,12 +1,15 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/review_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 import 'package:htql_mua_ban_nong_san/models/order.dart';
+import 'package:htql_mua_ban_nong_san/models/review.dart';
 import 'package:htql_mua_ban_nong_san/views/view_seller/drawer_seller.dart';
 import 'package:intl/intl.dart';
 
@@ -19,7 +22,9 @@ class OrderSellerHomePage extends StatelessWidget {
     OrderController orderController = Get.find<OrderController>();
 
     return Obx(() {
-      return mainController.isLoading.value || orderController.isLoading.value
+      return mainController.isLoading.value ||
+              orderController.isLoading.value ||
+              Get.find<ReviewController>().isLoading.value
           ? const LoadingPage()
           : DefaultTabController(
               initialIndex: 0,
@@ -190,6 +195,33 @@ class OrderSellerHomePage extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 width: Get.width * 0.4,
                 child: const Text(
+                  'Mã đơn hàng:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+              Container(
+                alignment: Alignment.centerRight,
+                width: Get.width * 0.5,
+                child: Text(
+                  order.id.toUpperCase(),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                width: Get.width * 0.4,
+                child: const Text(
                   'Ngày đặt:',
                   style: TextStyle(
                     fontSize: 16,
@@ -308,6 +340,75 @@ class OrderSellerHomePage extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 width: Get.width * 0.4,
                 child: const Text(
+                  'Tiền hàng:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+              Container(
+                alignment: Alignment.centerRight,
+                width: Get.width * 0.5,
+                child: Text(
+                  NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ')
+                      .format(order.order_amount),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                width: Get.width * 0.4,
+                child: const Text(
+                  'Phí vận chuyển:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+              Container(
+                alignment: Alignment.centerRight,
+                width: Get.width * 0.5,
+                child: Text(
+                  NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ')
+                      .format(order.fee ?? 0),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Container(
+            // alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(
+              left: Get.width * 0.5,
+              // right: Get.width * 0.05,
+            ),
+            width: Get.width,
+            child: const Divider(),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                width: Get.width * 0.4,
+                child: const Text(
                   'Thanh toán:',
                   style: TextStyle(
                     fontSize: 16,
@@ -321,7 +422,7 @@ class OrderSellerHomePage extends StatelessWidget {
                 width: Get.width * 0.5,
                 child: Text(
                   NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ')
-                      .format(order.order_amount),
+                      .format(order.order_amount + (order.fee ?? 0)),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -341,7 +442,9 @@ class OrderSellerHomePage extends StatelessWidget {
           order.status == 'delivering'
               ? btnDelivering(order, context)
               : const SizedBox(),
-          order.status == 'delivered' ? btnDelivered(order) : const SizedBox(),
+          order.status == 'delivered'
+              ? btnDelivered(order, context)
+              : const SizedBox(),
           order.status == 'cancelled' ? btnCancel(order) : const SizedBox(),
           order.status == 'failed' ? btnCancel(order) : const SizedBox(),
         ],
@@ -351,14 +454,14 @@ class OrderSellerHomePage extends StatelessWidget {
 
   Row btnCancel(Orders order) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         btnViewDetail(order),
       ],
     );
   }
 
-  Row btnDelivered(Orders order) {
+  Row btnDelivered(Orders order, BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -367,7 +470,242 @@ class OrderSellerHomePage extends StatelessWidget {
           width: Get.width * 0.3,
           alignment: Alignment.center,
           child: ElevatedButton(
-            onPressed: () async {},
+            onPressed: () async {
+              Rx<TextEditingController> contentController =
+                  TextEditingController().obs;
+              Rx<TextEditingController> responseController =
+                  TextEditingController().obs;
+
+              Rx<Review> review = (Get.find<ReviewController>()
+                          .listReview
+                          .firstWhereOrNull((p0) => p0.order_id == order.id) ??
+                      Review.initReview())
+                  .obs;
+              contentController.value.text = review.value.comment;
+              responseController.value.text = review.value.response ?? '';
+              final formKey = GlobalKey<FormState>();
+              Get.dialog(
+                Obx(
+                  () {
+                    return AlertDialog(
+                      title: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Đánh giá',
+                                style: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Get.back();
+                                },
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.green,
+                                ),
+                              )
+                            ],
+                          ),
+                          const Divider(),
+                        ],
+                      ),
+                      content: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: review.value.id == ''
+                            ? Container(
+                                decoration: const BoxDecoration(),
+                                width: Get.width * 0.8,
+                                child: const Text(
+                                  'Khách hàng chưa đánh giá.',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.green,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                decoration: const BoxDecoration(),
+                                width: Get.width * 0.8,
+                                child: Form(
+                                  key: formKey,
+                                  child: Column(
+                                    children: [
+                                      RatingBarIndicator(
+                                        rating: review.value.ratting,
+                                        itemBuilder: (context, index) =>
+                                            const Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                        ),
+                                        itemCount: 5,
+                                        itemSize: 30,
+                                        direction: Axis.horizontal,
+                                      ),
+                                      SizedBox(
+                                        height: Get.height * 0.01,
+                                      ),
+                                      review.value.comment == ''
+                                          ? const SizedBox()
+                                          : TextFormField(
+                                              style: const TextStyle(
+                                                color: Colors.green,
+                                                fontSize: 16,
+                                              ),
+                                              controller:
+                                                  contentController.value,
+                                              readOnly: true,
+                                              minLines: 2,
+                                              maxLines: 3,
+                                              decoration: const InputDecoration(
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.green),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(20),
+                                                  ),
+                                                ),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.green),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(20),
+                                                  ),
+                                                ),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(20),
+                                                  ),
+                                                  borderSide: BorderSide(
+                                                      color: Colors.green),
+                                                ),
+                                                labelText: 'Nội dung',
+                                                labelStyle: TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ),
+                                      SizedBox(
+                                        height: Get.height * 0.01,
+                                      ),
+                                      TextFormField(
+                                        style: const TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 16,
+                                        ),
+                                        controller: responseController.value,
+                                        // readOnly: true,
+                                        minLines: 3,
+                                        maxLines: 4,
+                                        decoration: const InputDecoration(
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: Colors.green),
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: Colors.green),
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                          ),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                            borderSide:
+                                                BorderSide(color: Colors.green),
+                                          ),
+                                          labelText: 'Phản hồi khách hàng',
+                                          labelStyle: TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                      ),
+                      actions: [
+                        const Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: review.value.id == ''
+                                  ? () {
+                                      Get.back();
+                                    }
+                                  : () async {
+                                      if (formKey.currentState!.validate()) {
+                                        review.value.update_at =
+                                            Timestamp.now();
+                                        review.value.response =
+                                            responseController.value.text;
+                                        Get.back();
+                                        await Get.find<ReviewController>()
+                                            .updateReview(review.value);
+
+                                        await AwesomeDialog(
+                                          titleTextStyle: const TextStyle(
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 22,
+                                          ),
+                                          descTextStyle: const TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 16,
+                                          ),
+                                          // ignore: use_build_context_synchronously
+                                          context: context,
+                                          dialogType: DialogType.success,
+                                          animType: AnimType.rightSlide,
+                                          title:
+                                              'Phản hồi đánh giá của khách hàng thành công!',
+                                          btnOkOnPress: () {},
+                                        ).show();
+                                      }
+                                    },
+                              child: Container(
+                                alignment: Alignment.center,
+                                decoration: const BoxDecoration(),
+                                width: Get.width * 0.35,
+                                child: Text(
+                                  review.value.id == '' ? 'Đóng' : 'Phản hồi',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    );
+                  },
+                ),
+              );
+            },
             child: Container(
               alignment: Alignment.center,
               decoration: const BoxDecoration(),

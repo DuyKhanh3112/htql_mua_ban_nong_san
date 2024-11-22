@@ -57,6 +57,8 @@ class OrderController extends GetxController {
   Future<void> loadOrderByBuyer() async {
     isLoading.value = true;
     listOrder.value = [];
+
+    Get.find<ReviewController>().listReview.value = [];
     final snapOrder = await orderCollection
         .where('buyer_id', isEqualTo: Get.find<MainController>().buyer.value.id)
         .get();
@@ -79,6 +81,7 @@ class OrderController extends GetxController {
     isLoading.value = true;
     listOrder.value = [];
     listBuyer.value = [];
+    Get.find<ReviewController>().listReview.value = [];
     // await Get.find<BuyerController>().loadBuyer();
     final snapOrder = await orderCollection
         .where('seller_id',
@@ -99,6 +102,10 @@ class OrderController extends GetxController {
         dataBuyer['id'] = dataOrder['buyer_id'];
         dataBuyer['rate_order'] = await getRateSuccessByBuyer(dataBuyer['id']);
         listBuyer.add(Buyer.fromJson(dataBuyer));
+      }
+
+      if (dataOrder['status'] == 'delivered') {
+        await Get.find<ReviewController>().loadReviewByOrderID(od.id);
       }
     }
 

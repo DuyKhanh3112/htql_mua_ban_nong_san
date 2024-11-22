@@ -318,6 +318,75 @@ class OrderPage extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 width: Get.width * 0.4,
                 child: const Text(
+                  'Tiền hàng:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+              Container(
+                alignment: Alignment.centerRight,
+                width: Get.width * 0.5,
+                child: Text(
+                  NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ')
+                      .format(order.order_amount),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                width: Get.width * 0.4,
+                child: const Text(
+                  'Phí vận chuyển:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+              Container(
+                alignment: Alignment.centerRight,
+                width: Get.width * 0.5,
+                child: Text(
+                  NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ')
+                      .format(order.fee ?? 0),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Container(
+            // alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(
+              left: Get.width * 0.5,
+              // right: Get.width * 0.05,
+            ),
+            width: Get.width,
+            child: const Divider(),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                width: Get.width * 0.4,
+                child: const Text(
                   'Thanh toán:',
                   style: TextStyle(
                     fontSize: 16,
@@ -331,7 +400,7 @@ class OrderPage extends StatelessWidget {
                 width: Get.width * 0.5,
                 child: Text(
                   NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ')
-                      .format(order.order_amount),
+                      .format(order.order_amount + (order.fee ?? 0)),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -393,6 +462,8 @@ class OrderPage extends StatelessWidget {
             onPressed: () async {
               Rx<TextEditingController> contentController =
                   TextEditingController().obs;
+              Rx<TextEditingController> responseController =
+                  TextEditingController().obs;
               RxDouble ratting = 5.0.obs;
               Rx<Review> review = (Get.find<ReviewController>()
                           .listReview
@@ -400,6 +471,8 @@ class OrderPage extends StatelessWidget {
                       Review.initReview())
                   .obs;
               contentController.value.text = review.value.comment;
+              responseController.value.text = review.value.response ?? '';
+
               ratting.value = review.value.ratting;
               Get.dialog(
                 Obx(
@@ -496,6 +569,49 @@ class OrderPage extends StatelessWidget {
                                     ),
                                   ),
                                 ),
+                                SizedBox(
+                                  height: Get.height * 0.01,
+                                ),
+                                review.value.response == ''
+                                    ? const SizedBox()
+                                    : TextFormField(
+                                        style: const TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 16,
+                                        ),
+                                        controller: responseController.value,
+                                        readOnly: true,
+                                        minLines: 2,
+                                        maxLines: 3,
+                                        decoration: const InputDecoration(
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: Colors.green),
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: Colors.green),
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                          ),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                            borderSide:
+                                                BorderSide(color: Colors.green),
+                                          ),
+                                          labelText: 'Phản hồi của người bán',
+                                          labelStyle: TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
                               ],
                             ),
                           ),
@@ -512,6 +628,7 @@ class OrderPage extends StatelessWidget {
                                     id: review.value.id,
                                     order_id: order.id,
                                     comment: contentController.value.text,
+                                    response: responseController.value.text,
                                     ratting: ratting.value,
                                     create_at: Timestamp.now(),
                                     update_at: Timestamp.now());

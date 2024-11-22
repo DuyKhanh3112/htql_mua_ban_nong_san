@@ -1646,10 +1646,6 @@ class ProductDetailPage extends StatelessWidget {
           const Divider(),
           Container(
             width: Get.width * 0.9,
-            // padding: EdgeInsets.symmetric(
-            //   horizontal: Get.width * 0.02,
-            //   vertical: Get.width * 0.02,
-            // ),
             padding: EdgeInsets.only(
               bottom: Get.width * 0.02,
               right: Get.width * 0.02,
@@ -1664,6 +1660,50 @@ class ProductDetailPage extends StatelessWidget {
               ),
             ),
           ),
+          item.response == ''
+              ? const SizedBox()
+              : Column(
+                  children: [
+                    // const Divider(),
+                    Container(
+                      width: Get.width * 0.9,
+                      color: Colors.black12,
+                      padding: EdgeInsets.only(
+                        bottom: Get.width * 0.02,
+                        right: Get.width * 0.02,
+                        left: Get.width * 0.02,
+                      ),
+                      child: const Text(
+                        'Phản hồi của người bán',
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 14,
+                          // fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: Get.width * 0.9,
+                      color: Colors.black12,
+                      padding: EdgeInsets.only(
+                        bottom: Get.width * 0.02,
+                        right: Get.width * 0.02,
+                        left: Get.width * 0.2,
+                      ),
+                      child: Text(
+                        '"${item.response}"',
+                        textAlign: TextAlign.justify,
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontSize: 14,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
         ],
       ),
     );
