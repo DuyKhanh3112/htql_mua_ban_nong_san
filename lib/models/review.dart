@@ -5,6 +5,7 @@ class Review {
   String order_id;
   String comment;
   double ratting;
+  String? response;
   Timestamp create_at;
   Timestamp update_at;
 
@@ -15,6 +16,7 @@ class Review {
     required this.ratting,
     required this.create_at,
     required this.update_at,
+    this.response,
   });
 
   factory Review.initReview() {
@@ -25,6 +27,7 @@ class Review {
       ratting: 5,
       create_at: Timestamp.now(),
       update_at: Timestamp.now(),
+      response: '',
     );
   }
   static Review fromJson(Map<String, dynamic> json) {
@@ -35,6 +38,7 @@ class Review {
       ratting: json['ratting'],
       create_at: json['create_at'],
       update_at: json['update_at'],
+      response: json['response'] ?? '',
     );
   }
 
@@ -46,6 +50,7 @@ class Review {
       'ratting': ratting,
       'create_at': create_at,
       'update_at': update_at,
+      'response': response,
     };
   }
 
@@ -57,6 +62,7 @@ class Review {
       'ratting': ratting,
       'create_at': create_at,
       'update_at': update_at,
+      'response': response,
     };
   }
 }

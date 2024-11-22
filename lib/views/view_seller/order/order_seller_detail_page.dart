@@ -1,15 +1,20 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/review_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/address.dart';
+import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 import 'package:htql_mua_ban_nong_san/models/order_detail.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
+import 'package:htql_mua_ban_nong_san/models/review.dart';
 import 'package:intl/intl.dart';
 
 class OrderSellerDetailPage extends StatelessWidget {
@@ -25,7 +30,8 @@ class OrderSellerDetailPage extends StatelessWidget {
                 Get.find<OrderController>().address.value.province_id) ??
         Province.initProvince();
     return Obx(() {
-      return Get.find<OrderController>().isLoading.value
+      return Get.find<OrderController>().isLoading.value ||
+              Get.find<ReviewController>().isLoading.value
           ? const LoadingPage()
           : SafeArea(
               child: Scaffold(
@@ -185,6 +191,46 @@ class OrderSellerDetailPage extends StatelessWidget {
                                     alignment: Alignment.centerLeft,
                                     width: Get.width * 0.4,
                                     child: const Text(
+                                      'Mã đơn hàng:',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.centerRight,
+                                    width: Get.width * 0.5,
+                                    child: Text(
+                                      Get.find<OrderController>()
+                                          .order
+                                          .value
+                                          .id
+                                          .toUpperCase(),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: Get.width * 0.05,
+                                vertical: Get.width * 0.01,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    width: Get.width * 0.4,
+                                    child: const Text(
                                       'Ngày đặt:',
                                       style: TextStyle(
                                         fontSize: 16,
@@ -311,6 +357,100 @@ class OrderSellerDetailPage extends StatelessWidget {
                             for (var odd
                                 in Get.find<OrderController>().listOrderDetail)
                               orderDetailItem(odd),
+                            SizedBox(
+                              height: Get.height * 0.01,
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: Get.width * 0.05,
+                                vertical: Get.width * 0.01,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    width: Get.width * 0.4,
+                                    child: const Text(
+                                      'Tiền hàng:',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.centerRight,
+                                    width: Get.width * 0.5,
+                                    child: Text(
+                                      NumberFormat.currency(
+                                              locale: 'vi_VN', symbol: 'VNĐ')
+                                          .format(Get.find<OrderController>()
+                                              .order
+                                              .value
+                                              .order_amount),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: Get.width * 0.05,
+                                vertical: Get.width * 0.01,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    width: Get.width * 0.4,
+                                    child: const Text(
+                                      'Phí vận chuyển:',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.centerRight,
+                                    width: Get.width * 0.5,
+                                    child: Text(
+                                      NumberFormat.currency(
+                                              locale: 'vi_VN', symbol: 'VNĐ')
+                                          .format(Get.find<OrderController>()
+                                                  .order
+                                                  .value
+                                                  .fee ??
+                                              0),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(
+                                left: Get.width * 0.5,
+                                right: Get.width * 0.05,
+                              ),
+                              width: Get.width,
+                              child: const Divider(),
+                            ),
                             Container(
                               margin: EdgeInsets.symmetric(
                                 horizontal: Get.width * 0.05,
@@ -339,9 +479,14 @@ class OrderSellerDetailPage extends StatelessWidget {
                                       NumberFormat.currency(
                                               locale: 'vi_VN', symbol: 'VNĐ')
                                           .format(Get.find<OrderController>()
-                                              .order
-                                              .value
-                                              .order_amount),
+                                                  .order
+                                                  .value
+                                                  .order_amount +
+                                              (Get.find<OrderController>()
+                                                      .order
+                                                      .value
+                                                      .fee ??
+                                                  0)),
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -352,8 +497,41 @@ class OrderSellerDetailPage extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            SizedBox(
-                              height: Get.height * 0.01,
+                            Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: Get.width * 0.05,
+                                vertical: Get.width * 0.01,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    width: Get.width * 0.4,
+                                    child: const Text(
+                                      'Phương thức thanh toán:',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.centerRight,
+                                    width: Get.width * 0.5,
+                                    child: const Text(
+                                      'Thanh toán khi nhận hàng',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -365,16 +543,16 @@ class OrderSellerDetailPage extends StatelessWidget {
                         : const SizedBox(),
                     Get.find<OrderController>().order.value.status ==
                             'delivering'
-                        ? btnDelivering()
+                        ? btnDelivering(context)
                         : const SizedBox(),
                     Get.find<OrderController>().order.value.status ==
                             'delivered'
-                        ? btnDelivered()
+                        ? btnDelivered(context)
                         : const SizedBox(),
-                    Get.find<OrderController>().order.value.status ==
-                            'cancelled'
-                        ? btnCancel()
-                        : const SizedBox(),
+                    // Get.find<OrderController>().order.value.status ==
+                    //         'cancelled'
+                    //     ? btnCancel()
+                    //     : const SizedBox(),
                   ],
                 ),
               ),
@@ -382,48 +560,154 @@ class OrderSellerDetailPage extends StatelessWidget {
     });
   }
 
-  Row btnCancel() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // btnViewDetail(order),
-        Container(
-          alignment: Alignment.center,
-          width: Get.width,
-          child: ElevatedButton(
-            onPressed: () async {
-              await Get.find<OrderController>()
-                  .rebuy(Get.find<OrderController>().order.value);
-              Get.toNamed('/cart');
-            },
-            child: Container(
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(),
-              width: Get.width * 0.8,
-              child: const Text(
-                'Mua lại',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.green,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
+  // Row btnCancel() {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: [
+  //       // btnViewDetail(order),
+  //       Container(
+  //         alignment: Alignment.center,
+  //         width: Get.width,
+  //         child: ElevatedButton(
+  //           onPressed: () async {
+  //             await Get.find<OrderController>()
+  //                 .rebuy(Get.find<OrderController>().order.value);
+  //             Get.toNamed('/cart');
+  //           },
+  //           child: Container(
+  //             alignment: Alignment.center,
+  //             decoration: const BoxDecoration(),
+  //             width: Get.width * 0.8,
+  //             child: const Text(
+  //               'Mua lại',
+  //               textAlign: TextAlign.center,
+  //               style: TextStyle(
+  //                 color: Colors.green,
+  //                 fontSize: 13,
+  //                 fontWeight: FontWeight.bold,
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
+  Widget btnUnconfirm(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: Get.width * 0.02,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            width: Get.width * 0.4,
+            alignment: Alignment.center,
+            child: ElevatedButton(
+              onPressed: () async {
+                await AwesomeDialog(
+                        titleTextStyle: const TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                        ),
+                        descTextStyle: const TextStyle(
+                          color: Colors.green,
+                          fontSize: 16,
+                        ),
+                        context: context,
+                        dialogType: DialogType.question,
+                        animType: AnimType.rightSlide,
+                        title: 'Xác nhận',
+                        desc: 'Xác nhận nhận và giao đơn hàng này',
+                        btnOkText: 'Xác nhận',
+                        btnCancelText: 'Không',
+                        btnOkOnPress: () async {
+                          Get.find<OrderController>().order.value.status =
+                              'delivering';
+                          await Get.find<OrderController>().updateOrder(
+                              Get.find<OrderController>().order.value);
+                        },
+                        btnCancelOnPress: () {})
+                    .show();
+              },
+              child: Container(
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(),
+                width: Get.width * 0.3,
+                child: const Text(
+                  'Nhận đơn',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+          Container(
+            width: Get.width * 0.4,
+            alignment: Alignment.center,
+            child: ElevatedButton(
+              onPressed: () async {
+                await AwesomeDialog(
+                        titleTextStyle: const TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                        ),
+                        descTextStyle: const TextStyle(
+                          color: Colors.green,
+                          fontSize: 16,
+                        ),
+                        context: context,
+                        dialogType: DialogType.question,
+                        animType: AnimType.rightSlide,
+                        title: 'Xác nhận',
+                        desc: 'Bạn có muốn hủy đơn hàng này không',
+                        btnOkText: 'Xác nhận',
+                        btnCancelText: 'Không',
+                        btnOkOnPress: () async {
+                          Get.find<OrderController>().order.value.status =
+                              'cancelled';
+                          await Get.find<OrderController>().cancelOrder(
+                              Get.find<OrderController>().order.value);
+                        },
+                        btnCancelOnPress: () {})
+                    .show();
+              },
+              child: Container(
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(),
+                width: Get.width * 0.3,
+                child: const Text(
+                  'Huỷ đơn',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  Row btnUnconfirm(BuildContext context) {
+  Widget btnDelivering(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // btnViewDetail(order),
         Container(
+          width: Get.width * 0.4,
           alignment: Alignment.center,
-          width: Get.width,
           child: ElevatedButton(
             onPressed: () async {
               await AwesomeDialog(
@@ -440,14 +724,38 @@ class OrderSellerDetailPage extends StatelessWidget {
                       dialogType: DialogType.question,
                       animType: AnimType.rightSlide,
                       title: 'Xác nhận',
-                      desc: 'Bạn có muốn hủy đơn hàng này không',
+                      desc:
+                          'Xác nhận khách hàng không nhận hàng, đơn hàng giao thất bại',
                       btnOkText: 'Xác nhận',
                       btnCancelText: 'Không',
                       btnOkOnPress: () async {
+                        Get.find<OrderController>().order.value.update_at =
+                            Timestamp.now();
                         Get.find<OrderController>().order.value.status =
-                            'cancelled';
-                        await Get.find<OrderController>().cancelOrder(
+                            'failed';
+                        await Get.find<OrderController>().updateOrder(
                             Get.find<OrderController>().order.value);
+                        Get.find<OrderController>().isLoading.value = true;
+                        Buyer? buyer = Get.find<OrderController>()
+                            .listBuyer
+                            .firstWhereOrNull((p0) =>
+                                p0.id ==
+                                Get.find<OrderController>()
+                                    .order
+                                    .value
+                                    .buyer_id);
+
+                        Get.find<OrderController>().listBuyer.remove(buyer);
+                        if (buyer != null) {
+                          buyer.rate_order = await Get.find<OrderController>()
+                              .getRateSuccessByBuyer(Get.find<OrderController>()
+                                  .order
+                                  .value
+                                  .buyer_id);
+
+                          Get.find<OrderController>().listBuyer.add(buyer);
+                        }
+                        Get.find<OrderController>().isLoading.value = false;
                       },
                       btnCancelOnPress: () {})
                   .show();
@@ -455,13 +763,13 @@ class OrderSellerDetailPage extends StatelessWidget {
             child: Container(
               alignment: Alignment.center,
               decoration: const BoxDecoration(),
-              width: Get.width * 0.8,
+              width: Get.width * 0.3,
               child: const Text(
-                'Hủy đơn',
+                'Không nhận',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.red,
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -472,49 +780,258 @@ class OrderSellerDetailPage extends StatelessWidget {
     );
   }
 
-  Row btnDelivering() {
+  Row btnDelivered(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // btnViewDetail(order),
         Container(
+          width: Get.width * 0.4,
           alignment: Alignment.center,
-          width: Get.width,
           child: ElevatedButton(
             onPressed: () async {
-              // await AwesomeDialog(
-              //         titleTextStyle: const TextStyle(
-              //           color: Colors.green,
-              //           fontWeight: FontWeight.bold,
-              //           fontSize: 22,
-              //         ),
-              //         descTextStyle: const TextStyle(
-              //           color: Colors.green,
-              //           fontSize: 16,
-              //         ),
-              //         context: context,
-              //         dialogType: DialogType.question,
-              //         animType: AnimType.rightSlide,
-              //         title: 'Xác nhận',
-              //         desc:
-              //             'Bạn có muốn hủy đơn hàng này không',
-              //         btnOkText: 'Xác nhận',
-              //         btnCancelText: 'Không',
-              //         btnOkOnPress: () async {
-              //           // Orders ord = order;
-              //           // ord.status = 'cancelled';
-              //           // await Get.find<OrderController>()
-              //           //     .cancelOrder(ord);
-              //         },
-              //         btnCancelOnPress: () {})
-              //     .show();
+              Rx<TextEditingController> contentController =
+                  TextEditingController().obs;
+              Rx<TextEditingController> responseController =
+                  TextEditingController().obs;
+
+              Rx<Review> review = (Get.find<ReviewController>()
+                          .listReview
+                          .firstWhereOrNull((p0) =>
+                              p0.order_id ==
+                              Get.find<OrderController>().order.value.id) ??
+                      Review.initReview())
+                  .obs;
+              contentController.value.text = review.value.comment;
+              responseController.value.text = review.value.response ?? '';
+              final formKey = GlobalKey<FormState>();
+              Get.dialog(
+                Obx(
+                  () {
+                    return AlertDialog(
+                      title: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Đánh giá',
+                                style: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Get.back();
+                                },
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.green,
+                                ),
+                              )
+                            ],
+                          ),
+                          const Divider(),
+                        ],
+                      ),
+                      content: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: review.value.id == ''
+                            ? Container(
+                                decoration: const BoxDecoration(),
+                                width: Get.width * 0.8,
+                                child: const Text(
+                                  'Khách hàng chưa đánh giá.',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.green,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                decoration: const BoxDecoration(),
+                                width: Get.width * 0.8,
+                                child: Form(
+                                  key: formKey,
+                                  child: Column(
+                                    children: [
+                                      RatingBarIndicator(
+                                        rating: review.value.ratting,
+                                        itemBuilder: (context, index) =>
+                                            const Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                        ),
+                                        itemCount: 5,
+                                        itemSize: 30,
+                                        direction: Axis.horizontal,
+                                      ),
+                                      SizedBox(
+                                        height: Get.height * 0.01,
+                                      ),
+                                      review.value.comment == ''
+                                          ? const SizedBox()
+                                          : TextFormField(
+                                              style: const TextStyle(
+                                                color: Colors.green,
+                                                fontSize: 16,
+                                              ),
+                                              controller:
+                                                  contentController.value,
+                                              readOnly: true,
+                                              minLines: 2,
+                                              maxLines: 3,
+                                              decoration: const InputDecoration(
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.green),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(20),
+                                                  ),
+                                                ),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.green),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(20),
+                                                  ),
+                                                ),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(20),
+                                                  ),
+                                                  borderSide: BorderSide(
+                                                      color: Colors.green),
+                                                ),
+                                                labelText: 'Nội dung',
+                                                labelStyle: TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ),
+                                      SizedBox(
+                                        height: Get.height * 0.01,
+                                      ),
+                                      TextFormField(
+                                        style: const TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 16,
+                                        ),
+                                        controller: responseController.value,
+                                        // readOnly: true,
+                                        minLines: 3,
+                                        maxLines: 4,
+                                        decoration: const InputDecoration(
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: Colors.green),
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: Colors.green),
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                          ),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20),
+                                            ),
+                                            borderSide:
+                                                BorderSide(color: Colors.green),
+                                          ),
+                                          labelText: 'Phản hồi khách hàng',
+                                          labelStyle: TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                      ),
+                      actions: [
+                        const Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: review.value.id == ''
+                                  ? () {
+                                      Get.back();
+                                    }
+                                  : () async {
+                                      if (formKey.currentState!.validate()) {
+                                        review.value.update_at =
+                                            Timestamp.now();
+                                        review.value.response =
+                                            responseController.value.text;
+                                        Get.back();
+                                        await Get.find<ReviewController>()
+                                            .updateReview(review.value);
+
+                                        await AwesomeDialog(
+                                          titleTextStyle: const TextStyle(
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 22,
+                                          ),
+                                          descTextStyle: const TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 16,
+                                          ),
+                                          // ignore: use_build_context_synchronously
+                                          context: context,
+                                          dialogType: DialogType.success,
+                                          animType: AnimType.rightSlide,
+                                          title:
+                                              'Phản hồi đánh giá của khách hàng thành công!',
+                                          btnOkOnPress: () {},
+                                        ).show();
+                                      }
+                                    },
+                              child: Container(
+                                alignment: Alignment.center,
+                                decoration: const BoxDecoration(),
+                                width: Get.width * 0.35,
+                                child: Text(
+                                  review.value.id == '' ? 'Đóng' : 'Phản hồi',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    );
+                  },
+                ),
+              );
             },
             child: Container(
               alignment: Alignment.center,
               decoration: const BoxDecoration(),
-              width: Get.width * 0.8,
+              width: Get.width * 0.3,
               child: const Text(
-                'Đã nhận được hàng',
+                'Đánh giá',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.green,
@@ -526,114 +1043,6 @@ class OrderSellerDetailPage extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Container btnDelivered() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // btnViewDetail(order),
-          Container(
-            alignment: Alignment.center,
-            width: Get.width * 0.45,
-            child: ElevatedButton(
-              onPressed: () async {
-                // await AwesomeDialog(
-                //         titleTextStyle: const TextStyle(
-                //           color: Colors.green,
-                //           fontWeight: FontWeight.bold,
-                //           fontSize: 22,
-                //         ),
-                //         descTextStyle: const TextStyle(
-                //           color: Colors.green,
-                //           fontSize: 16,
-                //         ),
-                //         context: context,
-                //         dialogType: DialogType.question,
-                //         animType: AnimType.rightSlide,
-                //         title: 'Xác nhận',
-                //         desc:
-                //             'Bạn có muốn hủy đơn hàng này không',
-                //         btnOkText: 'Xác nhận',
-                //         btnCancelText: 'Không',
-                //         btnOkOnPress: () async {
-                //           // Orders ord = order;
-                //           // ord.status = 'cancelled';
-                //           // await Get.find<OrderController>()
-                //           //     .cancelOrder(ord);
-                //         },
-                //         btnCancelOnPress: () {})
-                //     .show();
-              },
-              child: Container(
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(),
-                width: Get.width * 0.45,
-                child: const Text(
-                  'Mua lại',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Container(
-            alignment: Alignment.center,
-            width: Get.width * 0.45,
-            child: ElevatedButton(
-              onPressed: () async {
-                // await AwesomeDialog(
-                //         titleTextStyle: const TextStyle(
-                //           color: Colors.green,
-                //           fontWeight: FontWeight.bold,
-                //           fontSize: 22,
-                //         ),
-                //         descTextStyle: const TextStyle(
-                //           color: Colors.green,
-                //           fontSize: 16,
-                //         ),
-                //         context: context,
-                //         dialogType: DialogType.question,
-                //         animType: AnimType.rightSlide,
-                //         title: 'Xác nhận',
-                //         desc:
-                //             'Bạn có muốn hủy đơn hàng này không',
-                //         btnOkText: 'Xác nhận',
-                //         btnCancelText: 'Không',
-                //         btnOkOnPress: () async {
-                //           // Orders ord = order;
-                //           // ord.status = 'cancelled';
-                //           // await Get.find<OrderController>()
-                //           //     .cancelOrder(ord);
-                //         },
-                //         btnCancelOnPress: () {})
-                //     .show();
-              },
-              child: Container(
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(),
-                width: Get.width * 0.45,
-                child: const Text(
-                  'Đánh giá',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 

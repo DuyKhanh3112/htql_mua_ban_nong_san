@@ -269,7 +269,7 @@ class ArticlePage extends StatelessWidget {
                                     height: Get.height * 0.01,
                                   ),
                                   listArticleImage.isEmpty
-                                      ? SizedBox()
+                                      ? const SizedBox()
                                       : CarouselSlider(
                                           items: listArticleImage
                                               .map(
@@ -310,7 +310,7 @@ class ArticlePage extends StatelessWidget {
                                           carouselController: controller,
                                         ),
                                   listArticleImage.isEmpty
-                                      ? SizedBox()
+                                      ? const SizedBox()
                                       : Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
