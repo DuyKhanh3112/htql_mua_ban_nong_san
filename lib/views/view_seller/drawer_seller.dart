@@ -320,6 +320,7 @@ class DrawerSeller extends StatelessWidget {
                     onTap: () {
                       Get.back();
                       mainController.seller.value = Seller.initSeller();
+                      mainController.indexSeller.value = 0;
                       Get.toNamed('/login');
                     },
                   ),

@@ -113,9 +113,9 @@ class CartPage extends StatelessWidget {
                                       Get.toNamed('/checkout');
                                     },
                                     style: const ButtonStyle(
-                                      backgroundColor: MaterialStatePropertyAll(
-                                          Colors.green),
-                                      shape: MaterialStatePropertyAll(
+                                      backgroundColor:
+                                          WidgetStatePropertyAll(Colors.green),
+                                      shape: WidgetStatePropertyAll(
                                         RoundedRectangleBorder(
                                           borderRadius: BorderRadius.all(
                                             Radius.circular(20),
@@ -266,10 +266,16 @@ class CartPage extends StatelessWidget {
 
     Rx<TextEditingController> quantityController = TextEditingController().obs;
 
+    // quantityController.value.text =
+    //     NumberFormat.decimalPatternDigits(decimalDigits: 0)
+    //         .format(cart.quantity)
+    //         .toString();
     quantityController.value.text =
         NumberFormat.decimalPatternDigits(decimalDigits: 0)
             .format(cart.quantity)
-            .toString();
+            .toString()
+            .replaceAll('.', '')
+            .replaceAll(',', '');
     return Obx(() {
       return Container(
         // padding: const EdgeInsets.all(5),
@@ -366,7 +372,9 @@ class CartPage extends StatelessWidget {
                                     NumberFormat.decimalPatternDigits(
                                             decimalDigits: 0)
                                         .format(cart.quantity)
-                                        .toString();
+                                        .toString()
+                                        .replaceAll('.', '')
+                                        .replaceAll(',', '');
                               }
                               if (cart.quantity == 1) {
                                 await AwesomeDialog(
@@ -404,12 +412,19 @@ class CartPage extends StatelessWidget {
                               onChanged: (value) {
                                 if (value.isNotEmpty) {
                                   if (double.parse(value) > 0) {
-                                    cart.quantity = double.parse(value);
+                                    if (double.parse(value) <=
+                                        product.quantity) {
+                                      cart.quantity = double.parse(value);
+                                    } else {
+                                      cart.quantity = product.quantity;
+                                    }
                                     quantityController.value.text =
                                         NumberFormat.decimalPatternDigits(
                                                 decimalDigits: 0)
                                             .format(cart.quantity)
-                                            .toString();
+                                            .toString()
+                                            .replaceAll('.', '')
+                                            .replaceAll(',', '');
                                     Get.find<CartController>().isChange.value =
                                         true;
                                     Get.find<CartController>().getCountCart();
@@ -418,7 +433,9 @@ class CartPage extends StatelessWidget {
                                         NumberFormat.decimalPatternDigits(
                                                 decimalDigits: 0)
                                             .format(cart.quantity)
-                                            .toString();
+                                            .toString()
+                                            .replaceAll('.', '')
+                                            .replaceAll(',', '');
                                   }
                                 }
                               },
@@ -426,7 +443,10 @@ class CartPage extends StatelessWidget {
                                 if (value!.isEmpty) {
                                   return 'Không hợp lệ';
                                 } else {
-                                  if (double.parse(value) <= 0) {
+                                  if (double.parse(value) <= 0 ||
+                                      double.parse(value) >
+                                          double.parse(
+                                              product.quantity.toString())) {
                                     return 'Không hợp lệ';
                                   }
                                 }
@@ -453,13 +473,17 @@ class CartPage extends StatelessWidget {
                               color: Colors.green,
                             ),
                             onTap: () {
-                              cart.quantity += 1;
-                              quantityController.value.text =
-                                  NumberFormat.decimalPatternDigits(
-                                          decimalDigits: 0)
-                                      .format(cart.quantity)
-                                      .toString();
-                              Get.find<CartController>().getCountCart();
+                              if (cart.quantity < product.quantity) {
+                                cart.quantity += 1;
+                                quantityController.value.text =
+                                    NumberFormat.decimalPatternDigits(
+                                            decimalDigits: 0)
+                                        .format(cart.quantity)
+                                        .toString()
+                                        .replaceAll('.', '')
+                                        .replaceAll(',', '');
+                                Get.find<CartController>().getCountCart();
+                              }
                             },
                           ),
                         ],

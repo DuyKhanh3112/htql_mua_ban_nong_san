@@ -170,53 +170,60 @@ class ArticlePage extends StatelessWidget {
                               ),
                               child: Column(
                                 children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: Get.width * 0.01,
-                                      ),
-                                      Container(
-                                        width: Get.width * 0.1,
-                                        height: Get.width * 0.1,
-                                        margin:
-                                            EdgeInsets.all(Get.width * 0.01),
-                                        decoration: BoxDecoration(
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey.shade300,
-                                              spreadRadius: 5,
-                                              blurRadius: 7,
-                                              offset: const Offset(0,
-                                                  3), // changes position of shadow
-                                            ),
-                                          ],
-                                          shape: BoxShape.circle,
-                                          image: seller.avatar == ''
-                                              ? null
-                                              : DecorationImage(
-                                                  image: NetworkImage(
-                                                    seller.avatar!,
-                                                  ),
-                                                  fit: BoxFit.fill,
-                                                ),
+                                  InkWell(
+                                    onTap: () async {
+                                      Get.toNamed('/view_seller');
+                                      await Get.find<SellerController>()
+                                          .getSeller(seller.id);
+                                    },
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: Get.width * 0.01,
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: Get.width * 0.05,
-                                      ),
-                                      SizedBox(
-                                        width: Get.width * 0.5,
-                                        child: Text(
-                                          seller.name,
-                                          style: const TextStyle(
-                                            color: Colors.green,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            overflow: TextOverflow.ellipsis,
+                                        Container(
+                                          width: Get.width * 0.1,
+                                          height: Get.width * 0.1,
+                                          margin:
+                                              EdgeInsets.all(Get.width * 0.01),
+                                          decoration: BoxDecoration(
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.grey.shade300,
+                                                spreadRadius: 5,
+                                                blurRadius: 7,
+                                                offset: const Offset(0,
+                                                    3), // changes position of shadow
+                                              ),
+                                            ],
+                                            shape: BoxShape.circle,
+                                            image: seller.avatar == ''
+                                                ? null
+                                                : DecorationImage(
+                                                    image: NetworkImage(
+                                                      seller.avatar!,
+                                                    ),
+                                                    fit: BoxFit.fill,
+                                                  ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        SizedBox(
+                                          width: Get.width * 0.05,
+                                        ),
+                                        SizedBox(
+                                          width: Get.width * 0.5,
+                                          child: Text(
+                                            seller.name,
+                                            style: const TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   const Divider(),
                                   SizedBox(
@@ -255,74 +262,88 @@ class ArticlePage extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  const Divider(),
-                                  CarouselSlider(
-                                    items: listArticleImage
-                                        .map(
-                                          (item) => Container(
-                                            margin: EdgeInsets.all(
-                                                Get.width * 0.01),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(40)),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      const BorderRadius.all(
-                                                    Radius.circular(40),
-                                                  ),
-                                                  image: DecorationImage(
-                                                    image: NetworkImage(
-                                                        item.image),
-                                                    fit: BoxFit.fill,
+                                  // listArticleImage.isEmpty
+                                  //     ? SizedBox()
+                                  //     : const Divider(),
+                                  SizedBox(
+                                    height: Get.height * 0.01,
+                                  ),
+                                  listArticleImage.isEmpty
+                                      ? SizedBox()
+                                      : CarouselSlider(
+                                          items: listArticleImage
+                                              .map(
+                                                (item) => Container(
+                                                  margin: EdgeInsets.all(
+                                                      Get.width * 0.01),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                            Radius.circular(
+                                                                40)),
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                .all(
+                                                          Radius.circular(40),
+                                                        ),
+                                                        image: DecorationImage(
+                                                          image: NetworkImage(
+                                                              item.image),
+                                                          fit: BoxFit.fill,
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ),
+                                              )
+                                              .toList(),
+                                          options: CarouselOptions(
+                                            enlargeCenterPage: true,
+                                            height: Get.height * 0.3,
+                                            onPageChanged: (index, reson) {
+                                              currentImg.value = index;
+                                            },
+                                            autoPlay: true,
                                           ),
-                                        )
-                                        .toList(),
-                                    options: CarouselOptions(
-                                      enlargeCenterPage: true,
-                                      height: Get.height * 0.3,
-                                      onPageChanged: (index, reson) {
-                                        currentImg.value = index;
-                                      },
-                                      autoPlay: true,
-                                    ),
-                                    carouselController: controller,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: listArticleImage
-                                        .asMap()
-                                        .entries
-                                        .map((entry) {
-                                      return GestureDetector(
-                                        onTap: () =>
-                                            controller.animateToPage(entry.key),
-                                        child: Container(
-                                          width: 12.0,
-                                          height: 12.0,
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 8.0, horizontal: 4.0),
-                                          decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: (Theme.of(context)
-                                                              .brightness ==
-                                                          Brightness.dark
-                                                      ? Colors.white
-                                                      : Colors.black)
-                                                  .withOpacity(
-                                                      currentImg.value ==
-                                                              entry.key
-                                                          ? 0.9
-                                                          : 0.4)),
+                                          carouselController: controller,
                                         ),
-                                      );
-                                    }).toList(),
-                                  ),
+                                  listArticleImage.isEmpty
+                                      ? SizedBox()
+                                      : Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: listArticleImage
+                                              .asMap()
+                                              .entries
+                                              .map((entry) {
+                                            return GestureDetector(
+                                              onTap: () => controller
+                                                  .animateToPage(entry.key),
+                                              child: Container(
+                                                width: 12.0,
+                                                height: 12.0,
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 8.0,
+                                                        horizontal: 4.0),
+                                                decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: (Theme.of(context)
+                                                                    .brightness ==
+                                                                Brightness.dark
+                                                            ? Colors.white
+                                                            : Colors.black)
+                                                        .withOpacity(
+                                                            currentImg.value ==
+                                                                    entry.key
+                                                                ? 0.9
+                                                                : 0.4)),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
                                 ],
                               ),
                             );
