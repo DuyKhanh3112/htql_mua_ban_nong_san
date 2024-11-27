@@ -508,7 +508,7 @@ class SellerPage extends StatelessWidget {
             (p0) => p0.product_id == product.id && p0.is_default == true);
     Province province = Get.find<ProvinceController>()
             .listProvince
-            .firstWhereOrNull((element) => element.id == product.province_id) ??
+            .firstWhereOrNull((element) => element.id == seller.province_id) ??
         Province.initProvince();
     return Container(
       width: Get.width * 0.5,

@@ -758,7 +758,7 @@ class RegisterPage extends StatelessWidget {
                                                 },
                                                 style: const ButtonStyle(
                                                   backgroundColor:
-                                                      MaterialStatePropertyAll(
+                                                      WidgetStatePropertyAll(
                                                     Colors.lightGreen,
                                                   ),
                                                 ),
@@ -947,8 +947,8 @@ class RegisterPage extends StatelessWidget {
       ).show();
       return false;
     }
-    seller.avatar = await CloudinaryController()
-        .uploadImage(filePath, seller.username, 'seller');
+    seller.avatar = await CloudinaryController().uploadImage(
+        filePath, '${seller.username}_avater', 'seller/${seller.username}');
     await sellerController.createSeller(seller);
 
     sellerController.isLoading.value = false;
@@ -958,7 +958,7 @@ class RegisterPage extends StatelessWidget {
       dialogType: DialogType.success,
       animType: AnimType.rightSlide,
       title: 'Thành công',
-      desc: 'Đăng ký tài khoản người mua thành công.',
+      desc: 'Đăng ký tài khoản người bán thành công.',
       btnOkOnPress: () {},
     ).show();
     return true;

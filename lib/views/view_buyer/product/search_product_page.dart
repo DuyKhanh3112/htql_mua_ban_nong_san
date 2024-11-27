@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_protected_member
+
 import 'package:card_banner/card_banner.dart';
 import 'package:convert_vietnamese/convert_vietnamese.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -23,6 +25,36 @@ import 'package:intl/intl.dart';
 class SearchProductPage extends StatelessWidget {
   const SearchProductPage({super.key});
   void loadData(RxList<Product> listProduct) {
+    if (Get.find<ProductController>().sortType.value == 'new') {
+      Get.find<ProductController>()
+          .listProduct
+          .value
+          .sort((a, b) => b.create_at.compareTo(a.create_at));
+    }
+    if (Get.find<ProductController>().sortType.value == 'sell') {
+      Get.find<ProductController>()
+          .listProduct
+          .value
+          .sort((a, b) => b.sale_num!.compareTo(a.sale_num!));
+    }
+    if (Get.find<ProductController>().sortType.value == 'new') {
+      Get.find<ProductController>()
+          .listProduct
+          .value
+          .sort((a, b) => b.create_at.compareTo(a.create_at));
+    }
+    if (Get.find<ProductController>().sortType.value == 'price_asc') {
+      Get.find<ProductController>()
+          .listProduct
+          .value
+          .sort((a, b) => a.price.compareTo(b.price));
+    }
+    if (Get.find<ProductController>().sortType.value == 'price_desc') {
+      Get.find<ProductController>()
+          .listProduct
+          .value
+          .sort((a, b) => b.price.compareTo(a.price));
+    }
     // List<String> listCategoryID = [];
     ProductController productController = Get.find<ProductController>();
     // if (productController.searchProductController.value.text.isNotEmpty) {
@@ -80,13 +112,13 @@ class SearchProductPage extends StatelessWidget {
     TextEditingController provinceController = TextEditingController();
     Rx<Category> category = Category.initCategory().obs;
     Rx<Province> province = Province.initProvince().obs;
-    // List<dynamic> listSortType = [
-    //   {'value': 'new', 'label': 'Mới nhất'},
-    //   {'value': 'sell', 'label': 'Bán chạy nhất'},
-    //   {'value': 'ratting', 'label': 'Đánh giá cao nhất'},
-    //   {'value': 'price_asc', 'label': 'Giá tăng dần'},
-    //   {'value': 'price_desc', 'label': 'Giá giảm dần'},
-    // ];
+    List<dynamic> listSortType = [
+      {'value': 'new', 'label': 'Mới nhất'},
+      {'value': 'sell', 'label': 'Bán chạy nhất'},
+      {'value': 'ratting', 'label': 'Đánh giá cao nhất'},
+      {'value': 'price_asc', 'label': 'Giá tăng dần'},
+      {'value': 'price_desc', 'label': 'Giá giảm dần'},
+    ];
     category.value = Get.find<ProductController>().category.value;
 
     return Obx(() {
@@ -99,19 +131,20 @@ class SearchProductPage extends StatelessWidget {
             .toList();
       }
       if (province.value.id != '') {
+        List<Seller> listSeller = Get.find<SellerController>()
+            .listSeller
+            .where((seller) => seller.province_id == province.value.id)
+            .toList();
         listProduct.value = listProduct
             .where(
-              (p0) => p0.province_id == province.value.id,
+              (p0) => listSeller
+                  .map(
+                    (e) => e.id,
+                  )
+                  .contains(p0.seller_id),
             )
             .toList();
       }
-      // if (Get.find<ProductController>().sortType.value == 'new') {
-      //   listProduct.sort((a, b) => a.create_at.compareTo(b.create_at));
-      // }
-      // if (Get.find<ProductController>().sortType.value == 'ratting') {
-      //   listProduct.sort((a, b) => a.ratting!.compareTo(b.ratting!));
-      // }
-
       return mainController.isLoading.value
           ? const LoadingPage()
           : SafeArea(
@@ -254,7 +287,7 @@ class SearchProductPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            width: Get.width * 0.4,
+                            width: Get.width * 0.3,
                             padding: const EdgeInsets.all(5),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,7 +328,7 @@ class SearchProductPage extends StatelessWidget {
                                     ],
                                     style: const TextStyle(
                                       color: Colors.green,
-                                      fontSize: 18,
+                                      fontSize: 14,
                                     ),
                                     isExpanded: true,
                                     onChanged: (value) {
@@ -356,7 +389,7 @@ class SearchProductPage extends StatelessWidget {
                             ),
                           ),
                           Container(
-                            width: Get.width * 0.4,
+                            width: Get.width * 0.3,
                             padding: const EdgeInsets.all(5),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -397,7 +430,7 @@ class SearchProductPage extends StatelessWidget {
                                     ],
                                     style: const TextStyle(
                                       color: Colors.green,
-                                      fontSize: 18,
+                                      fontSize: 14,
                                     ),
                                     isExpanded: true,
                                     onChanged: (value) {
@@ -457,72 +490,73 @@ class SearchProductPage extends StatelessWidget {
                               ],
                             ),
                           ),
-                          // Container(
-                          //   width: Get.width * 0.3,
-                          //   padding: const EdgeInsets.all(5),
-                          //   child: Column(
-                          //     crossAxisAlignment: CrossAxisAlignment.start,
-                          //     children: [
-                          //       const Text(
-                          //         'Sắp xếp',
-                          //         style: TextStyle(
-                          //           fontSize: 16,
-                          //           color: Colors.green,
-                          //         ),
-                          //       ),
-                          //       DropdownButtonHideUnderline(
-                          //         child: DropdownButton2(
-                          //           value: listSortType.firstWhereOrNull((item) =>
-                          //               item['value'] ==
-                          //               Get.find<ProductController>()
-                          //                   .sortType
-                          //                   .value),
-                          //           items: listSortType
-                          //               .map(
-                          //                 (item) => DropdownMenuItem(
-                          //                   value: item,
-                          //                   child: Text(
-                          //                     item['label'],
-                          //                     overflow: TextOverflow.ellipsis,
-                          //                     strutStyle: StrutStyle.disabled,
-                          //                   ),
-                          //                 ),
-                          //               )
-                          //               .toList(),
-                          //           style: const TextStyle(
-                          //             color: Colors.green,
-                          //             fontSize: 18,
-                          //           ),
-                          //           isExpanded: true,
-                          //           onChanged: (item) {
-                          //             if (item != null) {
-                          //               Map<String, dynamic> data =
-                          //                   item as Map<String, dynamic>;
-                          //               Get.find<ProductController>()
-                          //                   .sortType
-                          //                   .value = data["value"];
-                          //             }
-                          //           },
-                          //           dropdownStyleData: DropdownStyleData(
-                          //             maxHeight: Get.height / 2,
-                          //             width: Get.width * 0.75,
-                          //             // padding: EdgeInsets.all(5),
-                          //           ),
-                          //           buttonStyleData: ButtonStyleData(
-                          //             height: 40,
-                          //             decoration: BoxDecoration(
-                          //               border: Border.all(
-                          //                 color: Colors.green,
-                          //               ),
-                          //               borderRadius: BorderRadius.circular(10),
-                          //             ),
-                          //             padding: const EdgeInsets.all(5),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
+                          Container(
+                            width: Get.width * 0.3,
+                            padding: const EdgeInsets.all(5),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Sắp xếp',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                DropdownButtonHideUnderline(
+                                  child: DropdownButton2(
+                                    value: listSortType.firstWhereOrNull(
+                                        (item) =>
+                                            item['value'] ==
+                                            Get.find<ProductController>()
+                                                .sortType
+                                                .value),
+                                    items: listSortType
+                                        .map(
+                                          (item) => DropdownMenuItem(
+                                            value: item,
+                                            child: Text(
+                                              item['label'],
+                                              overflow: TextOverflow.ellipsis,
+                                              strutStyle: StrutStyle.disabled,
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                    style: const TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 14,
+                                    ),
+                                    isExpanded: true,
+                                    onChanged: (item) {
+                                      if (item != null) {
+                                        Map<String, dynamic> data =
+                                            item as Map<String, dynamic>;
+                                        Get.find<ProductController>()
+                                            .sortType
+                                            .value = data["value"];
+                                      }
+                                    },
+                                    dropdownStyleData: DropdownStyleData(
+                                      maxHeight: Get.height / 2,
+                                      width: Get.width * 0.75,
+                                      // padding: EdgeInsets.all(5),
+                                    ),
+                                    buttonStyleData: ButtonStyleData(
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.green,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      padding: const EdgeInsets.all(5),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -562,7 +596,7 @@ class SearchProductPage extends StatelessWidget {
             (p0) => p0.product_id == product.id && p0.is_default == true);
     Province province = Get.find<ProvinceController>()
             .listProvince
-            .firstWhereOrNull((element) => element.id == product.province_id) ??
+            .firstWhereOrNull((element) => element.id == seller.province_id) ??
         Province.initProvince();
     return Container(
       width: Get.width * 0.5,

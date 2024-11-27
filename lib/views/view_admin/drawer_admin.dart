@@ -20,8 +20,6 @@ class DrawerAdmin extends StatelessWidget {
   Widget build(BuildContext context) {
     AdminController adminController = Get.find<AdminController>();
     MainController mainController = Get.find<MainController>();
-    RxBool ischange = false.obs;
-    RxBool isEdit = false.obs;
     Rx<TextEditingController> nameController = TextEditingController().obs;
     return Obx(() {
       if (mainController.admin.value.id != '') {
@@ -110,23 +108,6 @@ class DrawerAdmin extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  InkWell(
-                                    child: Icon(
-                                        isEdit.value ? null : Icons.edit,
-                                        color: Colors.white,
-                                        shadows: [
-                                          BoxShadow(
-                                            color: Colors.grey.shade400,
-                                            spreadRadius: 5,
-                                            blurRadius: 7,
-                                            offset: const Offset(0,
-                                                3), // changes position of shadow
-                                          ),
-                                        ]),
-                                    onTap: () async {
-                                      isEdit.value = true;
-                                    },
-                                  ),
                                 ],
                               ),
                             ],
@@ -135,62 +116,6 @@ class DrawerAdmin extends StatelessWidget {
                       ],
                     ),
                   ),
-                  isEdit.value
-                      ? Container(
-                          padding: const EdgeInsets.only(
-                            left: 20,
-                            right: 10,
-                          ),
-                          child: TextFormField(
-                            controller: nameController.value,
-                            style: const TextStyle(
-                              color: Colors.green,
-                              fontSize: 18,
-                            ),
-                            onChanged: (value) {
-                              ischange.value = true;
-                            },
-                            minLines: 1,
-                            maxLines: 3,
-                            decoration: InputDecoration(
-                              hintText: '',
-                              hintStyle: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.green,
-                              ),
-                              errorStyle: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.red,
-                              ),
-                              suffixIcon: IconButton(
-                                onPressed: () async {
-                                  // hidePass.value = !hidePass.value;
-                                  if (ischange.value) {
-                                    mainController.admin.value.name =
-                                        nameController.value.text;
-                                    await adminController.updateAdmin(
-                                        mainController.admin.value);
-                                    ischange.value = false;
-                                    isEdit.value = false;
-                                  }
-                                },
-                                icon: ischange.value
-                                    ? const Icon(
-                                        Icons.check,
-                                        color: Colors.green,
-                                      )
-                                    : const Icon(null),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Không được bỏ trống';
-                              }
-                              return null;
-                            },
-                          ),
-                        )
-                      : const SizedBox(),
                   Expanded(
                     child: ListView(
                       children: [
@@ -291,7 +216,7 @@ class DrawerAdmin extends StatelessWidget {
                           onTap: () async {
                             Get.back();
                             // Get.toNamed('/product_admin');
-                            mainController.indexAdmin.value = 5;
+                            mainController.indexAdmin.value = 4;
                             Get.find<ProductController>().loadAllProduct();
                           },
                         ),
@@ -311,7 +236,7 @@ class DrawerAdmin extends StatelessWidget {
                           onTap: () async {
                             Get.back();
                             // Get.toNamed('/product_admin');
-                            mainController.indexAdmin.value = 6;
+                            mainController.indexAdmin.value = 5;
                             Get.find<ArticleController>().loadAllArticle();
                           },
                         ),
@@ -364,7 +289,7 @@ class DrawerAdmin extends StatelessWidget {
                               ),
                               onTap: () async {
                                 Get.back();
-                                Get.find<MainController>().indexAdmin.value = 7;
+                                Get.find<MainController>().indexAdmin.value = 6;
 
                                 await Get.find<ReportController>()
                                     .showReportSeller();
@@ -385,7 +310,7 @@ class DrawerAdmin extends StatelessWidget {
                               ),
                               onTap: () async {
                                 Get.back();
-                                Get.find<MainController>().indexAdmin.value = 8;
+                                Get.find<MainController>().indexAdmin.value = 7;
 
                                 // await Get.find<ReportController>()
                                 //     .showReportProduct();

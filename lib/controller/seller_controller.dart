@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/cloudinary_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
 
@@ -167,6 +169,33 @@ class SellerController extends GetxController {
       Seller seller = Seller.fromJson(data);
       await sellerCollection.doc(seller.id).update(seller.toJson());
     }
+    isLoading.value = false;
+  }
+
+  Future<void> updateInformation(
+      String filePathAvatar, String filePathCover) async {
+    isLoading.value = true;
+    Seller seller = Get.find<MainController>().seller.value;
+    if (filePathAvatar != '') {
+      Get.find<MainController>().seller.value.avatar =
+          await CloudinaryController().uploadImage(filePathAvatar,
+              '${seller.username}_avatar', 'seller/${seller.username}');
+    }
+    if (filePathCover != '') {
+      Get.find<MainController>().seller.value.cover =
+          await CloudinaryController().uploadImage(filePathCover,
+              '${seller.username}_cover', 'seller/${seller.username}');
+    }
+    await sellerCollection
+        .doc(seller.id)
+        .update(Get.find<MainController>().seller.value.toVal());
+    isLoading.value = false;
+  }
+
+  Future<void> updatePassword(Seller seller) async {
+    isLoading.value = true;
+    await sellerCollection.doc(seller.id).update(seller.toVal());
+
     isLoading.value = false;
   }
 }
