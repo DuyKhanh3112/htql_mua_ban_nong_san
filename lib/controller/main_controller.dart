@@ -66,11 +66,10 @@ class MainController extends GetxController {
     const BuyerHomePage(), //buyer 1
     const SellerHomePage(), //seller 2
     const CategoryHomePage(), //3
-    const CategoryHomePage(), //Province 4
-    const ProductHomePage(), //5
-    const ArticleAdminPage(), //6
-    const ReportSellerPage(), //7
-    const ReportBuyerPage(), //8
+    const ProductHomePage(), //4
+    const ArticleAdminPage(), //5
+    const ReportSellerPage(), //6
+    const ReportBuyerPage(), //7
   ];
   RxInt indexAdmin = 0.obs;
 

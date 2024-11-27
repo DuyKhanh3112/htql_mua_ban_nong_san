@@ -8,6 +8,7 @@ import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/review_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
@@ -16,6 +17,7 @@ import 'package:htql_mua_ban_nong_san/models/cart.dart';
 import 'package:htql_mua_ban_nong_san/models/order.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:htql_mua_ban_nong_san/models/province.dart';
 import 'package:htql_mua_ban_nong_san/models/review.dart';
 import 'package:htql_mua_ban_nong_san/models/seller.dart';
 import 'package:intl/intl.dart';
@@ -34,6 +36,18 @@ class ProductDetailPage extends StatelessWidget {
             (p0) => p0.id == productController.product.value.seller_id) ??
         Seller.initSeller();
     final CarouselSliderController controller = CarouselSliderController();
+    Province provinceSeller =
+        Get.find<ProvinceController>().listProvince.firstWhereOrNull(
+                  (element) => element.id == seller.province_id,
+                ) ??
+            Province.initProvince();
+    Province provinceProduct =
+        Get.find<ProvinceController>().listProvince.firstWhereOrNull(
+                  (element) =>
+                      element.id == productController.product.value.province_id,
+                ) ??
+            Province.initProvince();
+
     RxInt currentImg = 0.obs;
     final currencyFormatter =
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
@@ -362,19 +376,37 @@ class ProductDetailPage extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  height: Get.width * 0.15,
-                                  width: Get.width * 0.45,
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    seller.name,
-                                    style: const TextStyle(
-                                      color: Colors.green,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      overflow: TextOverflow.ellipsis,
+                                Column(
+                                  children: [
+                                    Container(
+                                      // height: Get.width * 0.15,
+                                      width: Get.width * 0.45,
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        seller.name,
+                                        style: const TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    Container(
+                                      // height: Get.width * 0.15,
+                                      width: Get.width * 0.45,
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        provinceSeller.name,
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 SizedBox(
                                   // height: Get.width * 0.15,
@@ -457,6 +489,53 @@ class ProductDetailPage extends StatelessWidget {
                                   ],
                                 ),
                           // description
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                              horizontal: Get.width * 0.03,
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: Get.width * 0.03,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  // height: Get.width * 0.15,
+                                  width: Get.width * 0.4,
+                                  alignment: Alignment.centerLeft,
+                                  child: const Text(
+                                    'Xuất xứ: ',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  // height: Get.width * 0.15,
+
+                                  width: Get.width * 0.4,
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    provinceProduct.name,
+                                    style: const TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            thickness: Get.height * 0.01,
+                            color: Colors.grey[200],
+                          ),
+
                           Container(
                             padding: EdgeInsets.only(
                                 bottom: Get.width * 0.01,

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
@@ -204,37 +205,50 @@ class CartPage extends StatelessWidget {
                 const SizedBox(
                   width: 20,
                 ),
-                Container(
-                  width: 40,
-                  height: 40,
-                  // margin: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade300,
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset:
-                            const Offset(0, 3), // changes position of shadow
+                InkWell(
+                  onTap: () async {
+                    Get.toNamed('/view_seller');
+                    await Get.find<SellerController>()
+                        .getSeller((item[0] as Seller).id);
+                  },
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        // margin: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade300,
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: const Offset(
+                                  0, 3), // changes position of shadow
+                            ),
+                          ],
+                          shape: BoxShape.circle,
+                          image: (item[0] as Seller).avatar == ''
+                              ? null
+                              : DecorationImage(
+                                  image: NetworkImage(
+                                    (item[0] as Seller).avatar!,
+                                  ),
+                                  fit: BoxFit.fill,
+                                ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        (item[0] as Seller).name,
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontSize: 16,
+                        ),
                       ),
                     ],
-                    shape: BoxShape.circle,
-                    image: const DecorationImage(
-                      image: NetworkImage(
-                        'https://res.cloudinary.com/dg3p7nxyp/image/upload/v1723018608/account_default.png',
-                      ),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  (item[0] as Seller).name,
-                  style: const TextStyle(
-                    color: Colors.green,
-                    fontSize: 16,
                   ),
                 ),
               ],

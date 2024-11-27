@@ -468,6 +468,10 @@ class CheckoutPage extends StatelessWidget {
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
     Seller seller = item[0] as Seller;
     RxDouble fee = 0.0.obs;
+    Province provinceSeller = Get.find<ProvinceController>()
+            .listProvince
+            .firstWhereOrNull((element) => element.id == seller.province_id) ??
+        Province.initProvince();
     if (Get.find<CartController>().address.value.province_id ==
         seller.province_id) {
       fee.value = 15000;
@@ -475,6 +479,7 @@ class CheckoutPage extends StatelessWidget {
       fee.value = 30000;
     }
     total.value += item[2] + fee.value;
+    item[3] = fee.value;
 
     return Container(
       padding: const EdgeInsets.all(10),
@@ -508,23 +513,37 @@ class CheckoutPage extends StatelessWidget {
                     ),
                   ],
                   shape: BoxShape.circle,
-                  image: const DecorationImage(
-                    image: NetworkImage(
-                      'https://res.cloudinary.com/dg3p7nxyp/image/upload/v1723018608/account_default.png',
-                    ),
-                    fit: BoxFit.fill,
-                  ),
+                  image: seller.avatar == ''
+                      ? null
+                      : DecorationImage(
+                          image: NetworkImage(
+                            seller.avatar!,
+                          ),
+                          fit: BoxFit.fill,
+                        ),
                 ),
               ),
               SizedBox(
                 width: Get.width * 0.05,
               ),
-              Text(
-                (item[0] as Seller).name,
-                style: const TextStyle(
-                  color: Colors.green,
-                  fontSize: 16,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    (item[0] as Seller).name,
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    provinceSeller.name,
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

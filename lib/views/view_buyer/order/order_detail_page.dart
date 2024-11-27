@@ -8,6 +8,7 @@ import 'package:htql_mua_ban_nong_san/controller/address_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/review_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/seller_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
 import 'package:htql_mua_ban_nong_san/models/address.dart';
 import 'package:htql_mua_ban_nong_san/models/order.dart';
@@ -16,6 +17,7 @@ import 'package:htql_mua_ban_nong_san/models/product.dart';
 import 'package:htql_mua_ban_nong_san/models/product_image.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
 import 'package:htql_mua_ban_nong_san/models/review.dart';
+import 'package:htql_mua_ban_nong_san/models/seller.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/address/address_page.dart';
 import 'package:intl/intl.dart';
 
@@ -33,6 +35,14 @@ class OrderDetailPage extends StatelessWidget {
                 Get.find<OrderController>().address.value.province_id) ??
         Province.initProvince();
     List paymentMethod = ['Thanh toán bằng tiền mặt'];
+    Rx<Seller> seller =
+        (Get.find<SellerController>().listSeller.firstWhereOrNull(
+                      (element) =>
+                          element.id ==
+                          Get.find<OrderController>().order.value.seller_id,
+                    ) ??
+                Seller.initSeller())
+            .obs;
     return Obx(() {
       return Get.find<OrderController>().isLoading.value ||
               Get.find<ReviewController>().isLoading.value
@@ -57,6 +67,9 @@ class OrderDetailPage extends StatelessWidget {
                         ? InkWell(
                             onTap: () async {
                               onChange.value = false;
+                              // print( Get.find<OrderController>()
+                              //         .order
+                              //         .value.toJson());
                               Get.find<OrderController>()
                                       .order
                                       .value
@@ -225,6 +238,21 @@ class OrderDetailPage extends StatelessWidget {
                                                 Get.find<OrderController>()
                                                     .address
                                                     .value = value as Address;
+                                                if (Get.find<OrderController>()
+                                                        .address
+                                                        .value
+                                                        .province_id ==
+                                                    seller.value.province_id) {
+                                                  Get.find<OrderController>()
+                                                      .order
+                                                      .value
+                                                      .fee = 15000;
+                                                } else {
+                                                  Get.find<OrderController>()
+                                                      .order
+                                                      .value
+                                                      .fee = 30000;
+                                                }
                                               }
                                             },
                                       menuItemStyleData:

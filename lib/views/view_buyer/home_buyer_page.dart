@@ -108,6 +108,9 @@ class HomeUserPage extends StatelessWidget {
                                           Get.find<ProductController>()
                                               .category
                                               .value = Category.initCategory();
+                                          Get.find<ProductController>()
+                                              .sortType
+                                              .value = '';
                                           Get.toNamed('search_product');
                                         },
                                       ),
@@ -248,52 +251,57 @@ class HomeUserPage extends StatelessWidget {
                                       textAlign: TextAlign.left,
                                     ),
                                   ),
-                            topProductNew.isEmpty
-                                ? const SizedBox()
-                                : SingleChildScrollView(
-                                    child: Container(
-                                      // height: Get.height * 0.5,
-                                      padding: EdgeInsets.only(
-                                          left: Get.width * 0.01),
-                                      child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          children: [
-                                            for (var product
-                                                in topProductNew.sublist(
-                                                    0,
-                                                    topProductNew.length > 5
-                                                        ? 5
-                                                        : topProductNew.length))
-                                              productDetail(
-                                                  product, currencyFormatter),
-                                            InkWell(
-                                              child: SizedBox(
-                                                width: Get.width * 0.2,
-                                                child: Icon(
-                                                  Icons.chevron_right_sharp,
-                                                  size: Get.width * 0.15,
-                                                  color: Colors.green,
-                                                ),
-                                              ),
-                                              onTap: () {
-                                                Get.find<ProductController>()
-                                                    .listProduct
-                                                    .sort((a, b) => b.create_at
-                                                        .compareTo(
-                                                            a.create_at));
-                                                Get.find<ProductController>()
-                                                        .category
-                                                        .value =
-                                                    Category.initCategory();
-                                                Get.toNamed('search_product');
-                                              },
+                            if (topProductNew.isEmpty)
+                              const SizedBox()
+                            else
+                              SingleChildScrollView(
+                                child: Container(
+                                  // height: Get.height * 0.5,
+                                  padding:
+                                      EdgeInsets.only(left: Get.width * 0.01),
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: [
+                                        for (var product
+                                            in topProductNew.sublist(
+                                                0,
+                                                topProductNew.length > 5
+                                                    ? 5
+                                                    : topProductNew.length))
+                                          productDetail(
+                                              product, currencyFormatter),
+                                        InkWell(
+                                          child: SizedBox(
+                                            width: Get.width * 0.2,
+                                            child: Icon(
+                                              Icons.chevron_right_sharp,
+                                              size: Get.width * 0.15,
+                                              color: Colors.green,
                                             ),
-                                          ],
+                                          ),
+                                          onTap: () {
+                                            // Get.find<ProductController>()
+                                            //     .listProduct
+                                            //     .sort((a, b) => b.create_at
+                                            //         .compareTo(
+                                            //             a.create_at));
+                                            Get.find<ProductController>()
+                                                    .sortType
+                                                    .value ==
+                                                'new';
+                                            Get.find<ProductController>()
+                                                    .category
+                                                    .value =
+                                                Category.initCategory();
+                                            Get.toNamed('search_product');
+                                          },
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ),
+                                ),
+                              ),
                             //SẢN PHẨM BÁN CHẠY
                             topProductBestSeller.isEmpty
                                 ? const SizedBox()
@@ -349,11 +357,15 @@ class HomeUserPage extends StatelessWidget {
                                                 ),
                                               ),
                                               onTap: () {
+                                                // Get.find<ProductController>()
+                                                //     .listProduct
+                                                //     .sort((a, b) => b.sale_num!
+                                                //         .compareTo(
+                                                //             a.sale_num!));
                                                 Get.find<ProductController>()
-                                                    .listProduct
-                                                    .sort((a, b) => b.sale_num!
-                                                        .compareTo(
-                                                            a.sale_num!));
+                                                        .sortType
+                                                        .value ==
+                                                    'sell';
                                                 Get.find<ProductController>()
                                                         .category
                                                         .value =
@@ -418,10 +430,14 @@ class HomeUserPage extends StatelessWidget {
                                                 ),
                                               ),
                                               onTap: () {
+                                                // Get.find<ProductController>()
+                                                //     .listProduct
+                                                //     .sort((a, b) => b.ratting!
+                                                //         .compareTo(a.ratting!));
                                                 Get.find<ProductController>()
-                                                    .listProduct
-                                                    .sort((a, b) => b.ratting!
-                                                        .compareTo(a.ratting!));
+                                                        .sortType
+                                                        .value ==
+                                                    'ratting';
                                                 Get.find<ProductController>()
                                                         .category
                                                         .value =
@@ -494,7 +510,7 @@ class HomeUserPage extends StatelessWidget {
             (p0) => p0.product_id == product.id && p0.is_default == true);
     Province province = Get.find<ProvinceController>()
             .listProvince
-            .firstWhereOrNull((element) => element.id == product.province_id) ??
+            .firstWhereOrNull((element) => element.id == seller.province_id) ??
         Province.initProvince();
     return Container(
       width: Get.width * 0.5,

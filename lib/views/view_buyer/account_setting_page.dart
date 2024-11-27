@@ -105,7 +105,7 @@ class AccountSettingPage extends StatelessWidget {
                                         },
                                         style: const ButtonStyle(
                                           backgroundColor:
-                                              MaterialStatePropertyAll(
+                                              WidgetStatePropertyAll(
                                                   Colors.green),
                                         ),
                                         child: const Row(
@@ -627,10 +627,10 @@ class AccountSettingPage extends StatelessWidget {
                                                   child: ElevatedButton(
                                                     style: const ButtonStyle(
                                                       backgroundColor:
-                                                          MaterialStatePropertyAll(
+                                                          WidgetStatePropertyAll(
                                                               Colors.green),
                                                       foregroundColor:
-                                                          MaterialStatePropertyAll(
+                                                          WidgetStatePropertyAll(
                                                               Colors.white),
                                                     ),
                                                     onPressed: () async {

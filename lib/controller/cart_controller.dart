@@ -153,11 +153,13 @@ class CartController extends GetxController {
   }
 
   dynamic getChooseCartGroupBySeller() {
+    // [seller, cart, total, fee]
     var listCartSeller = [];
     for (var seller in Get.find<SellerController>().listSeller) {
       var carts = [];
       var listProductID = [];
       double totalSeller = 0.0;
+      var fee = 0;
       for (var pro in Get.find<ProductController>()
           .listProduct
           .where((p0) => p0.seller_id == seller.id && p0.status == 'active')
@@ -173,9 +175,15 @@ class CartController extends GetxController {
         totalSeller += c.quantity * prod.price;
         carts.add(c);
       }
+      if (Get.find<CartController>().address.value.province_id ==
+          seller.province_id) {
+        fee = 15000;
+      } else {
+        fee = 30000;
+      }
 
       if (carts.isNotEmpty) {
-        listCartSeller.add([seller, carts, totalSeller]);
+        listCartSeller.add([seller, carts, totalSeller, fee]);
       }
     }
     return listCartSeller.toList();
@@ -194,6 +202,7 @@ class CartController extends GetxController {
         order_amount: item[2],
         order_date: Timestamp.now(),
         update_at: Timestamp.now(),
+        fee: double.parse((item[3] ?? 0).toString()),
       );
       await Get.find<OrderController>().createOrder(od);
       for (var oddItem in item[1]) {
