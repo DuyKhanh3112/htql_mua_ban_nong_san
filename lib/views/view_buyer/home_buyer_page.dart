@@ -1,7 +1,10 @@
 import 'package:card_banner/card_banner.dart';
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/banner_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
@@ -31,6 +34,15 @@ class HomeUserPage extends StatelessWidget {
     RxList<Product> topProductNew = <Product>[].obs;
     RxList<Product> topProductRatting = <Product>[].obs;
     RxList<Product> productBought = <Product>[].obs;
+
+    RxInt currentBanner = 0.obs;
+    final CarouselSliderController controller = CarouselSliderController();
+    // List listImageUrl = [
+    //   'https://media.vneconomy.vn/images/upload/2023/11/06/nong-san1.jpg',
+    //   'https://kinhtenongthon.vn/data/data/thanduong/2024/08/23/Thai%20la.jpg',
+    //   'https://cdn.baohatinh.vn/images/9809be34ee661c8030be3dcab5254b63b4f1c4224eabb3be0d6105c749b386c4dfc781f7398663777effc4e7939da9c82476db4d7782bc48b7a3b5f70cc6f8ac/70d5103247t1500l1-ky-uc-tet-trong-toi.jpg',
+    //   'https://file3.qdnd.vn/data/images/0/2022/01/03/nguyenthao/nong%20san.jpeg?dpi=150&quality=100&w=870',
+    // ];
 
     return Obx(() {
       loadData(topProductBestSeller, topProductNew, topProductRatting,
@@ -187,6 +199,92 @@ class HomeUserPage extends StatelessWidget {
                         scrollDirection: Axis.vertical,
                         child: Column(
                           children: [
+                            //banner
+                            Get.find<BannerController>().listBanner.isEmpty
+                                ? const SizedBox()
+                                : Column(
+                                    children: [
+                                      CarouselSlider(
+                                        items: Get.find<BannerController>()
+                                            .listBanner
+                                            .map(
+                                              (item) => Container(
+                                                // margin:
+                                                //     EdgeInsets.all(Get.width * 0.01),
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(40)),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .all(
+                                                        Radius.circular(40),
+                                                      ),
+                                                      image: DecorationImage(
+                                                        image: NetworkImage(
+                                                            item.image),
+                                                        fit: BoxFit.fill,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                        options: CarouselOptions(
+                                          enlargeCenterPage: true,
+                                          height: Get.width * 0.5,
+                                          onPageChanged: (index, reson) {
+                                            currentBanner.value = index;
+                                          },
+                                          autoPlay: true,
+                                        ),
+                                        carouselController: controller,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: Get.find<BannerController>()
+                                            .listBanner
+                                            .asMap()
+                                            .entries
+                                            .map((entry) {
+                                          return GestureDetector(
+                                            onTap: () => controller
+                                                .animateToPage(entry.key),
+                                            child: Container(
+                                              width: Get.width /
+                                                  (2 *
+                                                      Get.find<
+                                                              BannerController>()
+                                                          .listBanner
+                                                          .length),
+                                              height: 2.0,
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8.0,
+                                                      horizontal: 4.0),
+                                              decoration: BoxDecoration(
+                                                  shape: BoxShape.rectangle,
+                                                  color: (Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.white
+                                                          : Colors.black)
+                                                      .withOpacity(
+                                                          currentBanner.value ==
+                                                                  entry.key
+                                                              ? 0.9
+                                                              : 0.4)),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ],
+                                  ),
+
                             // SẢN PHẨM ĐÃ MUA
                             productBought.isEmpty
                                 ? const SizedBox()

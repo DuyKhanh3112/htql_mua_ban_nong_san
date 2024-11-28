@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/cloudinary_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/order_controller.dart';
 import 'package:htql_mua_ban_nong_san/models/buyer.dart';
@@ -144,6 +145,26 @@ class BuyerController extends GetxController {
       Buyer buyer = Buyer.fromJson(data);
       await buyerCollection.doc(buyer.id).update(buyer.toJson());
     }
+    isLoading.value = false;
+  }
+
+  Future<void> updateInformation(
+      String filePathAvatar, String filePathCover) async {
+    isLoading.value = true;
+    Buyer buyer = Get.find<MainController>().buyer.value;
+    if (filePathAvatar != '') {
+      Get.find<MainController>().buyer.value.avatar =
+          await CloudinaryController().uploadImage(filePathAvatar,
+              '${buyer.username}_avatar', 'buyer/${buyer.username}');
+    }
+    if (filePathCover != '') {
+      Get.find<MainController>().buyer.value.cover =
+          await CloudinaryController().uploadImage(filePathCover,
+              '${buyer.username}_cover', 'buyer/${buyer.username}');
+    }
+    await buyerCollection
+        .doc(buyer.id)
+        .update(Get.find<MainController>().buyer.value.toVal());
     isLoading.value = false;
   }
 }

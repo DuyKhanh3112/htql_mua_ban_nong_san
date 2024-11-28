@@ -87,10 +87,10 @@ class ProductController extends GetxController {
       Map<String, dynamic> data = item.data() as Map<String, dynamic>;
 
       data['id'] = item.id;
-      // data['sale_num'] =
-      //     await Get.find<OrderController>().getNumOfSale(data['id']);
-      // data['ratting'] =
-      //     await Get.find<ReviewController>().getRatting(data['id']);
+      data['sale_num'] =
+          await Get.find<OrderController>().getNumOfSale(data['id']);
+      data['ratting'] =
+          await Get.find<ReviewController>().getRatting(data['id']);
       listProduct.add(Product.fromJson(data));
 
       await loadProductImage(item.id);

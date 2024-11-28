@@ -295,7 +295,7 @@ class SearchProductPage extends StatelessWidget {
                                 const Text(
                                   'Loại sản phẩm',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     color: Colors.green,
                                   ),
                                 ),
@@ -316,7 +316,9 @@ class SearchProductPage extends StatelessWidget {
                                       ),
                                       for (var category
                                           in Get.find<CategoryController>()
-                                              .listCategory)
+                                              .listCategory
+                                              .where(
+                                                  (element) => !element.hide))
                                         DropdownMenuItem(
                                           value: category,
                                           child: Text(
@@ -397,7 +399,7 @@ class SearchProductPage extends StatelessWidget {
                                 const Text(
                                   'Tỉnh thành',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     color: Colors.green,
                                   ),
                                 ),
@@ -499,7 +501,7 @@ class SearchProductPage extends StatelessWidget {
                                 const Text(
                                   'Sắp xếp',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     color: Colors.green,
                                   ),
                                 ),

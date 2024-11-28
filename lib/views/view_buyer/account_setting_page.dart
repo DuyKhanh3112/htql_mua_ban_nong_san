@@ -178,7 +178,9 @@ class AccountSettingPage extends StatelessWidget {
                                       shape: const Border(
                                         bottom: BorderSide(color: Colors.green),
                                       ),
-                                      onTap: () {},
+                                      onTap: () {
+                                        Get.toNamed('/buyer_information');
+                                      },
                                     ),
                                   ),
                                   Container(

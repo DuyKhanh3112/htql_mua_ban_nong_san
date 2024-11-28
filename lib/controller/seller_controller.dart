@@ -56,7 +56,7 @@ class SellerController extends GetxController {
     for (var item in Get.find<ProductController>()
         .listProduct
         .where((p0) => p0.seller_id == seller.value.id)) {
-      if (item.sale_num! > 0 && item.ratting! > 0) {
+      if ((item.sale_num ?? 0) > 0 && (item.ratting ?? 0) > 0) {
         count += 1;
         ratting += item.ratting!;
       }
@@ -72,7 +72,7 @@ class SellerController extends GetxController {
     for (var item in Get.find<ProductController>()
         .listProduct
         .where((p0) => p0.seller_id == seller.value.id)) {
-      count += item.sale_num!;
+      count += item.sale_num ?? 0;
     }
     return count;
   }

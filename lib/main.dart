@@ -13,9 +13,9 @@ import 'package:htql_mua_ban_nong_san/login_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/admin_home_page.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:htql_mua_ban_nong_san/views/view_admin/personal_admin_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/product/product_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/address/address_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_buyer/buyer_information_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/cart_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/checkout_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_buyer/order/order_detail_page.dart';
@@ -90,7 +90,6 @@ class MyApp extends StatelessWidget {
         GetPage(name: "/", page: () => const HomePage()),
         GetPage(name: "/login", page: () => const LoginPage()),
         GetPage(name: "/register", page: () => const RegisterPage()),
-        GetPage(name: "/personal_admin", page: () => const PersonalAdminPage()),
         GetPage(name: "/cart", page: () => const CartPage()),
         GetPage(name: '/product_admin', page: () => const ProductHomePage()),
         GetPage(name: '/admin', page: () => const AdminHomePage()),
@@ -112,6 +111,9 @@ class MyApp extends StatelessWidget {
         GetPage(
             name: '/article_form', page: () => const ArticleSellerFormPage()),
         GetPage(name: '/view_seller', page: () => const SellerPage()),
+        GetPage(
+            name: '/buyer_information',
+            page: () => const BuyerInformationPage()),
       ],
     );
   }

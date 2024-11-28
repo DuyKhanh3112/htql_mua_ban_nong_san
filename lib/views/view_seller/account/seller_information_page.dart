@@ -60,24 +60,6 @@ class SellerInformationPage extends StatelessWidget {
                     ),
                   ),
                   actions: [
-                    // InkWell(
-                    //   child: Container(
-                    //     padding: EdgeInsets.only(right: Get.width * 0.02),
-                    //     child: const Icon(Icons.refresh),
-                    //   ),
-                    //   onTap: () {
-                    //     refershData(
-                    //         filePathAvatar,
-                    //         filePathCover,
-                    //         nameController,
-                    //         mainController,
-                    //         phoneController,
-                    //         taxCodeController,
-                    //         province,
-                    //         addressDetailController,
-                    //         provinceController);
-                    //   },
-                    // ),
                     PopupMenuButton<String>(
                       onSelected: (value) async {
                         if (value == 'refesh') {
@@ -200,12 +182,27 @@ class SellerInformationPage extends StatelessWidget {
                                   width: Get.width,
                                   decoration: BoxDecoration(
                                     // shape: BoxShape.circle,
+                                    color: Get.find<MainController>()
+                                                    .seller
+                                                    .value
+                                                    .cover ==
+                                                '' &&
+                                            filePathCover.value == ''
+                                        ? Colors.black12
+                                        : null,
                                     image: Get.find<MainController>()
                                                 .seller
                                                 .value
                                                 .cover ==
                                             ''
-                                        ? null
+                                        ? filePathCover.value == ''
+                                            ? null
+                                            : DecorationImage(
+                                                image: FileImage(
+                                                  File(filePathCover.value),
+                                                ),
+                                                fit: BoxFit.fill,
+                                              )
                                         : filePathCover.value == ''
                                             ? DecorationImage(
                                                 image: NetworkImage(
@@ -314,12 +311,27 @@ class SellerInformationPage extends StatelessWidget {
                                     width: Get.width * 0.2,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
+                                      color: Get.find<MainController>()
+                                                      .seller
+                                                      .value
+                                                      .avatar ==
+                                                  '' &&
+                                              filePathAvatar.value == ''
+                                          ? Colors.black12
+                                          : null,
                                       image: Get.find<MainController>()
                                                   .seller
                                                   .value
                                                   .avatar ==
                                               ''
-                                          ? null
+                                          ? filePathAvatar.value == ''
+                                              ? null
+                                              : DecorationImage(
+                                                  image: FileImage(
+                                                    File(filePathAvatar.value),
+                                                  ),
+                                                  fit: BoxFit.fill,
+                                                )
                                           : filePathAvatar.value == ''
                                               ? DecorationImage(
                                                   image: NetworkImage(
@@ -343,13 +355,30 @@ class SellerInformationPage extends StatelessWidget {
                                 ),
                                 SizedBox(
                                   width: Get.width * 0.6,
-                                  child: Text(
-                                    '${Get.find<MainController>().seller.value.username} \n(${Get.find<MainController>().seller.value.email})',
-                                    style: const TextStyle(
-                                      color: Colors.green,
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        Get.find<MainController>()
+                                            .seller
+                                            .value
+                                            .username,
+                                        style: const TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        '(${Get.find<MainController>().seller.value.email})',
+                                        style: const TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
