@@ -379,15 +379,14 @@ class HomeUserPage extends StatelessWidget {
                                             ),
                                           ),
                                           onTap: () {
-                                            // Get.find<ProductController>()
-                                            //     .listProduct
-                                            //     .sort((a, b) => b.create_at
-                                            //         .compareTo(
-                                            //             a.create_at));
+                                            Get.find<ProductController>()
+                                                .listProduct
+                                                .sort((a, b) => b.create_at
+                                                    .compareTo(a.create_at));
                                             Get.find<ProductController>()
                                                     .sortType
                                                     .value ==
-                                                'new';
+                                                '';
                                             Get.find<ProductController>()
                                                     .category
                                                     .value =
@@ -455,11 +454,11 @@ class HomeUserPage extends StatelessWidget {
                                                 ),
                                               ),
                                               onTap: () {
-                                                // Get.find<ProductController>()
-                                                //     .listProduct
-                                                //     .sort((a, b) => b.sale_num!
-                                                //         .compareTo(
-                                                //             a.sale_num!));
+                                                Get.find<ProductController>()
+                                                    .listProduct
+                                                    .sort((a, b) => b.sale_num!
+                                                        .compareTo(
+                                                            a.sale_num!));
                                                 Get.find<ProductController>()
                                                         .sortType
                                                         .value ==
@@ -528,10 +527,10 @@ class HomeUserPage extends StatelessWidget {
                                                 ),
                                               ),
                                               onTap: () {
-                                                // Get.find<ProductController>()
-                                                //     .listProduct
-                                                //     .sort((a, b) => b.ratting!
-                                                //         .compareTo(a.ratting!));
+                                                Get.find<ProductController>()
+                                                    .listProduct
+                                                    .sort((a, b) => b.ratting!
+                                                        .compareTo(a.ratting!));
                                                 Get.find<ProductController>()
                                                         .sortType
                                                         .value ==

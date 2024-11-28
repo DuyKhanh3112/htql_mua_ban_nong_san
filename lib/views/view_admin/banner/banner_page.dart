@@ -48,6 +48,9 @@ class BannerPage extends StatelessWidget {
                         Icons.refresh,
                       ),
                     ),
+                    SizedBox(
+                      width: Get.width * 0.02,
+                    ),
                     InkWell(
                       onTap: () async {
                         final RxString typeSource = ''.obs;
