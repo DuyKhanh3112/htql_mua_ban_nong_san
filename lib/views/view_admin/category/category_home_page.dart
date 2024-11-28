@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:convert_vietnamese/convert_vietnamese.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -150,29 +151,6 @@ class CategoryHomePage extends StatelessWidget {
                               ],
                             ),
                           ),
-                          // InkWell(
-                          //   onTap: () {
-                          //     widgetCreateCategory(context);
-                          //   },
-                          //   child: const Icon(
-                          //     Icons.add_circle_outline,
-                          //     size: 35,
-                          //     color: Colors.green,
-                          //   ),
-                          // ),
-                          // TextButton.icon(
-                          //   onPressed: () {},
-                          //   icon: const Icon(
-                          //     Icons.add_circle_outline,
-                          //     size: 35,
-                          //     color: Colors.green,
-                          //   ),
-                          //   label: const Text(
-                          //     'Thêm loại sản phẩm',
-                          //     style:
-                          //         TextStyle(color: Colors.green, fontSize: 16,),
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
@@ -257,9 +235,33 @@ class CategoryHomePage extends StatelessWidget {
             width: Get.width * 0.15,
             child: Switch(
                 value: !category.hide,
-                onChanged: (value) {
-                  category.hide = !value;
-                  Get.find<CategoryController>().updateCategory(category);
+                onChanged: (value) async {
+                  await AwesomeDialog(
+                          titleTextStyle: const TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22,
+                          ),
+                          descTextStyle: const TextStyle(
+                            color: Colors.green,
+                            fontSize: 16,
+                          ),
+                          context: context,
+                          dialogType: DialogType.question,
+                          animType: AnimType.rightSlide,
+                          title: 'Xác nhận',
+                          desc: category.hide
+                              ? 'Bạn có muốn  hiển thị Loại sản phẩm ${category.name} không?'
+                              : 'Bạn có muốn ẩn Loại sản phẩm ${category.name} không?',
+                          btnOkText: 'Xác nhận',
+                          btnCancelText: 'Không',
+                          btnOkOnPress: () async {
+                            category.hide = !value;
+                            Get.find<CategoryController>()
+                                .updateCategory(category);
+                          },
+                          btnCancelOnPress: () {})
+                      .show();
                 }),
           ),
         ],
@@ -447,7 +449,7 @@ class CategoryHomePage extends StatelessWidget {
                             },
                             style: const ButtonStyle(
                               backgroundColor:
-                                  MaterialStatePropertyAll(Colors.green),
+                                  WidgetStatePropertyAll(Colors.green),
                             ),
                             child: const Text(
                               'Xóa ảnh',
@@ -690,7 +692,7 @@ class CategoryHomePage extends StatelessWidget {
                             },
                             style: const ButtonStyle(
                               backgroundColor:
-                                  MaterialStatePropertyAll(Colors.green),
+                                  WidgetStatePropertyAll(Colors.green),
                             ),
                             child: const Text(
                               'Xóa ảnh',

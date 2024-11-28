@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:convert_vietnamese/convert_vietnamese.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
@@ -21,12 +22,14 @@ class ProductSellerHomePage extends StatelessWidget {
     MainController mainController = Get.find<MainController>();
     SellerController sellerController = Get.find<SellerController>();
     ProductController productController = Get.find<ProductController>();
-    TextEditingController searchController = TextEditingController();
+    Rx<TextEditingController> searchController = TextEditingController().obs;
     final currencyFormatter =
         NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ');
     RxBool isSearch = false.obs;
+    RxList<Product> listProduct = <Product>[].obs;
 
     return Obx(() {
+      refeshData(searchController, listProduct, productController);
       return mainController.isLoading.value ||
               sellerController.isLoading.value ||
               productController.isLoading.value
@@ -54,7 +57,7 @@ class ProductSellerHomePage extends StatelessWidget {
                       for (var item in productController.listStatus)
                         Tab(
                           text:
-                              '${item['label']} (${productController.listProduct.where((p0) => p0.status == item['value'] && (searchController.text.isEmpty || p0.name.contains(searchController.text))).length})',
+                              '${item['label']} (${productController.listProduct.where((p0) => p0.status == item['value'] && (searchController.value.text.isEmpty || removeDiacritics(p0.name.toLowerCase()).contains(removeDiacritics(searchController.value.text.toLowerCase())))).length})',
                           // icon: Icon(Icons.flight),
                         ),
                     ],
@@ -87,10 +90,16 @@ class ProductSellerHomePage extends StatelessWidget {
                                       fontStyle: FontStyle.italic,
                                     ),
                                   ),
+                                  controller: searchController.value,
+                                  onChanged: (value) {
+                                    refeshData(searchController, listProduct,
+                                        productController);
+                                  },
                                 ),
                               ),
                               IconButton(
                                 onPressed: () {
+                                  searchController.value.clear();
                                   isSearch.value = false;
                                 },
                                 icon: const Icon(Icons.arrow_right),
@@ -128,7 +137,7 @@ class ProductSellerHomePage extends StatelessWidget {
                           scrollDirection: Axis.vertical,
                           child: Column(
                             children: [
-                              for (var product in productController.listProduct
+                              for (var product in listProduct
                                   .where((p0) => p0.status == item['value']))
                                 productDetail(product, currencyFormatter,
                                     productController, context),
@@ -163,6 +172,20 @@ class ProductSellerHomePage extends StatelessWidget {
               ),
             );
     });
+  }
+
+  void refeshData(Rx<TextEditingController> searchController,
+      RxList<Product> listProduct, ProductController productController) {
+    if (searchController.value.text.isEmpty) {
+      listProduct.value = productController.listProduct;
+    } else {
+      listProduct.value = productController.listProduct
+          .where(
+            (p0) => removeDiacritics(p0.name.toLowerCase()).contains(
+                removeDiacritics(searchController.value.text.toLowerCase())),
+          )
+          .toList();
+    }
   }
 
   Container productDetail(Product product, NumberFormat currencyFormatter,

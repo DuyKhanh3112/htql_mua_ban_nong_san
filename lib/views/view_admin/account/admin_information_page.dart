@@ -146,9 +146,21 @@ class AdminInformationPage extends StatelessWidget {
                                     width: Get.width,
                                     decoration: BoxDecoration(
                                       // shape: BoxShape.circle,
+                                      color: mainController.admin.value.cover ==
+                                                  '' &&
+                                              filePathCover.value == ''
+                                          ? Colors.black12
+                                          : null,
                                       image: mainController.admin.value.cover ==
                                               ''
-                                          ? null
+                                          ? filePathCover.value == ''
+                                              ? null
+                                              : DecorationImage(
+                                                  image: FileImage(
+                                                    File(filePathCover.value),
+                                                  ),
+                                                  fit: BoxFit.fill,
+                                                )
                                           : filePathCover.value == ''
                                               ? DecorationImage(
                                                   image: NetworkImage(
@@ -257,10 +269,24 @@ class AdminInformationPage extends StatelessWidget {
                                       width: Get.width * 0.2,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
+                                        color:
+                                            mainController.admin.value.avatar ==
+                                                        '' &&
+                                                    filePathAvatar.value == ''
+                                                ? Colors.black12
+                                                : null,
                                         image: mainController
                                                     .admin.value.avatar ==
                                                 ''
-                                            ? null
+                                            ? filePathAvatar.value == ''
+                                                ? null
+                                                : DecorationImage(
+                                                    image: FileImage(
+                                                      File(
+                                                          filePathAvatar.value),
+                                                    ),
+                                                    fit: BoxFit.fill,
+                                                  )
                                             : filePathAvatar.value == ''
                                                 ? DecorationImage(
                                                     image: NetworkImage(

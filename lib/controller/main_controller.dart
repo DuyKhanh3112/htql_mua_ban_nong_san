@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/address_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/article_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/banner_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
@@ -17,6 +18,7 @@ import 'package:htql_mua_ban_nong_san/models/buyer.dart';
 import 'package:htql_mua_ban_nong_san/models/province.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/account/admin_information_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/article/article_admin_page.dart';
+import 'package:htql_mua_ban_nong_san/views/view_admin/banner/banner_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/buyer/buyer_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/category/category_home_page.dart';
 import 'package:htql_mua_ban_nong_san/views/view_admin/product/product_home_page.dart';
@@ -70,6 +72,7 @@ class MainController extends GetxController {
     const ArticleAdminPage(), //5
     const ReportSellerPage(), //6
     const ReportBuyerPage(), //7
+    const BannerPage(), //8
   ];
   RxInt indexAdmin = 0.obs;
 
@@ -193,6 +196,7 @@ class MainController extends GetxController {
     await Get.find<ProvinceController>().loadProvince();
     await Get.find<CategoryController>().loadCategory();
     await Get.find<SellerController>().loadSeller();
+    await Get.find<BannerController>().loadBanner();
     Get.find<ProductController>().loadProductActive();
     Get.find<ArticleController>().loadAllArticle();
     isLoading.value = false;

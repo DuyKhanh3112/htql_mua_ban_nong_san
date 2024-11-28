@@ -24,32 +24,32 @@ import 'package:intl/intl.dart';
 
 class SearchProductPage extends StatelessWidget {
   const SearchProductPage({super.key});
-  void loadData(RxList<Product> listProduct) {
-    if (Get.find<ProductController>().sortType.value == 'new') {
+  void loadData(RxList<Product> listProduct, RxString sortType) {
+    if (sortType.value == 'new') {
       Get.find<ProductController>()
           .listProduct
           .value
           .sort((a, b) => b.create_at.compareTo(a.create_at));
     }
-    if (Get.find<ProductController>().sortType.value == 'sell') {
+    if (sortType.value == 'sell') {
       Get.find<ProductController>()
           .listProduct
           .value
           .sort((a, b) => b.sale_num!.compareTo(a.sale_num!));
     }
-    if (Get.find<ProductController>().sortType.value == 'new') {
+    if (sortType.value == 'ratting') {
       Get.find<ProductController>()
           .listProduct
           .value
-          .sort((a, b) => b.create_at.compareTo(a.create_at));
+          .sort((a, b) => b.ratting!.compareTo(a.ratting!));
     }
-    if (Get.find<ProductController>().sortType.value == 'price_asc') {
+    if (sortType.value == 'price_asc') {
       Get.find<ProductController>()
           .listProduct
           .value
           .sort((a, b) => a.price.compareTo(b.price));
     }
-    if (Get.find<ProductController>().sortType.value == 'price_desc') {
+    if (sortType.value == 'price_desc') {
       Get.find<ProductController>()
           .listProduct
           .value
@@ -119,10 +119,11 @@ class SearchProductPage extends StatelessWidget {
       {'value': 'price_asc', 'label': 'Giá tăng dần'},
       {'value': 'price_desc', 'label': 'Giá giảm dần'},
     ];
+    RxString sortType = ''.obs;
     category.value = Get.find<ProductController>().category.value;
 
     return Obx(() {
-      loadData(listProduct);
+      loadData(listProduct, sortType);
       if (category.value.id != '') {
         listProduct.value = listProduct
             .where(
@@ -217,7 +218,7 @@ class SearchProductPage extends StatelessWidget {
                                     color: Colors.white,
                                   ),
                                   onTap: () {
-                                    loadData(listProduct);
+                                    loadData(listProduct, sortType);
                                   },
                                 ),
                                 border: InputBorder.none,
@@ -295,7 +296,7 @@ class SearchProductPage extends StatelessWidget {
                                 const Text(
                                   'Loại sản phẩm',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     color: Colors.green,
                                   ),
                                 ),
@@ -316,7 +317,9 @@ class SearchProductPage extends StatelessWidget {
                                       ),
                                       for (var category
                                           in Get.find<CategoryController>()
-                                              .listCategory)
+                                              .listCategory
+                                              .where(
+                                                  (element) => !element.hide))
                                         DropdownMenuItem(
                                           value: category,
                                           child: Text(
@@ -397,7 +400,7 @@ class SearchProductPage extends StatelessWidget {
                                 const Text(
                                   'Tỉnh thành',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     color: Colors.green,
                                   ),
                                 ),
@@ -499,7 +502,7 @@ class SearchProductPage extends StatelessWidget {
                                 const Text(
                                   'Sắp xếp',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     color: Colors.green,
                                   ),
                                 ),
@@ -507,10 +510,7 @@ class SearchProductPage extends StatelessWidget {
                                   child: DropdownButton2(
                                     value: listSortType.firstWhereOrNull(
                                         (item) =>
-                                            item['value'] ==
-                                            Get.find<ProductController>()
-                                                .sortType
-                                                .value),
+                                            item['value'] == sortType.value),
                                     items: listSortType
                                         .map(
                                           (item) => DropdownMenuItem(
@@ -532,9 +532,7 @@ class SearchProductPage extends StatelessWidget {
                                       if (item != null) {
                                         Map<String, dynamic> data =
                                             item as Map<String, dynamic>;
-                                        Get.find<ProductController>()
-                                            .sortType
-                                            .value = data["value"];
+                                        sortType.value = data["value"];
                                       }
                                     },
                                     dropdownStyleData: DropdownStyleData(

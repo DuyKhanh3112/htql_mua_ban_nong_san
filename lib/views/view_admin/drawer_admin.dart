@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/admin_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/article_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/banner_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
@@ -133,14 +134,31 @@ class DrawerAdmin extends StatelessWidget {
                             ),
                           ),
                           onTap: () {
-                            // Get.toNamed('/personal_admin');
-
                             Get.back();
                             mainController.indexAdmin.value = 0;
                           },
                         ),
                         const SizedBox(
                           height: 10,
+                        ),
+                        ListTile(
+                          leading: Image.asset(
+                            'assets/images/banner_icon.png',
+                            width: 40,
+                          ),
+                          title: const Text(
+                            'Banner',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          onTap: () async {
+                            Get.back();
+                            await Get.find<BannerController>().loadBanner();
+                            mainController.indexAdmin.value = 8;
+                          },
                         ),
                         ListTile(
                           leading: Image.asset(

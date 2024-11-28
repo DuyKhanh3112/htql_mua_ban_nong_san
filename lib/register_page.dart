@@ -887,8 +887,8 @@ class RegisterPage extends StatelessWidget {
       return false;
     }
 
-    buyer.avatar = await CloudinaryController()
-        .uploadImage(filePath, buyer.username, 'seller');
+    buyer.avatar = await CloudinaryController().uploadImage(
+        filePath, '${buyer.username}_avatar', 'seller/${buyer.username}');
 
     await buyerController.createBuyer(buyer);
     buyerController.isLoading.value = false;
@@ -948,7 +948,7 @@ class RegisterPage extends StatelessWidget {
       return false;
     }
     seller.avatar = await CloudinaryController().uploadImage(
-        filePath, '${seller.username}_avater', 'seller/${seller.username}');
+        filePath, '${seller.username}_avatar', 'seller/${seller.username}');
     await sellerController.createSeller(seller);
 
     sellerController.isLoading.value = false;
@@ -963,63 +963,4 @@ class RegisterPage extends StatelessWidget {
     ).show();
     return true;
   }
-
-  // Future<bool> createSeller(Seller seller, SellerController sellerController,
-  //     BuildContext context, Cloudinary cloudinary, String filePath) async {
-  //   if (await sellerController.checkExistUsername(seller.username)) {
-  //     sellerController.isLoading.value = false;
-  //     // ignore: use_build_context_synchronously
-  //     await AwesomeDialog(
-  //       context: context,
-  //       dialogType: DialogType.error,
-  //       animType: AnimType.rightSlide,
-  //       title: 'Lỗi!',
-  //       desc: 'Tên đăng nhập đã tồn tại.',
-  //       btnOkOnPress: () {},
-  //     ).show();
-  //     return false;
-  //   }
-  //   if (await sellerController.checkExistPhone(seller.phone)) {
-  //     sellerController.isLoading.value = false;
-  //     // ignore: use_build_context_synchronously
-  //     await AwesomeDialog(
-  //       context: context,
-  //       dialogType: DialogType.error,
-  //       animType: AnimType.rightSlide,
-  //       title: 'Lỗi!',
-  //       desc: 'Số điện thoại đã tồn tại.',
-  //       btnOkOnPress: () {},
-  //     ).show();
-  //     return false;
-  //   }
-  //   if (await sellerController.checkExistEmail(seller.email)) {
-  //     sellerController.isLoading.value = false;
-  //     // ignore: use_build_context_synchronously
-  //     await AwesomeDialog(
-  //       context: context,
-  //       dialogType: DialogType.error,
-  //       animType: AnimType.rightSlide,
-  //       title: 'Lỗi!',
-  //       desc: 'Email đã tồn tại.',
-  //       btnOkOnPress: () {},
-  //     ).show();
-  //     return false;
-  //   }
-
-  //   // seller.avatar = await uploadImage(
-  //   //     cloudinary, filePath, buyer, context, sellerController);
-
-  //   await sellerController.createSeller(seller);
-  //   sellerController.isLoading.value = false;
-  //   // ignore: use_build_context_synchronously
-  //   await AwesomeDialog(
-  //     context: context,
-  //     dialogType: DialogType.success,
-  //     animType: AnimType.rightSlide,
-  //     title: 'Thành công',
-  //     desc: 'Đăng ký tài khoản người mua thành công.',
-  //     btnOkOnPress: () {},
-  //   ).show();
-  //   return true;
-  // }
 }

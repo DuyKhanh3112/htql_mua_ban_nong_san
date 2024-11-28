@@ -1,4 +1,6 @@
 // import 'package:awesome_dialog/awesome_dialog.dart';
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -245,7 +247,6 @@ class LoginPage extends StatelessWidget {
                                           if (await mainController.login(
                                               usernameController.value.text,
                                               passwordController.value.text)) {
-                                            // ignore: use_build_context_synchronously
                                             if (mainController.buyer.value.id !=
                                                     '' &&
                                                 mainController
@@ -258,7 +259,6 @@ class LoginPage extends StatelessWidget {
                                                 mainController
                                                         .buyer.value.status ==
                                                     'inactive') {
-                                              // ignore: use_build_context_synchronously
                                               await AwesomeDialog(
                                                 titleTextStyle: const TextStyle(
                                                   color: Colors.green,
@@ -284,7 +284,6 @@ class LoginPage extends StatelessWidget {
                                                   Seller.initSeller();
                                             } else {}
                                           } else {
-                                            // ignore: use_build_context_synchronously
                                             await AwesomeDialog(
                                               titleTextStyle: const TextStyle(
                                                 color: Colors.green,
@@ -310,8 +309,7 @@ class LoginPage extends StatelessWidget {
                                         }
                                       },
                                       style: const ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStatePropertyAll(
+                                        backgroundColor: WidgetStatePropertyAll(
                                           Colors.green,
                                         ),
                                       ),
@@ -342,8 +340,7 @@ class LoginPage extends StatelessWidget {
                                         Get.toNamed('/register');
                                       },
                                       style: const ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStatePropertyAll(
+                                        backgroundColor: WidgetStatePropertyAll(
                                           Colors.lightGreen,
                                         ),
                                       ),
@@ -467,7 +464,6 @@ class LoginPage extends StatelessWidget {
                   mainController.typeForgot.value = '';
                 }
                 if (mainController.typeForgot.value == '') {
-                  // ignore: use_build_context_synchronously
                   await AwesomeDialog(
                     titleTextStyle: const TextStyle(
                       color: Colors.green,
@@ -493,8 +489,8 @@ class LoginPage extends StatelessWidget {
               }
             },
             style: const ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.green),
-              shape: MaterialStatePropertyAll(
+              backgroundColor: WidgetStatePropertyAll(Colors.green),
+              shape: WidgetStatePropertyAll(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(
                     Radius.circular(20),
@@ -615,8 +611,8 @@ class LoginPage extends StatelessWidget {
               }
             },
             style: const ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(Colors.green),
-              shape: MaterialStatePropertyAll(
+              backgroundColor: WidgetStatePropertyAll(Colors.green),
+              shape: WidgetStatePropertyAll(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(
                     Radius.circular(20),
@@ -833,8 +829,8 @@ class LoginPage extends StatelessWidget {
                 }
               },
               style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Colors.green),
-                shape: MaterialStatePropertyAll(
+                backgroundColor: WidgetStatePropertyAll(Colors.green),
+                shape: WidgetStatePropertyAll(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(
                       Radius.circular(20),
