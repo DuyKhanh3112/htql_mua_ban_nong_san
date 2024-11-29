@@ -261,7 +261,7 @@ class ProductSellerFormPage extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text(
-                                      'Tỉnh thành',
+                                      'Xuất xứ',
                                       style: TextStyle(
                                         fontSize: 16,
                                         color: Colors.green,

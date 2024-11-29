@@ -98,7 +98,34 @@ class ProductController extends GetxController {
     isLoading.value = false;
   }
 
-  Future<void> loadProductAllBySeller() async {
+  // Future<void> loadProductAllBySeller() async {
+  //   isLoading.value = true;
+  //   listProduct.value = [];
+  //   listProductImage.value = [];
+  //   final snapshotProduct = await productCollection
+  //       .where('seller_id',
+  //           isEqualTo: Get.find<MainController>().seller.value.id)
+  //       .where('category_id',
+  //           whereIn: Get.find<CategoryController>()
+  //               .listCategory
+  //               .where((p0) => p0.hide == false)
+  //               .map((element) => element.id)
+  //               .toList())
+  //       .get();
+  //   for (var item in snapshotProduct.docs) {
+  //     Map<String, dynamic> data = item.data() as Map<String, dynamic>;
+  //     data['id'] = item.id;
+  //     data['sale_num'] =
+  //         await Get.find<OrderController>().getNumOfSale(data['id']);
+  //     data['ratting'] =
+  //         await Get.find<ReviewController>().getRatting(data['id']);
+  //     listProduct.add(Product.fromJson(data));
+  //     await loadProductImage(item.id);
+  //   }
+  //   isLoading.value = false;
+  // }
+
+  Future<void> loadProductActiveBySeller() async {
     isLoading.value = true;
     listProduct.value = [];
     listProductImage.value = [];
@@ -111,6 +138,7 @@ class ProductController extends GetxController {
                 .where((p0) => p0.hide == false)
                 .map((element) => element.id)
                 .toList())
+        .where('status', isEqualTo: 'active')
         .get();
     for (var item in snapshotProduct.docs) {
       Map<String, dynamic> data = item.data() as Map<String, dynamic>;

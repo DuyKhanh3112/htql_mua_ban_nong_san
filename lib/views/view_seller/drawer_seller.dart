@@ -295,7 +295,8 @@ class DrawerSeller extends StatelessWidget {
                     onTap: () async {
                       Get.find<SellerController>().seller.value =
                           mainController.seller.value;
-                      Get.find<ProductController>().loadProductAllBySeller();
+                      Get.find<ProductController>().loadProductActive();
+                      Get.find<ArticleController>().loadArticleBySeller();
                       Get.toNamed('/view_seller');
                     },
                   ),

@@ -238,7 +238,7 @@ class ReportController extends GetxController {
   Future<void> showReportProduct() async {
     isLoading.value = true;
     reportProductStatus.value = [];
-    await Get.find<ProductController>().loadProductAllBySeller();
+    await Get.find<ProductController>().loadProductBySeller();
     if (Get.find<ProductController>().listProduct.isNotEmpty) {
       for (var status in Get.find<ProductController>().listStatus) {
         if (Get.find<ProductController>()
