@@ -29,7 +29,7 @@ class AdminController extends GetxController {
     if (filePathAvatar != '') {
       Get.find<MainController>().admin.value.avatar =
           await CloudinaryController().uploadImage(filePathAvatar,
-              '${admin.username}_cover', 'admin/${admin.username}');
+              '${admin.username}_avatar', 'admin/${admin.username}');
     }
 
     await adminCollection
