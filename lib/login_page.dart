@@ -96,7 +96,7 @@ class LoginPage extends StatelessWidget {
                             children: [
                               Image(
                                 image: NetworkImage(
-                                    'https://res.cloudinary.com/dg3p7nxyp/image/upload/v1722935387/app/logo.jpg'),
+                                    'https://res.cloudinary.com/dg3p7nxyp/image/upload/v1722935387/app/logo_remove_bg.png'),
                                 // height: 100,
                                 width: 150,
                               ),
