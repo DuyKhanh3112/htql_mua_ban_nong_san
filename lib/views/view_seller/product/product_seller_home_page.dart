@@ -181,8 +181,11 @@ class ProductSellerHomePage extends StatelessWidget {
     } else {
       listProduct.value = productController.listProduct
           .where(
-            (p0) => removeDiacritics(p0.name.toLowerCase()).contains(
-                removeDiacritics(searchController.value.text.toLowerCase())),
+            (p0) =>
+                p0.seller_id == Get.find<MainController>().seller.value.id &&
+                removeDiacritics(p0.name.toLowerCase()).contains(
+                    removeDiacritics(
+                        searchController.value.text.toLowerCase())),
           )
           .toList();
     }

@@ -58,7 +58,20 @@ class ProductController extends GetxController {
     }
 
     await productCollection.doc(pro.id).update(pro.toVal());
-    // await loadAllProduct();
+    // await loadProductByIDServer(pro.id);
+    listProductImage.removeWhere(
+      (element) => element.product_id == pro.id,
+    );
+    loadProductImage(pro.id);
+    isLoading.value = false;
+  }
+
+  Future<void> deleteProductImg(ProductImage proImg) async {
+    isLoading.value = true;
+    await CloudinaryController()
+        .deleteImage(proImg.id, 'product/${proImg.product_id}/');
+    await productImageCollection.doc(proImg.id).delete();
+
     isLoading.value = false;
   }
 
@@ -92,8 +105,7 @@ class ProductController extends GetxController {
       data['ratting'] =
           await Get.find<ReviewController>().getRatting(data['id']);
       listProduct.add(Product.fromJson(data));
-
-      await loadProductImage(item.id);
+      loadProductImage(item.id);
     }
     isLoading.value = false;
   }
@@ -150,7 +162,7 @@ class ProductController extends GetxController {
           await Get.find<ReviewController>().getRatting(data['id']);
       listProduct.add(Product.fromJson(data));
 
-      await loadProductImage(item.id);
+      loadProductImage(item.id);
     }
     isLoading.value = false;
   }
@@ -197,14 +209,15 @@ class ProductController extends GetxController {
 
       listProduct.add(Product.fromJson(data));
 
-      final snapshotImg = await productImageCollection
-          .where('product_id', isEqualTo: item.id)
-          .get();
-      for (var img in snapshotImg.docs) {
-        Map<String, dynamic> dataImg = img.data() as Map<String, dynamic>;
-        dataImg['id'] = img.id;
-        listProductImage.add(ProductImage.fromJson(dataImg));
-      }
+      // final snapshotImg = await productImageCollection
+      //     .where('product_id', isEqualTo: item.id)
+      //     .get();
+      // for (var img in snapshotImg.docs) {
+      //   Map<String, dynamic> dataImg = img.data() as Map<String, dynamic>;
+      //   dataImg['id'] = img.id;
+      //   listProductImage.add(ProductImage.fromJson(dataImg));
+      // }
+      loadProductImage(item.id);
     }
     listProduct.sort((a, b) => b.create_at.compareTo(a.create_at));
     isLoading.value = false;
@@ -239,14 +252,15 @@ class ProductController extends GetxController {
 
       listProduct.add(Product.fromJson(data));
 
-      final snapshotImg = await productImageCollection
-          .where('product_id', isEqualTo: item.id)
-          .get();
-      for (var img in snapshotImg.docs) {
-        Map<String, dynamic> dataImg = img.data() as Map<String, dynamic>;
-        dataImg['id'] = img.id;
-        listProductImage.add(ProductImage.fromJson(dataImg));
-      }
+      // final snapshotImg = await productImageCollection
+      //     .where('product_id', isEqualTo: item.id)
+      //     .get();
+      // for (var img in snapshotImg.docs) {
+      //   Map<String, dynamic> dataImg = img.data() as Map<String, dynamic>;
+      //   dataImg['id'] = img.id;
+      //   listProductImage.add(ProductImage.fromJson(dataImg));
+      // }
+      loadProductImage(item.id);
     }
     listProduct.sort((a, b) => b.create_at.compareTo(a.create_at));
     isLoading.value = false;
@@ -260,6 +274,16 @@ class ProductController extends GetxController {
 
     batch.set(refPrduct, product.value.toVal());
 
+    await createProductImage(listFilePath, productID);
+    await batch.commit();
+    await loadProductBySeller();
+    isLoading.value = false;
+  }
+
+  Future<void> createProductImage(
+      List<dynamic> listFilePath, String productID) async {
+    isLoading.value = true;
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     for (var path in listFilePath) {
       DocumentReference refImg =
           productImageCollection.doc(productImageCollection.doc().id);
@@ -276,7 +300,6 @@ class ProductController extends GetxController {
       }
     }
     await batch.commit();
-    await loadProductBySeller();
     isLoading.value = false;
   }
 

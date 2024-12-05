@@ -198,7 +198,7 @@ class DrawerSeller extends StatelessWidget {
             //     ],
             //   ),
             // ),
-            Divider(),
+            const Divider(),
             Expanded(
               child: ListView(
                 children: [
@@ -245,7 +245,7 @@ class DrawerSeller extends StatelessWidget {
                                 // Get.toNamed('/product_seller');
                                 Get.back();
                                 mainController.indexSeller.value = 1;
-                                await Get.find<ProductController>()
+                                Get.find<ProductController>()
                                     .loadProductBySeller();
                               },
                             ),
@@ -393,7 +393,7 @@ class DrawerSeller extends StatelessWidget {
                     onTap: () async {
                       Get.find<SellerController>().seller.value =
                           mainController.seller.value;
-                      Get.find<ProductController>().loadProductActive();
+                      Get.find<ProductController>().loadProductBySeller();
                       Get.find<ArticleController>().loadArticleBySeller();
                       Get.toNamed('/view_seller');
                     },

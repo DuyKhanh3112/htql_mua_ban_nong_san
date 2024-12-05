@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/article_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
@@ -102,6 +103,18 @@ class SellerPage extends StatelessWidget {
                                   width: Get.width * 0.1,
                                   child: InkWell(
                                     onTap: () {
+                                      Get.find<MainController>()
+                                          .isLoading
+                                          .value = false;
+                                      Get.find<SellerController>()
+                                          .isLoading
+                                          .value = false;
+                                      Get.find<BuyerController>()
+                                          .isLoading
+                                          .value = false;
+                                      Get.find<ProductController>()
+                                          .isLoading
+                                          .value = false;
                                       Get.back();
                                     },
                                     child: const Icon(

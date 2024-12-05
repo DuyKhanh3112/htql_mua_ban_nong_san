@@ -167,6 +167,7 @@ class MainController extends GetxController {
       data['id'] = snapshotSeller.docs[0].id;
 
       seller.value = Seller.fromJson(data);
+      indexSeller.value = 0;
       Get.toNamed('/seller');
       isLoading.value = false;
       return true;
@@ -182,6 +183,7 @@ class MainController extends GetxController {
           snapshotAdmin.docs[0].data() as Map<String, dynamic>;
       data['id'] = snapshotAdmin.docs[0].id;
       admin.value = Admin.fromJson(data);
+      indexAdmin.value = 0;
       Get.toNamed('/admin');
       isLoading.value = false;
       return true;

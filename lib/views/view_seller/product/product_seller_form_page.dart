@@ -1066,6 +1066,31 @@ class ProductSellerFormPage extends StatelessWidget {
                                       'draft';
                                 }
 
+                                if (listFilePath.isNotEmpty) {
+                                  await productController.createProductImage(
+                                      listFilePath.value, pro.id);
+                                }
+                                if (listImageUrl.length <
+                                    productController.listProductImage
+                                        .where(
+                                          (p0) => p0.product_id == pro.id,
+                                        )
+                                        .length) {
+                                  for (var proImg in productController
+                                      .listProductImage
+                                      .where(
+                                    (p0) =>
+                                        p0.product_id == pro.id &&
+                                        !listImageUrl
+                                            .map(
+                                              (element) => element.id,
+                                            )
+                                            .toList()
+                                            .contains(p0.id),
+                                  )) {
+                                    productController.deleteProductImg(proImg);
+                                  }
+                                }
                                 await productController.updateProduct(
                                     productController.product.value);
 
@@ -1138,9 +1163,10 @@ class ProductSellerFormPage extends StatelessWidget {
               .toString()
               .toString()
           : '';
-      priceController.text = NumberFormat.decimalPatternDigits(decimalDigits: 0)
-          .format(pro.price)
-          .toString();
+      // priceController.text = NumberFormat.decimalPatternDigits(decimalDigits: 0)
+      //     .format(pro.price)
+      //     .toString();
+      priceController.text = pro.price.toString().replaceAll('.0', '');
       quantityController.text =
           NumberFormat.decimalPatternDigits(decimalDigits: 0)
               .format(pro.quantity)
