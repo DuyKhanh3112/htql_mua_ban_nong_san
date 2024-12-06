@@ -628,7 +628,7 @@ class SellerPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
               alignment: Alignment.centerRight,
               width: Get.width * 0.5,
-              child: product.ratting == 0
+              child: product.ratting == 0 || product.ratting == null
                   ? const Text(
                       'Chưa có đánh giá',
                       style: TextStyle(
@@ -658,7 +658,7 @@ class SellerPage extends StatelessWidget {
                           alignment: Alignment.centerLeft,
                           width: Get.width * 0.1,
                           child: Text(
-                            '(${NumberFormat.decimalPatternDigits(decimalDigits: 1).format(product.ratting)})',
+                            '(${NumberFormat.decimalPatternDigits(decimalDigits: 1).format(product.ratting ?? 0)})',
                             style: const TextStyle(
                               fontSize: 12,
                               color: Colors.green,
@@ -675,7 +675,7 @@ class SellerPage extends StatelessWidget {
               alignment: Alignment.centerRight,
               width: Get.width * 0.5,
               child: Text(
-                'Đã bán: ${NumberFormat.decimalPattern().format(product.sale_num)}',
+                'Đã bán: ${NumberFormat.decimalPattern().format(product.sale_num ?? 0)}',
                 style: const TextStyle(
                   fontSize: 12,
                   color: Colors.green,

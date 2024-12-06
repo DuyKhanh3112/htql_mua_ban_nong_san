@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_unnecessary_containers
+
 import 'package:card_banner/card_banner.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -48,7 +50,8 @@ class HomeUserPage extends StatelessWidget {
       loadData(topProductBestSeller, topProductNew, topProductRatting,
           mainController, productBought);
 
-      return mainController.isLoading.value
+      return mainController.isLoading.value ||
+              Get.find<ProductController>().isLoading.value
           ? const LoadingPage()
           : SafeArea(
               child: Scaffold(
@@ -572,7 +575,8 @@ class HomeUserPage extends StatelessWidget {
           .listProduct
           .where((p0) => p0.status == 'active')
           .toList();
-      topProductBestSeller.sort((a, b) => b.sale_num!.compareTo(a.sale_num!));
+      topProductBestSeller
+          .sort((a, b) => (b.sale_num ?? 0).compareTo(a.sale_num ?? 0));
 
       topProductNew.value = Get.find<ProductController>()
           .listProduct
@@ -584,7 +588,8 @@ class HomeUserPage extends StatelessWidget {
           .listProduct
           .where((p0) => p0.status == 'active')
           .toList();
-      topProductRatting.sort((a, b) => b.ratting!.compareTo(a.ratting!));
+      topProductRatting
+          .sort((a, b) => (b.ratting ?? 0).compareTo(a.ratting ?? 0));
 
       if (mainController.buyer.value.id != '') {
         productBought.value = Get.find<BuyerController>().listProductBought;
@@ -714,7 +719,7 @@ class HomeUserPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
               alignment: Alignment.centerRight,
               width: Get.width * 0.5,
-              child: product.ratting == 0
+              child: (product.ratting ?? 0) == 0
                   ? const Text(
                       'Chưa có đánh giá',
                       style: TextStyle(
@@ -761,7 +766,7 @@ class HomeUserPage extends StatelessWidget {
               alignment: Alignment.centerRight,
               width: Get.width * 0.5,
               child: Text(
-                'Đã bán: ${NumberFormat.decimalPattern().format(product.sale_num)}',
+                'Đã bán: ${NumberFormat.decimalPattern().format(product.sale_num ?? 0)}',
                 style: const TextStyle(
                   fontSize: 12,
                   color: Colors.green,

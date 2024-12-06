@@ -32,7 +32,9 @@ class ReportController extends GetxController {
       DateTimeRange(start: DateTime.now(), end: DateTime.now()).obs;
 
   RxList<OrdinalData> reportBuyer = <OrdinalData>[].obs;
+  RxList<OrdinalData> reportBuyerDetail = <OrdinalData>[].obs;
   RxList<OrdinalData> reportSeller = <OrdinalData>[].obs;
+  RxList<OrdinalData> reportSellerDetail = <OrdinalData>[].obs;
 
   RxInt countBuyer = 0.obs;
   RxInt countSeller = 0.obs;
@@ -77,12 +79,39 @@ class ReportController extends GetxController {
         // }
       }
     }
+
+    //revenue buyer
+    for (var buyer in listBuyer) {
+      double revenue = 0;
+      final snapshotOrder = await Get.find<OrderController>()
+          .orderCollection
+          .where('buyer_id', isEqualTo: buyer.id)
+          .where('status', isEqualTo: 'delivered')
+          .get();
+      for (var itemOrder in snapshotOrder.docs) {
+        final snapshotODD = await Get.find<OrderController>()
+            .orderDetailCollection
+            .where('order_id', isEqualTo: itemOrder.id)
+            .get();
+        for (var itemOdd in snapshotODD.docs) {
+          Map<String, dynamic> dataOdd = itemOdd.data() as Map<String, dynamic>;
+          dataOdd['id'] = itemOdd.id;
+          OrderDetail odd = OrderDetail.fromJson(dataOdd);
+          revenue += odd.sell_price * odd.quantity;
+        }
+      }
+      reportBuyerDetail.add(OrdinalData(
+          domain: buyer.username,
+          measure: revenue / 1000,
+          other: {'name': buyer.name}));
+    }
     isLoading.value = false;
   }
 
   Future<void> showReportSeller() async {
     isLoading.value = true;
     reportSeller.value = [];
+    reportSellerDetail.value = [];
     final snapSeller = await Get.find<SellerController>()
         .sellerCollection
         .where('create_at',
@@ -119,6 +148,31 @@ class ReportController extends GetxController {
         );
         // }
       }
+    }
+//revenue seller
+    for (var seller in listSeller) {
+      double revenue = 0;
+      final snapshotOrder = await Get.find<OrderController>()
+          .orderCollection
+          .where('seller_id', isEqualTo: seller.id)
+          .where('status', isEqualTo: 'delivered')
+          .get();
+      for (var itemOrder in snapshotOrder.docs) {
+        final snapshotODD = await Get.find<OrderController>()
+            .orderDetailCollection
+            .where('order_id', isEqualTo: itemOrder.id)
+            .get();
+        for (var itemOdd in snapshotODD.docs) {
+          Map<String, dynamic> dataOdd = itemOdd.data() as Map<String, dynamic>;
+          dataOdd['id'] = itemOdd.id;
+          OrderDetail odd = OrderDetail.fromJson(dataOdd);
+          revenue += odd.sell_price * odd.quantity;
+        }
+      }
+      reportSellerDetail.add(OrdinalData(
+          domain: seller.username,
+          measure: revenue / 1000,
+          other: {'name': seller.name}));
     }
     isLoading.value = false;
   }

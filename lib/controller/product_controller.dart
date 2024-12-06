@@ -84,8 +84,8 @@ class ProductController extends GetxController {
 
   Future<void> loadProductBySeller() async {
     isLoading.value = true;
-    listProduct.value = [];
-    listProductImage.value = [];
+    // listProduct.value = [];
+    // listProductImage.value = [];
     final snapshotProduct = await productCollection
         .where('seller_id',
             isEqualTo: Get.find<MainController>().seller.value.id)
@@ -96,7 +96,11 @@ class ProductController extends GetxController {
                 .map((element) => element.id)
                 .toList())
         .get();
-    for (var item in snapshotProduct.docs) {
+    for (var item in snapshotProduct.docs.where((element) => listProduct
+        .where(
+          (p0) => p0.id == element.id,
+        )
+        .isEmpty)) {
       Map<String, dynamic> data = item.data() as Map<String, dynamic>;
 
       data['id'] = item.id;
@@ -188,8 +192,8 @@ class ProductController extends GetxController {
 
   Future<void> loadAllProduct() async {
     isLoading.value = true;
-    listProduct.value = [];
-    listProductImage.value = [];
+    // listProduct.value = [];
+    // listProductImage.value = [];
     final snapshotProduct = await productCollection
         // .where('status', isEqualTo: 'active')
         .where('seller_id',
@@ -198,25 +202,23 @@ class ProductController extends GetxController {
                 .map((element) => element.id)
                 .toList())
         .get();
-    for (var item in snapshotProduct.docs) {
+    for (var item in snapshotProduct.docs.where(
+      (element) => listProduct
+          .where(
+            (p0) => p0.id == element.id,
+          )
+          .isEmpty,
+    )) {
       Map<String, dynamic> data = item.data() as Map<String, dynamic>;
 
       data['id'] = item.id;
-      // data['sale_num'] =
-      //     await Get.find<OrderController>().getNumOfSale(data['id']);
-      // data['ratting'] =
-      //     await Get.find<ReviewController>().getRatting(data['id']);
+      data['sale_num'] =
+          await Get.find<OrderController>().getNumOfSale(data['id']);
+      data['ratting'] =
+          await Get.find<ReviewController>().getRatting(data['id']);
 
       listProduct.add(Product.fromJson(data));
 
-      // final snapshotImg = await productImageCollection
-      //     .where('product_id', isEqualTo: item.id)
-      //     .get();
-      // for (var img in snapshotImg.docs) {
-      //   Map<String, dynamic> dataImg = img.data() as Map<String, dynamic>;
-      //   dataImg['id'] = img.id;
-      //   listProductImage.add(ProductImage.fromJson(dataImg));
-      // }
       loadProductImage(item.id);
     }
     listProduct.sort((a, b) => b.create_at.compareTo(a.create_at));
@@ -225,8 +227,8 @@ class ProductController extends GetxController {
 
   Future<void> loadProductActive() async {
     isLoading.value = true;
-    listProduct.value = [];
-    listProductImage.value = [];
+    // listProduct.value = [];
+    // listProductImage.value = [];
     final snapshotProduct = await productCollection
         .where('status', isEqualTo: 'active')
         .where('category_id',
@@ -241,7 +243,12 @@ class ProductController extends GetxController {
             .listSeller
             .map((element) => element.id)
             .toList()
-            .contains((element.data() as Map<String, dynamic>)['seller_id']))) {
+            .contains((element.data() as Map<String, dynamic>)['seller_id']) &&
+        listProduct
+            .where(
+              (p0) => p0.id == element.id,
+            )
+            .isEmpty)) {
       Map<String, dynamic> data = item.data() as Map<String, dynamic>;
 
       data['id'] = item.id;
@@ -251,15 +258,6 @@ class ProductController extends GetxController {
           await Get.find<ReviewController>().getRatting(data['id']);
 
       listProduct.add(Product.fromJson(data));
-
-      // final snapshotImg = await productImageCollection
-      //     .where('product_id', isEqualTo: item.id)
-      //     .get();
-      // for (var img in snapshotImg.docs) {
-      //   Map<String, dynamic> dataImg = img.data() as Map<String, dynamic>;
-      //   dataImg['id'] = img.id;
-      //   listProductImage.add(ProductImage.fromJson(dataImg));
-      // }
       loadProductImage(item.id);
     }
     listProduct.sort((a, b) => b.create_at.compareTo(a.create_at));
@@ -362,6 +360,10 @@ class ProductController extends GetxController {
                     data['status'] == 'active') {
                   data['create_at'] = dataOrder['update_at'];
                   data['id'] = snapProduct.id;
+                  data['sale_num'] = await Get.find<OrderController>()
+                      .getNumOfSale(data['id']);
+                  data['ratting'] =
+                      await Get.find<ReviewController>().getRatting(data['id']);
                   Get.find<BuyerController>()
                       .listProductBought
                       .add(Product.fromJson(data));

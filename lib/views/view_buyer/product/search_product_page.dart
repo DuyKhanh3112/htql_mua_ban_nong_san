@@ -88,7 +88,11 @@ class SearchProductPage extends StatelessWidget {
     // } else {
     //   listProduct.value = productController.listProduct;
     // }
-    listProduct.value = productController.listProduct;
+    listProduct.value = productController.listProduct
+        .where(
+          (p0) => p0.status == 'active',
+        )
+        .toList();
     if (productController.searchProductController.value.text.isNotEmpty) {
       listProduct.value = Get.find<ProductController>()
           .listProduct
