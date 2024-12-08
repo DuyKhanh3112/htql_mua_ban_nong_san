@@ -29,94 +29,193 @@ class DrawerAdmin extends StatelessWidget {
       return mainController.isLoading.value || adminController.isLoading.value
           ? const LoadingPage()
           : Container(
-              width: Get.width * 2 / 3,
+              width: Get.width * 0.7,
               decoration: const BoxDecoration(
                 color: Colors.white,
               ),
               child: Column(
                 children: [
-                  Container(
-                    // color: Colors.white,
-                    height: 150,
-                    width: Get.width * 2 / 3,
-                    decoration: const BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.only(
-                          // bottomLeft: Radius.circular(40),
-                          // bottomRight: Radius.circular(40),
-                          ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(
-                            bottom: 10,
-                            left: 5,
-                            right: 5,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                width: Get.width / 5,
-                                height: 100,
-                                // margin: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.shade300,
-                                      spreadRadius: 5,
-                                      blurRadius: 7,
-                                      offset: const Offset(
-                                          0, 3), // changes position of shadow
-                                    ),
-                                  ],
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                      mainController.admin.value.avatar != ''
-                                          ? mainController.admin.value.avatar!
-                                          : 'https://res.cloudinary.com/dg3p7nxyp/image/upload/v1723018608/account_default.png',
-                                    ),
-                                    fit: BoxFit.fill,
+                  Stack(
+                    children: [
+                      Column(
+                        children: [
+                          Container(
+                            // color: Colors.white,
+                            height: 150,
+                            width: Get.width * 0.75,
+                            decoration: BoxDecoration(
+                              color: mainController.admin.value.cover == ''
+                                  ? null
+                                  : Colors.green,
+                              borderRadius: const BorderRadius.only(
+                                  // bottomLeft: Radius.circular(40),
+                                  // bottomRight: Radius.circular(40),
                                   ),
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    // color: Colors.amber,
-                                    width: Get.width * 0.35,
-                                    child: Text(
-                                      mainController.admin.value.name,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                        shadows: [
-                                          BoxShadow(
-                                            color: Colors.grey.shade400,
-                                            spreadRadius: 5,
-                                            blurRadius: 7,
-                                            offset: const Offset(0,
-                                                3), // changes position of shadow
-                                          ),
-                                        ],
-                                      ),
+                              image: mainController.admin.value.cover == ''
+                                  ? null
+                                  : DecorationImage(
+                                      image: NetworkImage(
+                                          mainController.admin.value.cover!),
+                                      fit: BoxFit.fill,
                                     ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: Get.height * 0.03,
+                          )
+                        ],
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        left: Get.width * 0.05,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: Get.width * 0.2,
+                              height: 100,
+                              // margin: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.shade300,
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: const Offset(
+                                        0, 3), // changes position of shadow
                                   ),
                                 ],
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  image: NetworkImage(
+                                    mainController.admin.value.avatar != ''
+                                        ? mainController.admin.value.avatar!
+                                        : 'https://res.cloudinary.com/dg3p7nxyp/image/upload/v1723018608/account_default.png',
+                                  ),
+                                  fit: BoxFit.fill,
+                                ),
                               ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                            ),
+                            Container(
+                              width: Get.width * 0.45,
+                              padding: EdgeInsets.only(left: Get.width * 0.05),
+                              child: Text(
+                                mainController.admin.value.name,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green,
+                                  // shadows: [
+                                  //   BoxShadow(
+                                  //     color: Colors.black,
+                                  //     spreadRadius: 5,
+                                  //     blurRadius: 7,
+                                  //     offset:
+                                  //         Offset(0, 3), // changes position of shadow
+                                  //   ),
+                                  // ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
+                  const Divider(),
+                  // Container(
+                  //   // color: Colors.white,
+                  //   height: 150,
+                  //   width: Get.width * 2 / 3,
+                  //   decoration: BoxDecoration(
+                  //     color: mainController.admin.value.cover != ''
+                  //         ? null
+                  //         : Colors.green,
+                  //     borderRadius: const BorderRadius.only(
+                  //         // bottomLeft: Radius.circular(40),
+                  //         // bottomRight: Radius.circular(40),
+                  //         ),
+                  //     image: mainController.admin.value.cover == ''
+                  //         ? null
+                  //         : DecorationImage(
+                  //             image: NetworkImage(
+                  //                 mainController.admin.value.cover!),
+                  //             fit: BoxFit.fill,
+                  //           ),
+                  //   ),
+                  //   child: Column(
+                  //     mainAxisAlignment: MainAxisAlignment.end,
+                  //     children: [
+                  //       Container(
+                  //         margin: const EdgeInsets.only(
+                  //           bottom: 10,
+                  //           left: 5,
+                  //           right: 5,
+                  //         ),
+                  //         child: Row(
+                  //           crossAxisAlignment: CrossAxisAlignment.center,
+                  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //           children: [
+                  //             Container(
+                  //               width: Get.width / 5,
+                  //               height: 100,
+                  //               // margin: const EdgeInsets.all(10),
+                  //               decoration: BoxDecoration(
+                  //                 boxShadow: [
+                  //                   BoxShadow(
+                  //                     color: Colors.grey.shade300,
+                  //                     spreadRadius: 5,
+                  //                     blurRadius: 7,
+                  //                     offset: const Offset(
+                  //                         0, 3), // changes position of shadow
+                  //                   ),
+                  //                 ],
+                  //                 shape: BoxShape.circle,
+                  //                 image: DecorationImage(
+                  //                   image: NetworkImage(
+                  //                     mainController.admin.value.avatar != ''
+                  //                         ? mainController.admin.value.avatar!
+                  //                         : 'https://res.cloudinary.com/dg3p7nxyp/image/upload/v1723018608/account_default.png',
+                  //                   ),
+                  //                   fit: BoxFit.fill,
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //             Row(
+                  //               mainAxisAlignment:
+                  //                   MainAxisAlignment.spaceBetween,
+                  //               children: [
+                  //                 SizedBox(
+                  //                   // color: Colors.amber,
+                  //                   width: Get.width * 0.35,
+                  //                   child: Text(
+                  //                     mainController.admin.value.name,
+                  //                     style: const TextStyle(
+                  //                       fontSize: 20,
+                  //                       fontWeight: FontWeight.bold,
+                  //                       color: Colors.green,
+                  //                       shadows: [
+                  //                         BoxShadow(
+                  //                           color: Colors.black,
+                  //                           spreadRadius: 5,
+                  //                           blurRadius: 7,
+                  //                           offset: Offset(0,
+                  //                               3), // changes position of shadow
+                  //                         ),
+                  //                       ],
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       )
+                  //     ],
+                  //   ),
+                  // ),
+
                   Expanded(
                     child: ListView(
                       children: [

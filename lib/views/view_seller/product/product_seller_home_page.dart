@@ -57,7 +57,7 @@ class ProductSellerHomePage extends StatelessWidget {
                       for (var item in productController.listStatus)
                         Tab(
                           text:
-                              '${item['label']} (${productController.listProduct.where((p0) => p0.status == item['value'] && (searchController.value.text.isEmpty || removeDiacritics(p0.name.toLowerCase()).contains(removeDiacritics(searchController.value.text.toLowerCase())))).length})',
+                              '${item['label']} (${listProduct.where((p0) => p0.status == item['value'] && (searchController.value.text.isEmpty || removeDiacritics(p0.name.toLowerCase()).contains(removeDiacritics(searchController.value.text.toLowerCase())))).length})',
                           // icon: Icon(Icons.flight),
                         ),
                     ],
@@ -177,12 +177,19 @@ class ProductSellerHomePage extends StatelessWidget {
   void refeshData(Rx<TextEditingController> searchController,
       RxList<Product> listProduct, ProductController productController) {
     if (searchController.value.text.isEmpty) {
-      listProduct.value = productController.listProduct;
+      listProduct.value = productController.listProduct
+          .where(
+            (p0) => p0.seller_id == Get.find<MainController>().seller.value.id,
+          )
+          .toList();
     } else {
       listProduct.value = productController.listProduct
           .where(
-            (p0) => removeDiacritics(p0.name.toLowerCase()).contains(
-                removeDiacritics(searchController.value.text.toLowerCase())),
+            (p0) =>
+                p0.seller_id == Get.find<MainController>().seller.value.id &&
+                removeDiacritics(p0.name.toLowerCase()).contains(
+                    removeDiacritics(
+                        searchController.value.text.toLowerCase())),
           )
           .toList();
     }

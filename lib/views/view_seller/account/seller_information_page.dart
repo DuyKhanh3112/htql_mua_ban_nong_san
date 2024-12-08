@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -1052,7 +1054,6 @@ class SellerInformationPage extends StatelessWidget {
                     Get.back();
                     await Get.find<SellerController>()
                         .updatePassword(mainController.seller.value);
-                    // ignore: use_build_context_synchronously
                     await AwesomeDialog(
                       titleTextStyle: const TextStyle(
                         color: Colors.green,

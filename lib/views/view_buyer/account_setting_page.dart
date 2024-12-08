@@ -71,10 +71,15 @@ class AccountSettingPage extends StatelessWidget {
                                   : Container(
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                          image: NetworkImage(mainController
-                                              .buyer.value.avatar!),
-                                        ),
+                                        image:
+                                            mainController.buyer.value.avatar ==
+                                                    ''
+                                                ? null
+                                                : DecorationImage(
+                                                    image: NetworkImage(
+                                                        mainController.buyer
+                                                            .value.avatar!),
+                                                  ),
                                       ),
                                       height: 75,
                                       width: 75,
@@ -169,7 +174,7 @@ class AccountSettingPage extends StatelessWidget {
                                         color: Colors.green,
                                       ),
                                       title: const Text(
-                                        'Quản lý tài khoản',
+                                        'Quản lý thông tin cá nhân',
                                         style: TextStyle(
                                           fontSize: 18,
                                           color: Colors.green,

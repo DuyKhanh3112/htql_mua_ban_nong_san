@@ -269,7 +269,7 @@ class ProductDetailPage extends StatelessWidget {
                                 ),
                                 // height: Get.height * 0.075,
                                 child: Text(
-                                  'Đã bán: ${productController.product.value.sale_num == 0 ? 0 : NumberFormat.decimalPatternDigits(decimalDigits: 0).format(productController.product.value.sale_num)}',
+                                  'Đã bán: ${NumberFormat.decimalPatternDigits(decimalDigits: 0).format((productController.product.value.sale_num ?? 0))}',
                                   style: const TextStyle(
                                     color: Colors.green,
                                     fontSize: 14,
@@ -284,8 +284,11 @@ class ProductDetailPage extends StatelessWidget {
                                 alignment: Alignment.centerRight,
                                 width: Get.width * 0.5,
                                 child: productController
-                                            .product.value.ratting ==
-                                        0
+                                                .product.value.ratting ==
+                                            0 ||
+                                        productController
+                                                .product.value.ratting ==
+                                            null
                                     ? const Text(
                                         'Chưa có đánh giá',
                                         style: TextStyle(

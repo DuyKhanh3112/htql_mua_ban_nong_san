@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/article_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
@@ -102,6 +103,18 @@ class SellerPage extends StatelessWidget {
                                   width: Get.width * 0.1,
                                   child: InkWell(
                                     onTap: () {
+                                      Get.find<MainController>()
+                                          .isLoading
+                                          .value = false;
+                                      Get.find<SellerController>()
+                                          .isLoading
+                                          .value = false;
+                                      Get.find<BuyerController>()
+                                          .isLoading
+                                          .value = false;
+                                      Get.find<ProductController>()
+                                          .isLoading
+                                          .value = false;
                                       Get.back();
                                     },
                                     child: const Icon(
@@ -615,7 +628,7 @@ class SellerPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
               alignment: Alignment.centerRight,
               width: Get.width * 0.5,
-              child: product.ratting == 0
+              child: product.ratting == 0 || product.ratting == null
                   ? const Text(
                       'Chưa có đánh giá',
                       style: TextStyle(
@@ -645,7 +658,7 @@ class SellerPage extends StatelessWidget {
                           alignment: Alignment.centerLeft,
                           width: Get.width * 0.1,
                           child: Text(
-                            '(${NumberFormat.decimalPatternDigits(decimalDigits: 1).format(product.ratting)})',
+                            '(${NumberFormat.decimalPatternDigits(decimalDigits: 1).format(product.ratting ?? 0)})',
                             style: const TextStyle(
                               fontSize: 12,
                               color: Colors.green,
@@ -662,7 +675,7 @@ class SellerPage extends StatelessWidget {
               alignment: Alignment.centerRight,
               width: Get.width * 0.5,
               child: Text(
-                'Đã bán: ${NumberFormat.decimalPattern().format(product.sale_num)}',
+                'Đã bán: ${NumberFormat.decimalPattern().format(product.sale_num ?? 0)}',
                 style: const TextStyle(
                   fontSize: 12,
                   color: Colors.green,

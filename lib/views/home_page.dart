@@ -55,7 +55,7 @@ class HomePage extends StatelessWidget {
                 label: 'Bài Viết',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle_rounded),
+                icon: Icon(Icons.manage_accounts),
                 label: 'Tài Khoản',
               ),
             ],

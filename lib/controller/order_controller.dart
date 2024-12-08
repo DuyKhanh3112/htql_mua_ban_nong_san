@@ -182,19 +182,21 @@ class OrderController extends GetxController {
       listOrderId.add(element.id);
     }
     final QuerySnapshot<Object?> snapshootOrderDetail;
-    if (listOrderId.isEmpty) {
+    if (listOrderId == []) {
       snapshootOrderDetail = await orderDetailCollection
           .where('product_id', isEqualTo: productID)
           .get();
     } else {
       snapshootOrderDetail = await orderDetailCollection
           .where('product_id', isEqualTo: productID)
-          .where('order_id', whereIn: listOrderId)
+          // .where('order_id', whereIn: listOrderId)
           .get();
     }
-    for (var item in snapshootOrderDetail.docs) {
+    for (var item in snapshootOrderDetail.docs.where(
+      (element) => listOrderId
+          .contains((element.data() as Map<String, dynamic>)['order_id']),
+    )) {
       Map<String, dynamic> data = item.data() as Map<String, dynamic>;
-
       count += data['quantity'];
     }
     return count;

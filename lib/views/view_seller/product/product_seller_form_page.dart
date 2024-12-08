@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_protected_member, use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -261,7 +263,7 @@ class ProductSellerFormPage extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text(
-                                      'Tỉnh thành',
+                                      'Xuất xứ',
                                       style: TextStyle(
                                         fontSize: 16,
                                         color: Colors.green,
@@ -1066,10 +1068,33 @@ class ProductSellerFormPage extends StatelessWidget {
                                       'draft';
                                 }
 
+                                if (listFilePath.isNotEmpty) {
+                                  await productController.createProductImage(
+                                      listFilePath.value, pro.id);
+                                }
+                                if (listImageUrl.length <
+                                    productController.listProductImage
+                                        .where(
+                                          (p0) => p0.product_id == pro.id,
+                                        )
+                                        .length) {
+                                  for (var proImg in productController
+                                      .listProductImage
+                                      .where(
+                                    (p0) =>
+                                        p0.product_id == pro.id &&
+                                        !listImageUrl
+                                            .map(
+                                              (element) => element.id,
+                                            )
+                                            .toList()
+                                            .contains(p0.id),
+                                  )) {
+                                    productController.deleteProductImg(proImg);
+                                  }
+                                }
                                 await productController.updateProduct(
                                     productController.product.value);
-
-                                // ignore: use_build_context_synchronously
                                 await AwesomeDialog(
                                   titleTextStyle: const TextStyle(
                                     color: Colors.green,
@@ -1138,9 +1163,10 @@ class ProductSellerFormPage extends StatelessWidget {
               .toString()
               .toString()
           : '';
-      priceController.text = NumberFormat.decimalPatternDigits(decimalDigits: 0)
-          .format(pro.price)
-          .toString();
+      // priceController.text = NumberFormat.decimalPatternDigits(decimalDigits: 0)
+      //     .format(pro.price)
+      //     .toString();
+      priceController.text = pro.price.toString().replaceAll('.0', '');
       quantityController.text =
           NumberFormat.decimalPatternDigits(decimalDigits: 0)
               .format(pro.quantity)
@@ -1165,10 +1191,7 @@ class ProductSellerFormPage extends StatelessWidget {
 
   Future<void> createProduct(ProductController productController,
       RxList<dynamic> listFilePath, BuildContext context) async {
-    await productController
-        // ignore: invalid_use_of_protected_member
-        .createProduct(listFilePath.value);
-    // ignore: use_build_context_synchronously
+    await productController.createProduct(listFilePath.value);
     await AwesomeDialog(
       titleTextStyle: const TextStyle(
         color: Colors.green,

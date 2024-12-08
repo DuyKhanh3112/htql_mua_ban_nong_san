@@ -122,7 +122,7 @@ class ReportBuyerPage extends StatelessWidget {
                                     .showReportBuyer();
                               },
                               style: const ButtonStyle(
-                                backgroundColor: MaterialStatePropertyAll(
+                                backgroundColor: WidgetStatePropertyAll(
                                   Colors.green,
                                 ),
                               ),
@@ -145,7 +145,8 @@ class ReportBuyerPage extends StatelessWidget {
                         fontSize: 24,
                       ),
                     ),
-                    reportController.reportBuyer.isEmpty
+                    reportController.reportBuyer.isEmpty &&
+                            reportController.reportBuyerDetail.isEmpty
                         // ? Row(
                         //     mainAxisAlignment: MainAxisAlignment.center,
                         //     children: [
@@ -164,16 +165,179 @@ class ReportBuyerPage extends StatelessWidget {
                         //       )
                         //     ],
                         //   )
-                        ? SizedBox()
+                        ? const SizedBox()
                         : Expanded(
                             child: ListView(
                               children: [
+                                reportController.reportBuyerDetail.isEmpty
+                                    ? const SizedBox()
+                                    : Container(
+                                        padding:
+                                            EdgeInsets.all(Get.width * 0.05),
+                                        margin:
+                                            EdgeInsets.all(Get.width * 0.02),
+                                        decoration: const BoxDecoration(
+                                          // border: Border.all(),
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(20),
+                                          ),
+                                          color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey,
+                                              offset: Offset(4.0, 4.0),
+                                              blurRadius: 10.0,
+                                              spreadRadius: 2.0,
+                                            ),
+                                          ],
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            const Text(
+                                              'Chi tiêu của người mua',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.green,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 24,
+                                              ),
+                                            ),
+                                            const Text(
+                                              '(Nghìn VNĐ)',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.green,
+                                                fontWeight: FontWeight.bold,
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                            AspectRatio(
+                                              aspectRatio: 1.5,
+                                              child: DChartBarO(
+                                                allowSliding: true,
+                                                groupList: [
+                                                  OrdinalGroup(
+                                                    id: 'id',
+                                                    data: reportController
+                                                        .reportBuyerDetail,
+                                                  ),
+                                                ],
+                                                domainAxis: DomainAxis(
+                                                  ordinalViewport:
+                                                      OrdinalViewport('1', 3),
+                                                  gapAxisToLabel: 10,
+                                                  labelAnchor:
+                                                      LabelAnchor.centered,
+                                                  // thickLength: 5,
+                                                  labelRotation: 0,
+                                                  labelStyle: const LabelStyle(
+                                                    color: Colors.green,
+                                                    fontSize: 12,
+                                                  ),
+
+                                                  lineStyle: const LineStyle(
+                                                    color: Colors.green,
+                                                    thickness: 1,
+                                                    dashPattern: [],
+                                                  ),
+                                                  showLine: true,
+                                                ),
+                                                barLabelValue: (group,
+                                                    ordinalData, index) {
+                                                  return NumberFormat
+                                                          .decimalPatternDigits(
+                                                              decimalDigits: 0)
+                                                      .format(
+                                                          ordinalData.measure);
+                                                },
+                                                outsideBarLabelStyle: (group,
+                                                    ordinalData, index) {
+                                                  return LabelStyle(
+                                                    color:
+                                                        ordinalData.measure <=
+                                                                10
+                                                            ? Colors.red
+                                                            : Colors.green,
+                                                    fontSize: 14,
+                                                  );
+                                                },
+                                                insideBarLabelStyle: (group,
+                                                    ordinalData, index) {
+                                                  return LabelStyle(
+                                                    color:
+                                                        ordinalData.measure <=
+                                                                10
+                                                            ? Colors.red
+                                                            : Colors.white,
+                                                    fontSize: 14,
+                                                  );
+                                                },
+                                                barLabelDecorator:
+                                                    BarLabelDecorator(
+                                                  barLabelPosition:
+                                                      BarLabelPosition.auto,
+                                                  labelAnchor:
+                                                      BarLabelAnchor.start,
+                                                  labelPadding: 10,
+                                                ),
+                                                configRenderBar:
+                                                    ConfigRenderBar(
+                                                  barGroupInnerPaddingPx: 2,
+                                                  barGroupingType:
+                                                      BarGroupingType.grouped,
+                                                  fillPattern:
+                                                      FillPattern.solid,
+                                                  maxBarWidthPx: 60,
+                                                  radius: 30,
+                                                  stackedBarPaddingPx: 1,
+                                                  strokeWidthPx: 0,
+                                                ),
+                                                measureAxis: MeasureAxis(
+                                                  numericViewport:
+                                                      NumericViewport(
+                                                          0,
+                                                          maxMeasure(
+                                                              reportController
+                                                                  .reportBuyerDetail
+                                                                  .map(
+                                                                    (element) =>
+                                                                        element
+                                                                            .measure,
+                                                                  )
+                                                                  .toList())),
+                                                  desiredTickCount: 5,
+                                                  showLine: true,
+                                                  labelAnchor:
+                                                      LabelAnchor.centered,
+                                                  labelFormat: (measure) {
+                                                    return NumberFormat
+                                                            .decimalPatternDigits(
+                                                                decimalDigits:
+                                                                    0)
+                                                        .format(measure ?? 0);
+                                                  },
+                                                  labelStyle: const LabelStyle(
+                                                    color: Colors.green,
+                                                    fontSize: 14,
+                                                  ),
+                                                  lineStyle: const LineStyle(
+                                                    color: Colors.green,
+                                                    thickness: 1,
+                                                    dashPattern: [],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                 Column(
                                   children: [
                                     reportController.reportBuyer
                                             .where((p0) => p0.measure > 0)
                                             .isEmpty
-                                        ? SizedBox()
+                                        ? const SizedBox()
                                         : Container(
                                             padding: EdgeInsets.all(
                                                 Get.width * 0.05),
@@ -335,104 +499,117 @@ class ReportBuyerPage extends StatelessWidget {
                                               ],
                                             ),
                                           ),
-                                    Container(
-                                      padding: EdgeInsets.all(Get.width * 0.05),
-                                      margin: EdgeInsets.all(Get.width * 0.02),
-                                      decoration: const BoxDecoration(
-                                        // border: Border.all(),
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(20),
-                                        ),
-                                        color: Colors.white,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey,
-                                            offset: Offset(4.0, 4.0),
-                                            blurRadius: 10.0,
-                                            spreadRadius: 2.0,
-                                          ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          const Text(
-                                            'Số lượng người mua mới theo trạng thái',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: Colors.green,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 24,
+                                    reportController.reportBuyer.isEmpty
+                                        ? const SizedBox()
+                                        : Container(
+                                            padding: EdgeInsets.all(
+                                                Get.width * 0.05),
+                                            margin: EdgeInsets.all(
+                                                Get.width * 0.02),
+                                            decoration: const BoxDecoration(
+                                              // border: Border.all(),
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(20),
+                                              ),
+                                              color: Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey,
+                                                  offset: Offset(4.0, 4.0),
+                                                  blurRadius: 10.0,
+                                                  spreadRadius: 2.0,
+                                                ),
+                                              ],
                                             ),
-                                          ),
-                                          AspectRatio(
-                                            aspectRatio: 16 / 9,
-                                            child: DChartBarCustom(
-                                              valueAlign: Alignment.topCenter,
-                                              showDomainLine: true,
-                                              showDomainLabel: true,
-                                              showMeasureLine: true,
-                                              showMeasureLabel: true,
-                                              spaceDomainLabeltoChart: 10,
-                                              spaceMeasureLabeltoChart: 10,
-                                              // spaceDomainLinetoChart: 15,
-                                              spaceMeasureLinetoChart:
-                                                  Get.width * 0.02,
-                                              spaceBetweenItem: 10,
-                                              radiusBar:
-                                                  const BorderRadius.only(
-                                                topLeft: Radius.circular(20),
-                                                topRight: Radius.circular(20),
-                                              ),
-                                              measureLabelStyle:
-                                                  const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                                color: Colors.green,
-                                              ),
-                                              domainLabelStyle: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12,
-                                                color: Colors.green,
-                                                overflow: TextOverflow.clip,
-                                              ),
-                                              measureLineStyle:
-                                                  const BorderSide(
+                                            child: Column(
+                                              children: [
+                                                const Text(
+                                                  'Số lượng người mua mới theo trạng thái',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: Colors.green,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 24,
+                                                  ),
+                                                ),
+                                                AspectRatio(
+                                                  aspectRatio: 16 / 9,
+                                                  child: DChartBarCustom(
+                                                    valueAlign:
+                                                        Alignment.topCenter,
+                                                    showDomainLine: true,
+                                                    showDomainLabel: true,
+                                                    showMeasureLine: true,
+                                                    showMeasureLabel: true,
+                                                    spaceDomainLabeltoChart: 10,
+                                                    spaceMeasureLabeltoChart:
+                                                        10,
+                                                    // spaceDomainLinetoChart: 15,
+                                                    spaceMeasureLinetoChart:
+                                                        Get.width * 0.02,
+                                                    spaceBetweenItem: 10,
+                                                    radiusBar:
+                                                        const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(20),
+                                                      topRight:
+                                                          Radius.circular(20),
+                                                    ),
+                                                    measureLabelStyle:
+                                                        const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16,
                                                       color: Colors.green,
-                                                      width: 2),
-                                              domainLineStyle: const BorderSide(
-                                                  color: Colors.green,
-                                                  width: 2),
-                                              // max: 25,
-                                              // verticalDirection: true,
-                                              listData:
-                                                  Get.find<ReportController>()
-                                                      .reportBuyer
-                                                      .map(
-                                                        (item) =>
-                                                            DChartBarDataCustom(
-                                                          value: item.measure
-                                                              .toDouble(),
-                                                          label: item.domain,
-                                                          showValue: true,
-                                                          valueTooltip:
-                                                              '${item.measure} đơn hàng',
-                                                          color: item.color!
-                                                              .withOpacity(1),
-                                                          valueStyle:
-                                                              const TextStyle(
-                                                                  color: Colors
-                                                                      .white),
-                                                        ),
-                                                      )
-                                                      .toList(),
+                                                    ),
+                                                    domainLabelStyle:
+                                                        const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 12,
+                                                      color: Colors.green,
+                                                      overflow:
+                                                          TextOverflow.clip,
+                                                    ),
+                                                    measureLineStyle:
+                                                        const BorderSide(
+                                                            color: Colors.green,
+                                                            width: 2),
+                                                    domainLineStyle:
+                                                        const BorderSide(
+                                                            color: Colors.green,
+                                                            width: 2),
+                                                    // max: 25,
+                                                    // verticalDirection: true,
+                                                    listData: Get.find<
+                                                            ReportController>()
+                                                        .reportBuyer
+                                                        .map(
+                                                          (item) =>
+                                                              DChartBarDataCustom(
+                                                            value: item.measure
+                                                                .toDouble(),
+                                                            label: item.domain,
+                                                            showValue: true,
+                                                            valueTooltip:
+                                                                '${item.measure} đơn hàng',
+                                                            color: item.color!
+                                                                .withOpacity(1),
+                                                            valueStyle:
+                                                                const TextStyle(
+                                                                    color: Colors
+                                                                        .white),
+                                                          ),
+                                                        )
+                                                        .toList(),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: Get.height * 0.05,
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          SizedBox(
-                                            height: Get.height * 0.05,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
                                   ],
                                 ),
                               ],
