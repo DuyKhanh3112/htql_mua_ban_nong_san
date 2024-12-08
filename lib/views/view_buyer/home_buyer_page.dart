@@ -39,12 +39,6 @@ class HomeUserPage extends StatelessWidget {
 
     RxInt currentBanner = 0.obs;
     final CarouselSliderController controller = CarouselSliderController();
-    // List listImageUrl = [
-    //   'https://media.vneconomy.vn/images/upload/2023/11/06/nong-san1.jpg',
-    //   'https://kinhtenongthon.vn/data/data/thanduong/2024/08/23/Thai%20la.jpg',
-    //   'https://cdn.baohatinh.vn/images/9809be34ee661c8030be3dcab5254b63b4f1c4224eabb3be0d6105c749b386c4dfc781f7398663777effc4e7939da9c82476db4d7782bc48b7a3b5f70cc6f8ac/70d5103247t1500l1-ky-uc-tet-trong-toi.jpg',
-    //   'https://file3.qdnd.vn/data/images/0/2022/01/03/nguyenthao/nong%20san.jpeg?dpi=150&quality=100&w=870',
-    // ];
 
     return Obx(() {
       loadData(topProductBestSeller, topProductNew, topProductRatting,

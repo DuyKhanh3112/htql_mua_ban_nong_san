@@ -258,6 +258,7 @@ class ProductController extends GetxController {
           await Get.find<ReviewController>().getRatting(data['id']);
 
       listProduct.add(Product.fromJson(data));
+
       loadProductImage(item.id);
     }
     listProduct.sort((a, b) => b.create_at.compareTo(a.create_at));
