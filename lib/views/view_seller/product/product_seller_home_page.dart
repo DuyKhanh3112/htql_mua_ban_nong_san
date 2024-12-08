@@ -603,11 +603,11 @@ class ProductSellerHomePage extends StatelessWidget {
               btnOkText: 'Hiện',
               btnCancelText: 'Không',
               btnOkOnPress: () async {
-                // if (product.quantity == 0) {
-                //   product.status = 'inactive';
-                // } else {
-                //   product.status = 'active';
-                // }
+                if (product.quantity == 0) {
+                  product.status = 'inactive';
+                } else {
+                  product.status = 'active';
+                }
                 await productController.updateProduct(product);
               },
               btnCancelOnPress: () {},

@@ -321,6 +321,16 @@ class ProductController extends GetxController {
     var snapOrder = await Get.find<OrderController>()
         .orderCollection
         .where('buyer_id', isEqualTo: Get.find<MainController>().buyer.value.id)
+        .where('category_id',
+            whereIn: Get.find<CategoryController>()
+                .listCategory
+                .where(
+                  (c) => !c.hide,
+                )
+                .map(
+                  (e) => e.id,
+                )
+                .toList())
         .get();
     for (var order in snapOrder.docs) {
       if (Get.find<BuyerController>().listProductBought.length < 5) {

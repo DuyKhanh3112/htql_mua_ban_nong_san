@@ -2,6 +2,7 @@ import 'package:d_chart/d_chart.dart';
 import 'package:flexible_grid_view/flexible_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/report_controller.dart';
 import 'package:htql_mua_ban_nong_san/loading.dart';
@@ -24,8 +25,12 @@ class ReportProductSellerPage extends StatelessWidget {
 
     return Obx(() {
       topProductSell.value = productController.listProduct
-          .where((p0) =>
-              p0.sale_num! > 0 && !['lock', 'draft'].contains(p0.status))
+          .where(
+            (p0) =>
+                p0.sale_num! > 0 &&
+                !['lock', 'draft'].contains(p0.status) &&
+                p0.seller_id == Get.find<MainController>().seller.value.id,
+          )
           .toList();
       topProductSell.sort((a, b) => b.sale_num!.compareTo(a.sale_num!));
       topProductSell.value = topProductSell.sublist(
@@ -33,13 +38,21 @@ class ReportProductSellerPage extends StatelessWidget {
 
       topProductRatting.value = productController.listProduct
           .where(
-              (p0) => p0.ratting! > 0 && !['lock', 'draft'].contains(p0.status))
+            (p0) =>
+                p0.ratting! > 0 &&
+                !['lock', 'draft'].contains(p0.status) &&
+                p0.seller_id == Get.find<MainController>().seller.value.id,
+          )
           .toList();
       topProductRatting.sort((a, b) => b.ratting!.compareTo(a.ratting!));
       topProductRatting.value = topProductRatting.sublist(
           0, topProductRatting.length < 5 ? topProductRatting.length : 5);
 
-      topProductInventory.value = productController.listProduct;
+      topProductInventory.value = productController.listProduct
+          .where(
+            (p0) => p0.seller_id == Get.find<MainController>().seller.value.id,
+          )
+          .toList();
       topProductInventory
           .sort((a, b) => (b.quantity as num).compareTo((a.quantity as num)));
 
