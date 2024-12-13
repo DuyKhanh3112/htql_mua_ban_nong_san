@@ -169,11 +169,11 @@ class ReportSellSellerPage extends StatelessWidget {
                                         .isEmpty
                                     ? const SizedBox()
                                     : orderStatusChart(i),
-                                // Get.find<ReportController>()
-                                //         .reportProduct
-                                //         .isEmpty
-                                //     ? const SizedBox()
-                                //     : productSellChartBar(),
+                                Get.find<ReportController>()
+                                        .reportProduct
+                                        .isEmpty
+                                    ? const SizedBox()
+                                    : productSellChartBar(),
                                 Get.find<ReportController>()
                                         .reportRevenue
                                         .isEmpty
