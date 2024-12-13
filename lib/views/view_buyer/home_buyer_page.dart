@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:htql_mua_ban_nong_san/controller/banner_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/buyer_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/cart_controller.dart';
+import 'package:htql_mua_ban_nong_san/controller/category_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/main_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/product_controller.dart';
 import 'package:htql_mua_ban_nong_san/controller/province_controller.dart';
@@ -567,20 +568,50 @@ class HomeUserPage extends StatelessWidget {
     if (Get.find<ProductController>().listProduct.isNotEmpty) {
       topProductBestSeller.value = Get.find<ProductController>()
           .listProduct
-          .where((p0) => p0.status == 'active')
+          .where((p0) =>
+              p0.status == 'active' &&
+              Get.find<CategoryController>()
+                  .listCategory
+                  .where(
+                    (c) => !c.hide,
+                  )
+                  .map(
+                    (e) => e.id,
+                  )
+                  .contains(p0.category_id))
           .toList();
       topProductBestSeller
           .sort((a, b) => (b.sale_num ?? 0).compareTo(a.sale_num ?? 0));
 
       topProductNew.value = Get.find<ProductController>()
           .listProduct
-          .where((p0) => p0.status == 'active')
+          .where((p0) =>
+              p0.status == 'active' &&
+              Get.find<CategoryController>()
+                  .listCategory
+                  .where(
+                    (c) => !c.hide,
+                  )
+                  .map(
+                    (e) => e.id,
+                  )
+                  .contains(p0.category_id))
           .toList();
       topProductNew.sort((a, b) => b.create_at.compareTo(a.create_at));
 
       topProductRatting.value = Get.find<ProductController>()
           .listProduct
-          .where((p0) => p0.status == 'active')
+          .where((p0) =>
+              p0.status == 'active' &&
+              Get.find<CategoryController>()
+                  .listCategory
+                  .where(
+                    (c) => !c.hide,
+                  )
+                  .map(
+                    (e) => e.id,
+                  )
+                  .contains(p0.category_id))
           .toList();
       topProductRatting
           .sort((a, b) => (b.ratting ?? 0).compareTo(a.ratting ?? 0));

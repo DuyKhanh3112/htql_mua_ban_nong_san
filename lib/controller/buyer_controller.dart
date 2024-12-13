@@ -48,7 +48,7 @@ class BuyerController extends GetxController {
       data['id'] = item.id;
       data['rate_order'] =
           await Get.find<OrderController>().getRateSuccessByBuyer(item.id);
-      if (data['status'] == 'active' && data['rate_order'] < 80) {
+      if (data['status'] == 'active' && data['rate_order'] < 50) {
         data['status'] = 'warning';
       }
 

@@ -239,15 +239,19 @@ class ReportController extends GetxController {
         final snapODD = await Get.find<OrderController>()
             .orderDetailCollection
             .where('product_id', isEqualTo: product['id'])
-            .where('order_id',
-                whereIn: snapshot.docs
-                    .where((element) =>
-                        (element.data() as Map<String, dynamic>)['status'] !=
-                        'failed')
-                    .map((e) => e.id)
-                    .toList())
             .get();
-        for (var odd in snapODD.docs) {
+        for (var odd in snapODD.docs.where(
+          (element) => snapshot.docs
+              .where((element) =>
+                  (element.data() as Map<String, dynamic>)['status'] !=
+                  'failed')
+              .map((e) => e.id)
+              .contains(snapshot.docs
+                  .where((element) =>
+                      (element.data() as Map<String, dynamic>)['status'] !=
+                      'failed')
+                  .map((e) => e.id)),
+        )) {
           quantity +=
               ((odd.data() as Map<String, dynamic>)['quantity'] as num).toInt();
         }
@@ -297,7 +301,9 @@ class ReportController extends GetxController {
       for (var status in Get.find<ProductController>().listStatus) {
         if (Get.find<ProductController>()
             .listProduct
-            .where((p0) => p0.status == status['value'])
+            .where((p0) =>
+                p0.status == status['value'] &&
+                p0.seller_id == Get.find<MainController>().seller.value)
             .isNotEmpty) {
           reportProductStatus.add(OrdinalData(
               domain: status['label'],

@@ -123,7 +123,7 @@ class ReportSellSellerPage extends StatelessWidget {
                                     .showReportOrder();
                               },
                               style: const ButtonStyle(
-                                backgroundColor: MaterialStatePropertyAll(
+                                backgroundColor: WidgetStatePropertyAll(
                                   Colors.green,
                                 ),
                               ),
